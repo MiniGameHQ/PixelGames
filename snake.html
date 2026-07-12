@@ -6,17 +6,18 @@
 
 <style>
 body {
-    background:#111;
+    background:#0b3d0b;
     color:white;
     text-align:center;
     font-family:Arial;
 }
 
 canvas {
-    background:#222;
+    background:#3f9b3f;
     border:3px solid white;
     display:block;
-    margin:20px auto;
+    margin:10px auto;
+    max-width:90vw;
 }
 
 button {
@@ -29,19 +30,17 @@ button {
 
 .controls {
     width:230px;
-    margin:auto;
+    margin:5px auto;
 }
 
 .middle {
     display:flex;
     justify-content:space-between;
-    align-items:center;
 }
 
 .controls button {
     width:65px;
     height:65px;
-    padding:0;
     font-size:30px;
 }
 
@@ -51,9 +50,13 @@ button {
     padding:20px;
     border-radius:15px;
     width:260px;
-    margin:20px auto;
+    margin:15px auto;
 }
 
+#paused {
+    display:none;
+    font-size:22px;
+}
 </style>
 
 </head>
@@ -67,9 +70,12 @@ button {
 
 <canvas id="game" width="300" height="300"></canvas>
 
+<div id="paused">⏸️ Paused</div>
 
 <div id="gameOver">
+
 <h2>💀 Game Over</h2>
+
 <p>Score: <span id="finalScore">0</span></p>
 <p>🏆 Best: <span id="finalHigh">0</span></p>
 
@@ -86,27 +92,19 @@ button {
 
 <div class="controls">
 
-<div>
 <button onclick="move(0,-1)">⬆️</button>
-</div>
 
 <div class="middle">
 <button onclick="move(-1,0)">⬅️</button>
-
 <button onclick="move(1,0)">➡️</button>
 </div>
 
-<div>
 <button onclick="move(0,1)">⬇️</button>
-</div>
 
 </div>
 
-
-<br>
 
 <button onclick="pauseGame()">⏸️ Pause</button>
-
 <button onclick="restart()">🔄 Restart</button>
 
 
@@ -115,8 +113,8 @@ button {
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
-let size=10;
-let tiles=30;
+const size=10;
+const tiles=30;
 
 let snake;
 let food;
@@ -127,6 +125,8 @@ let score;
 let paused=false;
 let dead=false;
 
+let sparkle=0;
+
 let highScore=Number(localStorage.getItem("snakeHighScore")) || 0;
 
 document.getElementById("highscore").innerHTML=highScore;
@@ -134,12 +134,13 @@ document.getElementById("highscore").innerHTML=highScore;
 
 function start(){
 
-snake=[{x:15,y:15}];
+snake=[
+{x:15,y:15},
+{x:14,y:15},
+{x:13,y:15}
+];
 
-food={
-x:5,
-y:5
-};
+food=randomFood();
 
 dx=1;
 dy=0;
@@ -150,8 +151,18 @@ paused=false;
 dead=false;
 
 document.getElementById("score").innerHTML=0;
-
 document.getElementById("gameOver").style.display="none";
+document.getElementById("paused").style.display="none";
+
+}
+
+
+function randomFood(){
+
+return {
+x:Math.floor(Math.random()*tiles),
+y:Math.floor(Math.random()*tiles)
+};
 
 }
 
@@ -159,8 +170,10 @@ document.getElementById("gameOver").style.display="none";
 function move(x,y){
 
 if(!dead){
+
 dx=x;
 dy=y;
+
 }
 
 }
@@ -169,6 +182,9 @@ dy=y;
 function pauseGame(){
 
 paused=!paused;
+
+document.getElementById("paused").style.display=
+paused ? "block" : "none";
 
 }
 
@@ -193,9 +209,7 @@ localStorage.setItem("snakeHighScore",highScore);
 }
 
 document.getElementById("finalScore").innerHTML=score;
-
 document.getElementById("finalHigh").innerHTML=highScore;
-
 document.getElementById("highscore").innerHTML=highScore;
 
 document.getElementById("gameOver").style.display="block";
@@ -203,19 +217,43 @@ document.getElementById("gameOver").style.display="block";
 }
 
 
-function game(){
 
-if(paused || dead){
-return;
-}
-
+function draw(){
 
 ctx.clearRect(0,0,300,300);
 
 
-ctx.fillStyle="lime";
+// grass grid
 
-snake.forEach(part=>{
+ctx.strokeStyle="rgba(255,255,255,0.15)";
+
+for(let i=0;i<=300;i+=10){
+
+ctx.beginPath();
+ctx.moveTo(i,0);
+ctx.lineTo(i,300);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(0,i);
+ctx.lineTo(300,i);
+ctx.stroke();
+
+}
+
+
+// apple
+
+ctx.font="12px Arial";
+
+ctx.fillText("🍎",food.x*size,food.y*size+10);
+
+
+// snake
+
+snake.forEach((part,index)=>{
+
+ctx.fillStyle=index===0 ? "#00ff00" : "#00c900";
 
 ctx.fillRect(
 part.x*size,
@@ -227,14 +265,36 @@ size
 });
 
 
-ctx.fillStyle="red";
+// snake face
 
-ctx.fillRect(
-food.x*size,
-food.y*size,
-size,
-size
-);
+let head=snake[0];
+
+ctx.fillStyle="black";
+
+ctx.fillRect(head.x*size+2,head.y*size+2,2,2);
+ctx.fillRect(head.x*size+6,head.y*size+2,2,2);
+
+
+// sparkle effect
+
+if(sparkle>0){
+
+ctx.font="20px Arial";
+ctx.fillText("✨",food.x*size-5,food.y*size);
+
+sparkle--;
+
+}
+
+}
+
+
+
+function game(){
+
+if(paused || dead){
+return;
+}
 
 
 let head={
@@ -247,11 +307,11 @@ if(
 head.x<0 ||
 head.x>=tiles ||
 head.y<0 ||
-head.y>=tiles
+head.y>=tiles ||
+snake.some(part=>part.x===head.x && part.y===head.y)
 ){
 
 endGame();
-
 return;
 
 }
@@ -266,18 +326,18 @@ score++;
 
 document.getElementById("score").innerHTML=score;
 
+sparkle=5;
 
-food={
-x:Math.floor(Math.random()*tiles),
-y:Math.floor(Math.random()*tiles)
-};
-
+food=randomFood();
 
 }else{
 
 snake.pop();
 
 }
+
+
+draw();
 
 }
 
@@ -286,8 +346,9 @@ start();
 
 setInterval(game,100);
 
-</script>
+draw();
 
+</script>
 
 </body>
 </html>
