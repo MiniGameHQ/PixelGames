@@ -29,6 +29,7 @@ button {
     height:60px;
     margin:3px;
     border-radius:10px;
+    border:none;
 }
 
 .row {
@@ -36,16 +37,20 @@ button {
     justify-content:center;
 }
 </style>
+
 </head>
 
 <body>
 
 <h1>🐍 Snake</h1>
+
 <p>Score: <span id="score">0</span></p>
 
 <canvas id="game" width="300" height="300"></canvas>
 
+
 <div class="controls">
+
 <div class="row">
 <button onclick="move(0,-1)">⬆️</button>
 </div>
@@ -55,6 +60,7 @@ button {
 <button onclick="move(0,1)">⬇️</button>
 <button onclick="move(1,0)">➡️</button>
 </div>
+
 </div>
 
 
@@ -78,15 +84,19 @@ y:5
 let dx=1;
 let dy=0;
 let score=0;
+let gameOver=false;
 
 
 function move(x,y){
-dx=x;
-dy=y;
+    dx=x;
+    dy=y;
 }
 
 
 function game(){
+
+if(gameOver) return;
+
 
 ctx.clearRect(0,0,300,300);
 
@@ -108,16 +118,23 @@ y:snake[0].y+dy
 };
 
 
-// exact wall collision
+// Wall collision
 if(
 head.x < 0 ||
 head.x >= tiles ||
 head.y < 0 ||
 head.y >= tiles
 ){
+
+gameOver=true;
+
+setTimeout(()=>{
 alert("Game Over! Score: "+score);
 location.reload();
+},50);
+
 return;
+
 }
 
 
@@ -127,6 +144,7 @@ snake.unshift(head);
 if(head.x===food.x && head.y===food.y){
 
 score++;
+
 document.getElementById("score").innerHTML=score;
 
 food={
