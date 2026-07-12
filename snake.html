@@ -16,6 +16,13 @@ canvas {
     background:#222;
     border:3px solid white;
 }
+
+.controls button {
+    font-size:25px;
+    width:60px;
+    height:60px;
+    margin:5px;
+}
 </style>
 
 </head>
@@ -27,6 +34,15 @@ canvas {
 
 <canvas id="game" width="300" height="300"></canvas>
 
+<div class="controls">
+<br>
+<button onclick="move(0,-10)">⬆️</button>
+<br>
+<button onclick="move(-10,0)">⬅️</button>
+<button onclick="move(0,10)">⬇️</button>
+<button onclick="move(10,0)">➡️</button>
+</div>
+
 <script>
 
 const canvas=document.getElementById("game");
@@ -37,6 +53,11 @@ let food={x:50,y:50};
 let dx=10;
 let dy=0;
 let score=0;
+
+function move(x,y){
+dx=x;
+dy=y;
+}
 
 function game(){
 
@@ -60,10 +81,12 @@ snake.unshift(head);
 if(head.x===food.x && head.y===food.y){
 score++;
 document.getElementById("score").innerHTML=score;
+
 food={
 x:Math.floor(Math.random()*30)*10,
 y:Math.floor(Math.random()*30)*10
 };
+
 }else{
 snake.pop();
 }
@@ -74,13 +97,6 @@ location.reload();
 }
 
 }
-
-document.addEventListener("keydown",e=>{
-if(e.key==="ArrowUp"){dx=0;dy=-10}
-if(e.key==="ArrowDown"){dx=0;dy=10}
-if(e.key==="ArrowLeft"){dx=-10;dy=0}
-if(e.key==="ArrowRight"){dx=10;dy=0}
-});
 
 setInterval(game,100);
 
