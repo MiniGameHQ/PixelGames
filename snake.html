@@ -44,10 +44,15 @@ button {
 
 <h1>🐍 Snake</h1>
 
-<p>Score: <span id="score">0</span></p>
+<p>
+Score: <span id="score">0</span>
+</p>
+
+<p>
+🏆 High Score: <span id="highscore">0</span>
+</p>
 
 <canvas id="game" width="300" height="300"></canvas>
-
 
 <div class="controls">
 
@@ -72,9 +77,7 @@ const ctx=canvas.getContext("2d");
 let size=10;
 let tiles=30;
 
-let snake=[
-{x:15,y:15}
-];
+let snake=[{x:15,y:15}];
 
 let food={
 x:5,
@@ -83,20 +86,21 @@ y:5
 
 let dx=1;
 let dy=0;
+
 let score=0;
-let gameOver=false;
+
+let highScore=localStorage.getItem("snakeHighScore") || 0;
+
+document.getElementById("highscore").innerHTML=highScore;
 
 
 function move(x,y){
-    dx=x;
-    dy=y;
+dx=x;
+dy=y;
 }
 
 
 function game(){
-
-if(gameOver) return;
-
 
 ctx.clearRect(0,0,300,300);
 
@@ -104,12 +108,12 @@ ctx.clearRect(0,0,300,300);
 ctx.fillStyle="lime";
 
 snake.forEach(part=>{
-ctx.fillRect(part.x*size, part.y*size, size, size);
+ctx.fillRect(part.x*size,part.y*size,size,size);
 });
 
 
 ctx.fillStyle="red";
-ctx.fillRect(food.x*size, food.y*size, size, size);
+ctx.fillRect(food.x*size,food.y*size,size,size);
 
 
 let head={
@@ -118,20 +122,21 @@ y:snake[0].y+dy
 };
 
 
-// Wall collision
 if(
-head.x < 0 ||
-head.x >= tiles ||
-head.y < 0 ||
-head.y >= tiles
+head.x<0 ||
+head.x>=tiles ||
+head.y<0 ||
+head.y>=tiles
 ){
 
-gameOver=true;
+if(score>highScore){
 
-setTimeout(()=>{
+localStorage.setItem("snakeHighScore",score);
+
+}
+
 alert("Game Over! Score: "+score);
 location.reload();
-},50);
 
 return;
 
@@ -147,10 +152,20 @@ score++;
 
 document.getElementById("score").innerHTML=score;
 
+
+if(score>highScore){
+
+highScore=score;
+document.getElementById("highscore").innerHTML=highScore;
+
+}
+
+
 food={
 x:Math.floor(Math.random()*tiles),
 y:Math.floor(Math.random()*tiles)
 };
+
 
 }else{
 
