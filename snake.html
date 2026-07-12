@@ -20,17 +20,15 @@ canvas {
 }
 
 .controls {
-    width:200px;
-    margin:auto;
+    text-align:center;
 }
 
-.controls button {
+button {
     font-size:25px;
     width:60px;
     height:60px;
     margin:3px;
     border-radius:10px;
-    border:none;
 }
 
 .row {
@@ -38,7 +36,6 @@ canvas {
     justify-content:center;
 }
 </style>
-
 </head>
 
 <body>
@@ -49,51 +46,60 @@ canvas {
 <canvas id="game" width="300" height="300"></canvas>
 
 <div class="controls">
+<div class="row">
+<button onclick="move(0,-1)">⬆️</button>
+</div>
 
 <div class="row">
-<button onclick="move(0,-10)">⬆️</button>
+<button onclick="move(-1,0)">⬅️</button>
+<button onclick="move(0,1)">⬇️</button>
+<button onclick="move(1,0)">➡️</button>
+</div>
 </div>
 
-<div class="row">
-<button onclick="move(-10,0)">⬅️</button>
-<button onclick="move(0,10)">⬇️</button>
-<button onclick="move(10,0)">➡️</button>
-</div>
-
-</div>
 
 <script>
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
-let snake=[{x:150,y:150}];
+let size=10;
+let tiles=30;
+
+let snake=[
+{x:15,y:15}
+];
 
 let food={
-x:50,
-y:50
+x:5,
+y:5
 };
 
-let dx=10;
+let dx=1;
 let dy=0;
 let score=0;
+
 
 function move(x,y){
 dx=x;
 dy=y;
 }
 
+
 function game(){
 
 ctx.clearRect(0,0,300,300);
 
+
 ctx.fillStyle="lime";
+
 snake.forEach(part=>{
-ctx.fillRect(part.x,part.y,10,10);
+ctx.fillRect(part.x*size, part.y*size, size, size);
 });
 
+
 ctx.fillStyle="red";
-ctx.fillRect(food.x,food.y,10,10);
+ctx.fillRect(food.x*size, food.y*size, size, size);
 
 
 let head={
@@ -102,14 +108,16 @@ y:snake[0].y+dy
 };
 
 
-// exact edge collision
-if(head.x < 0 || head.x >= canvas.width ||
-head.y < 0 || head.y >= canvas.height){
-
+// exact wall collision
+if(
+head.x < 0 ||
+head.x >= tiles ||
+head.y < 0 ||
+head.y >= tiles
+){
 alert("Game Over! Score: "+score);
 location.reload();
 return;
-
 }
 
 
@@ -122,8 +130,8 @@ score++;
 document.getElementById("score").innerHTML=score;
 
 food={
-x:Math.floor(Math.random()*30)*10,
-y:Math.floor(Math.random()*30)*10
+x:Math.floor(Math.random()*tiles),
+y:Math.floor(Math.random()*tiles)
 };
 
 }else{
@@ -133,6 +141,7 @@ snake.pop();
 }
 
 }
+
 
 setInterval(game,100);
 
