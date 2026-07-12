@@ -2,119 +2,112 @@
 <html>
 <head>
 
-<title>Snake v6 - GameHub</title>
+<title>Snake v7 - GameHub</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
-    background:#0b3d0b;
-    color:white;
-    text-align:center;
-    font-family:Arial;
-    margin:0;
-    padding-top:5px;
+background:#0b3d0b;
+color:white;
+text-align:center;
+font-family:Arial;
+margin:0;
+padding-top:5px;
 }
 
 
 h1{
-    margin:5px;
+margin:5px;
 }
 
 
 .gameArea{
-    position:relative;
-    width:300px;
-    margin:auto;
+position:relative;
+width:300px;
+margin:auto;
 }
 
 
 canvas{
-    background:#3f9b3f;
-    border:3px solid white;
-    display:block;
+background:#3f9b3f;
+border:3px solid white;
+display:block;
 }
-
 
 
 #gameOver{
 
-    display:none;
-    position:absolute;
-    top:75px;
-    left:20px;
-    width:260px;
-    background:#222;
-    padding:15px;
-    border-radius:15px;
-    box-sizing:border-box;
+display:none;
+position:absolute;
+top:80px;
+left:20px;
+width:260px;
+background:#222;
+padding:15px;
+border-radius:15px;
+box-sizing:border-box;
 
 }
 
 
 button{
 
-    font-size:20px;
-    padding:10px 15px;
-    border-radius:12px;
-    border:none;
-    margin:5px;
+font-size:20px;
+padding:10px 15px;
+border-radius:12px;
+border:none;
+margin:5px;
 
 }
-
 
 
 .controls{
 
-    width:230px;
-    margin:10px auto;
+width:230px;
+margin:10px auto;
 
 }
-
 
 
 .middle{
 
-    display:flex;
-    justify-content:space-between;
+display:flex;
+justify-content:space-between;
 
 }
-
 
 
 .controls button{
 
-    width:65px;
-    height:65px;
-    font-size:28px;
+width:65px;
+height:65px;
+font-size:28px;
 
 }
-
 
 
 .shop{
 
-    background:#1d5c1d;
-    border:3px solid white;
-    border-radius:20px;
-    width:280px;
-    margin:15px auto;
-    padding:10px;
+background:#1d5c1d;
+border:3px solid white;
+border-radius:20px;
+width:280px;
+margin:15px auto;
+padding:10px;
 
 }
-
 
 
 .skin{
 
-    background:#2e8b2e;
-    border-radius:15px;
-    margin:10px;
-    padding:10px;
+background:#2e8b2e;
+border-radius:15px;
+margin:10px;
+padding:10px;
 
 }
-
 
 </style>
 
@@ -124,7 +117,7 @@ button{
 <body>
 
 
-<h1>🐍 Snake v6</h1>
+<h1>🐍 Snake v7</h1>
 
 
 <p>Score: <span id="score">0</span></p>
@@ -148,14 +141,11 @@ button{
 
 <p>Score: <span id="finalScore">0</span></p>
 
-
 <button onclick="restart()">
 🔄 Play Again
 </button>
 
-
 <br>
-
 
 <a href="index.html">
 
@@ -165,12 +155,11 @@ button{
 
 </a>
 
-
 </div>
 
 
 </div>
-  <div class="controls">
+<div class="controls">
 
 <button onclick="move(0,-1)">⬆️</button>
 
@@ -185,7 +174,6 @@ button{
 
 
 <button onclick="move(0,1)">⬇️</button>
-
 
 </div>
 
@@ -205,13 +193,14 @@ button{
 
 <h2>🛒 Snake Shop</h2>
 
-<p>🪙 Buy skins and equip them anytime!</p>
+<p>Buy skins and equip them anytime!</p>
+
 
 <div class="skin">
 <h3>🟢 Classic Green</h3>
-<p>Free</p>
 <button onclick="equipSkin('green')">Equip</button>
 </div>
+
 
 <div class="skin">
 <h3>🔵 Ocean Blue</h3>
@@ -219,11 +208,13 @@ button{
 <button onclick="buyOrEquip('blue',20)">Buy / Equip</button>
 </div>
 
+
 <div class="skin">
 <h3>🟡 Gold Snake</h3>
 <p>🪙 50 coins</p>
 <button onclick="buyOrEquip('gold',50)">Buy / Equip</button>
 </div>
+
 
 <div class="skin">
 <h3>🌈 Rainbow Snake</h3>
@@ -231,11 +222,13 @@ button{
 <button onclick="buyOrEquip('rainbow',100)">Buy / Equip</button>
 </div>
 
+
 <div class="skin">
 <h3>🔥 Fire Snake</h3>
 <p>🪙 150 coins</p>
 <button onclick="buyOrEquip('fire',150)">Buy / Equip</button>
 </div>
+
 
 <div class="skin">
 <h3>❄️ Ice Snake</h3>
@@ -243,11 +236,13 @@ button{
 <button onclick="buyOrEquip('ice',150)">Buy / Equip</button>
 </div>
 
+
 <div class="skin">
 <h3>💜 Galaxy Snake</h3>
 <p>🪙 250 coins</p>
 <button onclick="buyOrEquip('galaxy',250)">Buy / Equip</button>
 </div>
+
 
 <div class="skin">
 <h3>⚫ Shadow Snake</h3>
@@ -255,17 +250,8 @@ button{
 <button onclick="buyOrEquip('shadow',300)">Buy / Equip</button>
 </div>
 
-<p>
-Current Skin: <span id="skin">green</span>
-</p>
 
-</div>
-
-
-<p>
-Current Skin: <span id="skin">green</span>
-</p>
-
+<p>Current Skin: <span id="skin">green</span></p>
 
 </div>
 
@@ -294,13 +280,12 @@ let dy;
 
 let score;
 
+let speed;
+
 
 let paused=false;
 
 let dead=false;
-
-
-let speed=100;
 
 
 let coins=Number(localStorage.getItem("snakeCoins"))||0;
@@ -308,6 +293,10 @@ let coins=Number(localStorage.getItem("snakeCoins"))||0;
 let high=Number(localStorage.getItem("snakeHigh"))||0;
 
 let skin=localStorage.getItem("snakeSkin")||"green";
+
+
+let ownedSkins=JSON.parse(localStorage.getItem("ownedSkins"))||["green"];
+
 
 
 document.getElementById("coins").innerHTML=coins;
@@ -339,7 +328,6 @@ dx=1;
 
 dy=0;
 
-
 score=0;
 
 speed=100;
@@ -353,13 +341,11 @@ document.getElementById("score").innerHTML=0;
 
 document.getElementById("gameOver").style.display="none";
 
-
 }
 
 
 
 function randomFood(){
-
 
 return{
 
@@ -369,13 +355,11 @@ y:Math.floor(Math.random()*tiles)
 
 };
 
-
 }
 
 
 
 function move(x,y){
-
 
 if(!dead && (x!==-dx || y!==-dy)){
 
@@ -384,7 +368,6 @@ dx=x;
 dy=y;
 
 }
-
 
 }
 
@@ -403,10 +386,7 @@ function restart(){
 start();
 
 }
-  let ownedSkins = JSON.parse(localStorage.getItem("ownedSkins")) || ["green"];
-
-
-function buyOrEquip(type,cost){
+ function buyOrEquip(type,cost){
 
 if(ownedSkins.includes(type)){
 
@@ -455,27 +435,6 @@ document.getElementById("skin").innerHTML=skin;
 }
 
 
-if(coins>=cost){
-
-coins-=cost;
-
-skin=type;
-
-
-localStorage.setItem("snakeCoins",coins);
-
-localStorage.setItem("snakeSkin",skin);
-
-
-document.getElementById("coins").innerHTML=coins;
-
-document.getElementById("skin").innerHTML=skin;
-
-}
-
-}
-
-
 
 function endGame(){
 
@@ -498,6 +457,35 @@ document.getElementById("finalScore").innerHTML=score;
 
 document.getElementById("gameOver").style.display="block";
 
+}
+
+
+
+function snakeColor(){
+
+if(skin==="blue") return "#008cff";
+
+if(skin==="gold") return "#ffd700";
+
+if(skin==="fire") return "orange";
+
+if(skin==="ice") return "#b9f2ff";
+
+if(skin==="galaxy") return "purple";
+
+if(skin==="shadow") return "#111";
+
+
+if(skin==="rainbow"){
+
+let colors=["red","orange","yellow","green","blue","purple"];
+
+return colors[Math.floor(Date.now()/200)%colors.length];
+
+}
+
+
+return "#00ff00";
 
 }
 
@@ -508,8 +496,6 @@ function draw(){
 
 ctx.clearRect(0,0,300,300);
 
-
-// grid lines
 
 ctx.strokeStyle="rgba(255,255,255,0.15)";
 
@@ -536,59 +522,30 @@ ctx.stroke();
 }
 
 
-// apple
 
 ctx.font="14px Arial";
 
-ctx.fillText(
-"🍎",
-food.x*size,
-food.y*size+10
-);
+ctx.fillText("🍎",food.x*size,food.y*size+10);
 
 
-// snake
 
 snake.forEach((part,index)=>{
 
 
-if(skin==="blue"){
-
-ctx.fillStyle="#008cff";
-
-}
-
-else if(skin==="gold"){
-
-ctx.fillStyle="#ffd700";
-
-}
-
-else{
-
-ctx.fillStyle="#00ff00";
-
-}
-
+ctx.fillStyle=snakeColor();
 
 
 ctx.fillRect(
-
 part.x*size,
-
 part.y*size,
-
 size,
-
 size
-
 );
 
 
 });
 
 
-// face
 
 ctx.fillStyle="black";
 
@@ -634,19 +591,13 @@ y:snake[0].y+dy
 
 
 if(
-
 head.x<0 ||
-
 head.x>=tiles ||
-
 head.y<0 ||
-
 head.y>=tiles ||
-
 snake.some(p=>p.x===head.x && p.y===head.y)
 
 ){
-
 
 endGame();
 
@@ -676,15 +627,6 @@ document.getElementById("score").innerHTML=score;
 document.getElementById("coins").innerHTML=coins;
 
 
-
-if(score%5===0 && speed>40){
-
-speed-=10;
-
-}
-
-
-
 food=randomFood();
 
 
@@ -692,12 +634,9 @@ food=randomFood();
 
 else{
 
-
 snake.pop();
 
-
 }
-
 
 
 draw();
@@ -728,4 +667,4 @@ loop();
 
 </body>
 
-</html>  
+</html>   
