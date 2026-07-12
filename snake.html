@@ -205,32 +205,59 @@ button{
 
 <h2>🛒 Snake Shop</h2>
 
-<p>Buy new skins with your coins!</p>
-
+<p>🪙 Buy skins and equip them anytime!</p>
 
 <div class="skin">
-
-<h3>🔵 Blue Snake</h3>
-
-<p>🪙 20 coins</p>
-
-<button onclick="buySkin('blue')">
-Buy
-</button>
-
+<h3>🟢 Classic Green</h3>
+<p>Free</p>
+<button onclick="equipSkin('green')">Equip</button>
 </div>
 
-
+<div class="skin">
+<h3>🔵 Ocean Blue</h3>
+<p>🪙 20 coins</p>
+<button onclick="buyOrEquip('blue',20)">Buy / Equip</button>
+</div>
 
 <div class="skin">
-
 <h3>🟡 Gold Snake</h3>
-
 <p>🪙 50 coins</p>
+<button onclick="buyOrEquip('gold',50)">Buy / Equip</button>
+</div>
 
-<button onclick="buySkin('gold')">
-Buy
-</button>
+<div class="skin">
+<h3>🌈 Rainbow Snake</h3>
+<p>🪙 100 coins</p>
+<button onclick="buyOrEquip('rainbow',100)">Buy / Equip</button>
+</div>
+
+<div class="skin">
+<h3>🔥 Fire Snake</h3>
+<p>🪙 150 coins</p>
+<button onclick="buyOrEquip('fire',150)">Buy / Equip</button>
+</div>
+
+<div class="skin">
+<h3>❄️ Ice Snake</h3>
+<p>🪙 150 coins</p>
+<button onclick="buyOrEquip('ice',150)">Buy / Equip</button>
+</div>
+
+<div class="skin">
+<h3>💜 Galaxy Snake</h3>
+<p>🪙 250 coins</p>
+<button onclick="buyOrEquip('galaxy',250)">Buy / Equip</button>
+</div>
+
+<div class="skin">
+<h3>⚫ Shadow Snake</h3>
+<p>🪙 300 coins</p>
+<button onclick="buyOrEquip('shadow',300)">Buy / Equip</button>
+</div>
+
+<p>
+Current Skin: <span id="skin">green</span>
+</p>
 
 </div>
 
@@ -376,13 +403,55 @@ function restart(){
 start();
 
 }
-  function buySkin(type){
-
-let cost = type==="blue" ? 20 : 50;
+  let ownedSkins = JSON.parse(localStorage.getItem("ownedSkins")) || ["green"];
 
 
-if(skin===type){
+function buyOrEquip(type,cost){
+
+if(ownedSkins.includes(type)){
+
+equipSkin(type);
+
 return;
+
+}
+
+
+if(coins>=cost){
+
+coins-=cost;
+
+ownedSkins.push(type);
+
+
+localStorage.setItem("snakeCoins",coins);
+
+localStorage.setItem("ownedSkins",JSON.stringify(ownedSkins));
+
+
+equipSkin(type);
+
+
+document.getElementById("coins").innerHTML=coins;
+
+}
+
+}
+
+
+
+function equipSkin(type){
+
+if(ownedSkins.includes(type)){
+
+skin=type;
+
+localStorage.setItem("snakeSkin",skin);
+
+document.getElementById("skin").innerHTML=skin;
+
+}
+
 }
 
 
