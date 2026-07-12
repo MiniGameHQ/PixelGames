@@ -44,15 +44,11 @@ button {
 
 <h1>🐍 Snake</h1>
 
-<p>
-Score: <span id="score">0</span>
-</p>
-
-<p>
-🏆 High Score: <span id="highscore">0</span>
-</p>
+<p>Score: <span id="score">0</span></p>
+<p>🏆 High Score: <span id="highscore">0</span></p>
 
 <canvas id="game" width="300" height="300"></canvas>
+
 
 <div class="controls">
 
@@ -89,7 +85,7 @@ let dy=0;
 
 let score=0;
 
-let highScore=localStorage.getItem("snakeHighScore") || 0;
+let highScore=Number(localStorage.getItem("snakeHighScore")) || 0;
 
 document.getElementById("highscore").innerHTML=highScore;
 
@@ -131,11 +127,14 @@ head.y>=tiles
 
 if(score>highScore){
 
-localStorage.setItem("snakeHighScore",score);
+highScore=score;
+
+localStorage.setItem("snakeHighScore", highScore);
 
 }
 
 alert("Game Over! Score: "+score);
+
 location.reload();
 
 return;
@@ -156,6 +155,9 @@ document.getElementById("score").innerHTML=score;
 if(score>highScore){
 
 highScore=score;
+
+localStorage.setItem("snakeHighScore", highScore);
+
 document.getElementById("highscore").innerHTML=highScore;
 
 }
