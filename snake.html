@@ -1,94 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Snake v6 - GameHub</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
 body{
     background:#0b3d0b;
     color:white;
     text-align:center;
     font-family:Arial;
+    margin:0;
+    padding-top:5px;
 }
+
+
+h1{
+    margin:5px;
+}
+
+
+.gameArea{
+    position:relative;
+    width:300px;
+    margin:auto;
+}
+
 
 canvas{
     background:#3f9b3f;
     border:3px solid white;
     display:block;
-    margin:10px auto;
-    max-width:90vw;
 }
 
+
+
+#gameOver{
+
+    display:none;
+    position:absolute;
+    top:75px;
+    left:20px;
+    width:260px;
+    background:#222;
+    padding:15px;
+    border-radius:15px;
+    box-sizing:border-box;
+
+}
+
+
 button{
+
     font-size:20px;
     padding:10px 15px;
     border-radius:12px;
     border:none;
     margin:5px;
+
 }
+
+
 
 .controls{
+
     width:230px;
-    margin:auto;
+    margin:10px auto;
+
 }
+
+
 
 .middle{
+
     display:flex;
     justify-content:space-between;
+
 }
 
+
+
 .controls button{
+
     width:65px;
     height:65px;
     font-size:28px;
+
 }
 
-#shop{
-    background:#222;
-    padding:10px;
-    border-radius:15px;
+
+
+.shop{
+
+    background:#1d5c1d;
+    border:3px solid white;
+    border-radius:20px;
     width:280px;
-    margin:10px auto;
+    margin:15px auto;
+    padding:10px;
+
 }
 
-#gameOver{
-    display:none;
-    background:#222;
-    padding:20px;
+
+
+.skin{
+
+    background:#2e8b2e;
     border-radius:15px;
-    width:260px;
-    margin:auto;
+    margin:10px;
+    padding:10px;
+
 }
+
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <h1>🐍 Snake v6</h1>
 
+
 <p>Score: <span id="score">0</span></p>
+
 <p>🪙 Coins: <span id="coins">0</span></p>
+
 <p>🏆 High Score: <span id="high">0</span></p>
+
+
+
+<div class="gameArea">
+
 
 <canvas id="game" width="300" height="300"></canvas>
 
-
-<div id="shop">
-<h3>🐍 Skin Shop</h3>
-
-<button onclick="buySkin('blue')">
-🔵 Blue Skin (20 coins)
-</button>
-
-<button onclick="buySkin('gold')">
-🟡 Gold Skin (50 coins)
-</button>
-
-<p>Current: <span id="skin">green</span></p>
-
-</div>
 
 
 <div id="gameOver">
@@ -97,20 +148,32 @@ button{
 
 <p>Score: <span id="finalScore">0</span></p>
 
-<button onclick="restart()">🔄 Play Again</button>
+
+<button onclick="restart()">
+🔄 Play Again
+</button>
+
 
 <br>
 
+
 <a href="index.html">
-<button>🏠 GameHub</button>
+
+<button>
+🏠 GameHub
+</button>
+
 </a>
+
 
 </div>
 
 
-<div class="controls">
+</div>
+  <div class="controls">
 
 <button onclick="move(0,-1)">⬆️</button>
+
 
 <div class="middle">
 
@@ -120,89 +183,184 @@ button{
 
 </div>
 
+
 <button onclick="move(0,1)">⬇️</button>
+
 
 </div>
 
+
+
+<div>
 
 <button onclick="pauseGame()">⏸️ Pause</button>
 
 <button onclick="restart()">🔄 Restart</button>
 
+</div>
+
+
+
+<div class="shop">
+
+<h2>🛒 Snake Shop</h2>
+
+<p>Buy new skins with your coins!</p>
+
+
+<div class="skin">
+
+<h3>🔵 Blue Snake</h3>
+
+<p>🪙 20 coins</p>
+
+<button onclick="buySkin('blue')">
+Buy
+</button>
+
+</div>
+
+
+
+<div class="skin">
+
+<h3>🟡 Gold Snake</h3>
+
+<p>🪙 50 coins</p>
+
+<button onclick="buySkin('gold')">
+Buy
+</button>
+
+</div>
+
+
+<p>
+Current Skin: <span id="skin">green</span>
+</p>
+
+
+</div>
+
+
 
 <script>
 
+
 const canvas=document.getElementById("game");
+
 const ctx=canvas.getContext("2d");
 
+
 const size=10;
+
 const tiles=30;
 
-let snake,food,dx,dy,score;
+
+let snake;
+
+let food;
+
+let dx;
+
+let dy;
+
+let score;
+
+
 let paused=false;
+
 let dead=false;
+
+
 let speed=100;
 
+
 let coins=Number(localStorage.getItem("snakeCoins"))||0;
+
 let high=Number(localStorage.getItem("snakeHigh"))||0;
 
 let skin=localStorage.getItem("snakeSkin")||"green";
 
+
 document.getElementById("coins").innerHTML=coins;
+
 document.getElementById("high").innerHTML=high;
+
 document.getElementById("skin").innerHTML=skin;
-    
+
+
+
 function start(){
 
+
 snake=[
+
 {x:15,y:15},
+
 {x:14,y:15},
+
 {x:13,y:15}
+
 ];
+
 
 food=randomFood();
 
+
 dx=1;
+
 dy=0;
 
+
 score=0;
+
 speed=100;
 
 paused=false;
+
 dead=false;
 
+
 document.getElementById("score").innerHTML=0;
+
 document.getElementById("gameOver").style.display="none";
 
+
 }
+
 
 
 function randomFood(){
 
-return {
+
+return{
+
 x:Math.floor(Math.random()*tiles),
+
 y:Math.floor(Math.random()*tiles)
+
 };
 
+
 }
+
 
 
 function move(x,y){
 
-if(!dead){
 
-// stop instant backwards movement
-
-if(x!==-dx || y!==-dy){
+if(!dead && (x!==-dx || y!==-dy)){
 
 dx=x;
+
 dy=y;
 
 }
 
-}
 
 }
+
 
 
 function pauseGame(){
@@ -212,13 +370,21 @@ paused=!paused;
 }
 
 
-function buySkin(type){
 
-let cost= type==="blue" ? 20 : 50;
+function restart(){
+
+start();
+
+}
+  function buySkin(type){
+
+let cost = type==="blue" ? 20 : 50;
+
 
 if(skin===type){
 return;
 }
+
 
 if(coins>=cost){
 
@@ -226,30 +392,17 @@ coins-=cost;
 
 skin=type;
 
+
 localStorage.setItem("snakeCoins",coins);
+
 localStorage.setItem("snakeSkin",skin);
 
+
 document.getElementById("coins").innerHTML=coins;
+
 document.getElementById("skin").innerHTML=skin;
 
 }
-
-}
-
-
-function playSound(freq){
-
-let audio=new AudioContext();
-
-let osc=audio.createOscillator();
-
-osc.frequency.value=freq;
-
-osc.connect(audio.destination);
-
-osc.start();
-
-osc.stop(audio.currentTime+0.1);
 
 }
 
@@ -259,6 +412,7 @@ function endGame(){
 
 dead=true;
 
+
 if(score>high){
 
 high=score;
@@ -267,19 +421,14 @@ localStorage.setItem("snakeHigh",high);
 
 }
 
+
 document.getElementById("high").innerHTML=high;
 
 document.getElementById("finalScore").innerHTML=score;
 
+
 document.getElementById("gameOver").style.display="block";
 
-}
-
-
-
-function restart(){
-
-start();
 
 }
 
@@ -291,20 +440,28 @@ function draw(){
 ctx.clearRect(0,0,300,300);
 
 
-// grid
+// grid lines
 
 ctx.strokeStyle="rgba(255,255,255,0.15)";
+
 
 for(let i=0;i<=300;i+=10){
 
 ctx.beginPath();
+
 ctx.moveTo(i,0);
+
 ctx.lineTo(i,300);
+
 ctx.stroke();
 
+
 ctx.beginPath();
+
 ctx.moveTo(0,i);
+
 ctx.lineTo(300,i);
+
 ctx.stroke();
 
 }
@@ -312,9 +469,10 @@ ctx.stroke();
 
 // apple
 
-ctx.font="12px Arial";
+ctx.font="14px Arial";
 
-ctx.fillText("🍎",
+ctx.fillText(
+"🍎",
 food.x*size,
 food.y*size+10
 );
@@ -324,33 +482,47 @@ food.y*size+10
 
 snake.forEach((part,index)=>{
 
+
 if(skin==="blue"){
+
 ctx.fillStyle="#008cff";
+
 }
 
 else if(skin==="gold"){
+
 ctx.fillStyle="#ffd700";
+
 }
 
 else{
+
 ctx.fillStyle="#00ff00";
+
 }
 
 
+
 ctx.fillRect(
+
 part.x*size,
+
 part.y*size,
+
 size,
+
 size
+
 );
 
 
 });
 
 
-// snake eyes
+// face
 
 ctx.fillStyle="black";
+
 
 ctx.fillRect(
 snake[0].x*size+2,
@@ -358,6 +530,7 @@ snake[0].y*size+2,
 2,
 2
 );
+
 
 ctx.fillRect(
 snake[0].x*size+6,
@@ -367,52 +540,73 @@ snake[0].y*size+2,
 );
 
 
-} 
+}
+
+
+
 function game(){
 
+
 if(paused || dead){
+
 return;
+
 }
 
 
 let head={
+
 x:snake[0].x+dx,
+
 y:snake[0].y+dy
+
 };
 
 
+
 if(
+
 head.x<0 ||
+
 head.x>=tiles ||
+
 head.y<0 ||
+
 head.y>=tiles ||
+
 snake.some(p=>p.x===head.x && p.y===head.y)
+
 ){
 
+
 endGame();
+
 return;
 
 }
+
 
 
 snake.unshift(head);
 
 
+
 if(head.x===food.x && head.y===food.y){
+
 
 score++;
 
 coins++;
 
+
 localStorage.setItem("snakeCoins",coins);
 
+
 document.getElementById("score").innerHTML=score;
+
 document.getElementById("coins").innerHTML=coins;
 
-playSound(500);
 
-
-// increase difficulty
 
 if(score%5===0 && speed>40){
 
@@ -421,17 +615,24 @@ speed-=10;
 }
 
 
+
 food=randomFood();
 
 
-}else{
+}
+
+else{
+
 
 snake.pop();
+
 
 }
 
 
+
 draw();
+
 
 }
 
@@ -457,4 +658,5 @@ loop();
 </script>
 
 </body>
-</html>    
+
+</html>  
