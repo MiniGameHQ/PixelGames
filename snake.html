@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Snake - GameHub</title>
+<title>Snake v6 - GameHub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
+body{
     background:#0b3d0b;
     color:white;
     text-align:center;
     font-family:Arial;
 }
 
-canvas {
+canvas{
     background:#3f9b3f;
     border:3px solid white;
     display:block;
@@ -20,64 +20,82 @@ canvas {
     max-width:90vw;
 }
 
-button {
-    font-size:22px;
-    padding:12px 18px;
+button{
+    font-size:20px;
+    padding:10px 15px;
     border-radius:12px;
     border:none;
     margin:5px;
 }
 
-.controls {
+.controls{
     width:230px;
-    margin:5px auto;
+    margin:auto;
 }
 
-.middle {
+.middle{
     display:flex;
     justify-content:space-between;
 }
 
-.controls button {
+.controls button{
     width:65px;
     height:65px;
-    font-size:30px;
+    font-size:28px;
 }
 
-#gameOver {
+#shop{
+    background:#222;
+    padding:10px;
+    border-radius:15px;
+    width:280px;
+    margin:10px auto;
+}
+
+#gameOver{
     display:none;
     background:#222;
     padding:20px;
     border-radius:15px;
     width:260px;
-    margin:15px auto;
+    margin:auto;
 }
 
-#paused {
-    display:none;
-    font-size:22px;
-}
 </style>
-
 </head>
 
 <body>
 
-<h1>🐍 Snake</h1>
+<h1>🐍 Snake v6</h1>
 
 <p>Score: <span id="score">0</span></p>
-<p>🏆 High Score: <span id="highscore">0</span></p>
+<p>🪙 Coins: <span id="coins">0</span></p>
+<p>🏆 High Score: <span id="high">0</span></p>
 
 <canvas id="game" width="300" height="300"></canvas>
 
-<div id="paused">⏸️ Paused</div>
+
+<div id="shop">
+<h3>🐍 Skin Shop</h3>
+
+<button onclick="buySkin('blue')">
+🔵 Blue Skin (20 coins)
+</button>
+
+<button onclick="buySkin('gold')">
+🟡 Gold Skin (50 coins)
+</button>
+
+<p>Current: <span id="skin">green</span></p>
+
+</div>
+
 
 <div id="gameOver">
 
 <h2>💀 Game Over</h2>
 
 <p>Score: <span id="finalScore">0</span></p>
-<p>🏆 Best: <span id="finalHigh">0</span></p>
 
 <button onclick="restart()">🔄 Play Again</button>
 
@@ -95,8 +113,11 @@ button {
 <button onclick="move(0,-1)">⬆️</button>
 
 <div class="middle">
+
 <button onclick="move(-1,0)">⬅️</button>
+
 <button onclick="move(1,0)">➡️</button>
+
 </div>
 
 <button onclick="move(0,1)">⬇️</button>
@@ -105,6 +126,7 @@ button {
 
 
 <button onclick="pauseGame()">⏸️ Pause</button>
+
 <button onclick="restart()">🔄 Restart</button>
 
 
@@ -116,22 +138,20 @@ const ctx=canvas.getContext("2d");
 const size=10;
 const tiles=30;
 
-let snake;
-let food;
-let dx;
-let dy;
-let score;
-
+let snake,food,dx,dy,score;
 let paused=false;
 let dead=false;
+let speed=100;
 
-let sparkle=0;
+let coins=Number(localStorage.getItem("snakeCoins"))||0;
+let high=Number(localStorage.getItem("snakeHigh"))||0;
 
-let highScore=Number(localStorage.getItem("snakeHighScore")) || 0;
+let skin=localStorage.getItem("snakeSkin")||"green";
 
-document.getElementById("highscore").innerHTML=highScore;
-
-
+document.getElementById("coins").innerHTML=coins;
+document.getElementById("high").innerHTML=high;
+document.getElementById("skin").innerHTML=skin;
+    
 function start(){
 
 snake=[
@@ -146,13 +166,13 @@ dx=1;
 dy=0;
 
 score=0;
+speed=100;
 
 paused=false;
 dead=false;
 
 document.getElementById("score").innerHTML=0;
 document.getElementById("gameOver").style.display="none";
-document.getElementById("paused").style.display="none";
 
 }
 
@@ -171,8 +191,14 @@ function move(x,y){
 
 if(!dead){
 
+// stop instant backwards movement
+
+if(x!==-dx || y!==-dy){
+
 dx=x;
 dy=y;
+
+}
 
 }
 
@@ -183,10 +209,72 @@ function pauseGame(){
 
 paused=!paused;
 
-document.getElementById("paused").style.display=
-paused ? "block" : "none";
+}
+
+
+function buySkin(type){
+
+let cost= type==="blue" ? 20 : 50;
+
+if(skin===type){
+return;
+}
+
+if(coins>=cost){
+
+coins-=cost;
+
+skin=type;
+
+localStorage.setItem("snakeCoins",coins);
+localStorage.setItem("snakeSkin",skin);
+
+document.getElementById("coins").innerHTML=coins;
+document.getElementById("skin").innerHTML=skin;
 
 }
+
+}
+
+
+function playSound(freq){
+
+let audio=new AudioContext();
+
+let osc=audio.createOscillator();
+
+osc.frequency.value=freq;
+
+osc.connect(audio.destination);
+
+osc.start();
+
+osc.stop(audio.currentTime+0.1);
+
+}
+
+
+
+function endGame(){
+
+dead=true;
+
+if(score>high){
+
+high=score;
+
+localStorage.setItem("snakeHigh",high);
+
+}
+
+document.getElementById("high").innerHTML=high;
+
+document.getElementById("finalScore").innerHTML=score;
+
+document.getElementById("gameOver").style.display="block";
+
+}
+
 
 
 function restart(){
@@ -196,34 +284,14 @@ start();
 }
 
 
-function endGame(){
-
-dead=true;
-
-if(score>highScore){
-
-highScore=score;
-
-localStorage.setItem("snakeHighScore",highScore);
-
-}
-
-document.getElementById("finalScore").innerHTML=score;
-document.getElementById("finalHigh").innerHTML=highScore;
-document.getElementById("highscore").innerHTML=highScore;
-
-document.getElementById("gameOver").style.display="block";
-
-}
-
-
 
 function draw(){
+
 
 ctx.clearRect(0,0,300,300);
 
 
-// grass grid
+// grid
 
 ctx.strokeStyle="rgba(255,255,255,0.15)";
 
@@ -246,14 +314,28 @@ ctx.stroke();
 
 ctx.font="12px Arial";
 
-ctx.fillText("🍎",food.x*size,food.y*size+10);
+ctx.fillText("🍎",
+food.x*size,
+food.y*size+10
+);
 
 
 // snake
 
 snake.forEach((part,index)=>{
 
-ctx.fillStyle=index===0 ? "#00ff00" : "#00c900";
+if(skin==="blue"){
+ctx.fillStyle="#008cff";
+}
+
+else if(skin==="gold"){
+ctx.fillStyle="#ffd700";
+}
+
+else{
+ctx.fillStyle="#00ff00";
+}
+
 
 ctx.fillRect(
 part.x*size,
@@ -262,34 +344,30 @@ size,
 size
 );
 
+
 });
 
 
-// snake face
-
-let head=snake[0];
+// snake eyes
 
 ctx.fillStyle="black";
 
-ctx.fillRect(head.x*size+2,head.y*size+2,2,2);
-ctx.fillRect(head.x*size+6,head.y*size+2,2,2);
+ctx.fillRect(
+snake[0].x*size+2,
+snake[0].y*size+2,
+2,
+2
+);
+
+ctx.fillRect(
+snake[0].x*size+6,
+snake[0].y*size+2,
+2,
+2
+);
 
 
-// sparkle effect
-
-if(sparkle>0){
-
-ctx.font="20px Arial";
-ctx.fillText("✨",food.x*size-5,food.y*size);
-
-sparkle--;
-
-}
-
-}
-
-
-
+} 
 function game(){
 
 if(paused || dead){
@@ -308,7 +386,7 @@ head.x<0 ||
 head.x>=tiles ||
 head.y<0 ||
 head.y>=tiles ||
-snake.some(part=>part.x===head.x && part.y===head.y)
+snake.some(p=>p.x===head.x && p.y===head.y)
 ){
 
 endGame();
@@ -324,11 +402,27 @@ if(head.x===food.x && head.y===food.y){
 
 score++;
 
-document.getElementById("score").innerHTML=score;
+coins++;
 
-sparkle=5;
+localStorage.setItem("snakeCoins",coins);
+
+document.getElementById("score").innerHTML=score;
+document.getElementById("coins").innerHTML=coins;
+
+playSound(500);
+
+
+// increase difficulty
+
+if(score%5===0 && speed>40){
+
+speed-=10;
+
+}
+
 
 food=randomFood();
+
 
 }else{
 
@@ -342,13 +436,25 @@ draw();
 }
 
 
+
+function loop(){
+
+game();
+
+setTimeout(loop,speed);
+
+}
+
+
+
 start();
 
-setInterval(game,100);
-
 draw();
+
+loop();
+
 
 </script>
 
 </body>
-</html>
+</html>    
