@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>MiniGameHQ Snake v3</title>
+<title>MiniGameHQ Snake v4</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -33,6 +33,29 @@ margin:5px;
 cursor:pointer;
 
 }
+
+
+
+.menu{
+
+background:#1d5c1d;
+border:3px solid white;
+border-radius:20px;
+width:300px;
+margin:15px auto;
+padding:15px;
+box-sizing:border-box;
+
+}
+
+
+
+#gameScreen{
+
+display:none;
+
+}
+
 
 
 .difficulty button{
@@ -91,15 +114,7 @@ padding:20px;
 
 border-radius:20px;
 
-z-index:10;
-
-}
-
-
-
-#gameOver h2{
-
-font-size:30px;
+z-index:5;
 
 }
 
@@ -142,18 +157,30 @@ justify-content:space-between;
 
 
 
-.panel{
+.shopBox{
 
 background:#1d5c1d;
 border:3px solid white;
 border-radius:20px;
-width:280px;
+width:300px;
 margin:15px auto;
 padding:10px;
 box-sizing:border-box;
 
 }
 
+
+
+.skinCard{
+
+background:#2e8b57;
+border-radius:15px;
+padding:10px;
+margin:10px auto;
+width:90%;
+box-sizing:border-box;
+
+}
 
 </style>
 
@@ -166,22 +193,51 @@ box-sizing:border-box;
 <h1>🐍 MiniGameHQ Snake</h1>
 
 
+<!-- START MENU -->
+
+
+<div id="startMenu" class="menu">
+
+
+<h2>🎮 Welcome</h2>
+
+
+<p>
+🌟 Level:
+<span id="menuLevel">1</span>
+</p>
+
+
+<p>
+🪙 Coins:
+<span id="menuCoins">0</span>
+</p>
+
+
+
+<h3>Choose Difficulty</h3>
+
 
 <div class="difficulty">
 
-<h3>Choose Difficulty</h3>
 
 <button onclick="setDifficulty('easy')">
 🟢 Easy
 </button>
 
+
 <button onclick="setDifficulty('medium')">
 🟡 Medium
 </button>
 
+
 <button onclick="setDifficulty('hard')">
 🔴 Hard
 </button>
+
+
+</div>
+
 
 
 <p>
@@ -189,21 +245,47 @@ Difficulty:
 <span id="difficulty">Medium</span>
 </p>
 
+
+
+<button onclick="startGame()">
+▶️ Play
+</button>
+
+
 </div>
 
+
+
+
+
+<!-- GAME SCREEN -->
+
+
+<div id="gameScreen">
 
 
 
 <div class="info">
 
-<p>🏆 High Score: <span id="high">0</span></p>
+<p>
+🏆 High Score:
+<span id="high">0</span>
+</p>
 
-<p>Score: <span id="score">0</span></p>
 
-<p>🪙 Coins: <span id="coins">0</span></p>
+<p>
+Score:
+<span id="score">0</span>
+</p>
+
+
+<p>
+🪙 Coins:
+<span id="coins">0</span>
+</p>
+
 
 </div>
-
 
 
 
@@ -212,6 +294,7 @@ Difficulty:
 
 
 <canvas id="game" width="300" height="300"></canvas>
+
 
 
 
@@ -233,8 +316,7 @@ High Score:
 </p>
 
 
-
-<button onclick="restart()">
+<button onclick="startGame()">
 🔄 Play Again
 </button>
 
@@ -260,6 +342,7 @@ High Score:
 
 <div class="middle">
 
+
 <button onclick="move(-1,0)">
 ⬅️
 </button>
@@ -283,7 +366,6 @@ High Score:
 
 
 
-<div>
 
 <button onclick="pauseGame()">
 ⏸️ Pause
@@ -293,6 +375,7 @@ High Score:
 <button onclick="restart()">
 🔄 Restart
 </button>
+
 
 
 </div>
@@ -307,12 +390,11 @@ const tiles=30;
 
 
 let snake=[];
-let food={};
-
 
 let dx=1;
 let dy=0;
 
+let food={};
 
 let score=0;
 
@@ -327,9 +409,11 @@ Number(localStorage.getItem("snakeCoins"))||0;
 
 let speed=100;
 
-
 let paused=false;
+
 let dead=false;
+
+let playing=false;
 
 
 let difficulty="medium";
@@ -338,6 +422,8 @@ let difficulty="medium";
 
 document.getElementById("high").innerHTML=high;
 document.getElementById("coins").innerHTML=coins;
+
+document.getElementById("menuCoins").innerHTML=coins;
 
 
 
@@ -377,6 +463,26 @@ speed=60;
 
 
 
+
+function startGame(){
+
+
+document.getElementById("startMenu").style.display="none";
+
+document.getElementById("gameScreen").style.display="block";
+
+
+start();
+
+
+playing=true;
+
+
+}
+
+
+
+
 function start(){
 
 
@@ -391,18 +497,19 @@ snake=[
 ];
 
 
-food=randomFood();
-
-
 dx=1;
 dy=0;
 
 
 score=0;
 
+
 paused=false;
 
 dead=false;
+
+
+food=randomFood();
 
 
 document.getElementById("score").innerHTML=0;
@@ -410,45 +517,12 @@ document.getElementById("score").innerHTML=0;
 document.getElementById("gameOver").style.display="none";
 
 
-}
-
-
-
-function randomFood(){
-
-return{
-
-x:Math.floor(Math.random()*(tiles-1)),
-
-y:Math.floor(Math.random()*(tiles-1))
-
-};
-
-}
-
-
-
-function move(x,y){
-
-
-if(!dead && (x!==-dx || y!==-dy)){
-
-dx=x;
-
-dy=y;
-
-}
+draw();
 
 
 }
 
 
-
-function pauseGame(){
-
-paused=!paused;
-
-}
 
 
 
@@ -460,35 +534,156 @@ start();
 
 
 
-function appleSound(){
+
+function randomFood(){
+
+return {
+
+x:Math.floor(Math.random()*(tiles-1)),
+
+y:Math.floor(Math.random()*(tiles-1))
+
+};
+
+}
 
 
-let audio=new AudioContext();
 
 
-let beep=audio.createOscillator();
-
-let volume=audio.createGain();
+function move(x,y){
 
 
-beep.frequency.value=700;
-
-volume.gain.value=0.08;
+if(!dead && (x!==-dx || y!==-dy)){
 
 
-beep.connect(volume);
+dx=x;
 
-volume.connect(audio.destination);
+dy=y;
 
 
-beep.start();
+}
 
-beep.stop(
-audio.currentTime+0.1
+
+}
+
+
+
+
+
+function pauseGame(){
+
+paused=!paused;
+
+}
+
+
+
+
+
+function game(){
+
+
+if(!playing || paused || dead){
+
+return;
+
+}
+
+
+
+
+let head={
+
+x:snake[0].x+dx,
+
+y:snake[0].y+dy
+
+};
+
+
+
+
+if(
+
+head.x<0 ||
+
+head.x>=tiles ||
+
+head.y<0 ||
+
+head.y>=tiles ||
+
+snake.some(
+p=>p.x===head.x &&
+p.y===head.y
+)
+
+){
+
+
+endGame();
+
+return;
+
+
+}
+
+
+
+snake.unshift(head);
+
+
+
+snake.pop();
+
+
+draw();
+
+
+
+}
+
+
+
+
+
+
+function endGame(){
+
+
+dead=true;
+
+
+if(score>high){
+
+
+high=score;
+
+
+localStorage.setItem(
+"snakeHigh",
+high
 );
 
 
 }
+
+
+
+document.getElementById("high").innerHTML=high;
+
+
+document.getElementById("finalHigh").innerHTML=high;
+
+
+document.getElementById("finalScore").innerHTML=score;
+
+
+document.getElementById("gameOver").style.display="block";
+
+
+}
+
 
 
 
@@ -499,6 +694,8 @@ function draw(){
 ctx.clearRect(0,0,300,300);
 
 
+
+// grid
 
 ctx.strokeStyle=
 "rgba(255,255,255,0.15)";
@@ -531,16 +728,6 @@ ctx.stroke();
 
 
 
-ctx.font="20px Arial";
-
-
-ctx.fillText(
-"🍎",
-food.x*size,
-food.y*size+16
-);
-
-
 
 snake.forEach(function(part){
 
@@ -548,10 +735,7 @@ snake.forEach(function(part){
 ctx.fillStyle="#00ff00";
 
 
-ctx.beginPath();
-
-
-ctx.roundRect(
+ctx.fillRect(
 
 part.x*size,
 
@@ -559,18 +743,12 @@ part.y*size,
 
 size,
 
-size,
-
-4
+size
 
 );
 
 
-ctx.fill();
-
-
 });
-
 
 
 
@@ -595,8 +773,118 @@ snake[0].y*size+2,
 );
 
 
+}
+
+
+
+
+
+function loop(){
+
+game();
+
+setTimeout(loop,speed);
 
 }
+
+
+
+document.addEventListener(
+"keydown",
+function(e){
+
+
+if(e.key==="ArrowUp") move(0,-1);
+
+if(e.key==="ArrowDown") move(0,1);
+
+if(e.key==="ArrowLeft") move(-1,0);
+
+if(e.key==="ArrowRight") move(1,0);
+
+
+});
+
+
+
+loop();
+
+
+</script>
+<script>
+
+
+function appleSound(){
+
+let audio=new AudioContext();
+
+let beep=audio.createOscillator();
+
+let volume=audio.createGain();
+
+
+beep.frequency.value=700;
+
+volume.gain.value=0.08;
+
+
+beep.connect(volume);
+
+volume.connect(audio.destination);
+
+
+beep.start();
+
+beep.stop(
+audio.currentTime+0.1
+);
+
+}
+
+
+
+
+
+function drawFood(){
+
+
+ctx.font="20px Arial";
+
+
+ctx.fillText(
+
+"🍎",
+
+food.x*size,
+
+food.y*size+16
+
+);
+
+
+}
+
+
+
+
+
+
+let oldDraw=draw;
+
+
+draw=function(){
+
+
+oldDraw();
+
+
+drawFood();
+
+
+};
+
+
+
 
 
 
@@ -604,7 +892,7 @@ snake[0].y*size+2,
 function game(){
 
 
-if(paused || dead){
+if(!playing || paused || dead){
 
 return;
 
@@ -619,6 +907,8 @@ x:snake[0].x+dx,
 y:snake[0].y+dy
 
 };
+
+
 
 
 
@@ -639,6 +929,7 @@ p.y===head.y
 
 ){
 
+
 endGame();
 
 return;
@@ -651,22 +942,32 @@ snake.unshift(head);
 
 
 
+
+
+// 🍎 2x2 apple area
+
 if(
 
 head.x>=food.x &&
+
 head.x<=food.x+1 &&
+
 head.y>=food.y &&
+
 head.y<=food.y+1
 
 ){
 
 
+
 appleSound();
+
 
 
 score++;
 
 coins++;
+
 
 
 localStorage.setItem(
@@ -675,12 +976,27 @@ coins
 );
 
 
+
 document.getElementById("score").innerHTML=score;
+
 
 document.getElementById("coins").innerHTML=coins;
 
 
+
 food=randomFood();
+
+
+
+// keep snake length
+
+snake.push(
+{
+x:snake[snake.length-1].x,
+y:snake[snake.length-1].y
+}
+);
+
 
 
 }
@@ -695,77 +1011,27 @@ snake.pop();
 
 
 
-draw();
-
-
-}
-
-
-
-function endGame(){
-
-
-dead=true;
-
-
-
-if(score>high){
-
-high=score;
-
-
-localStorage.setItem(
-"snakeHigh",
-high
-);
-
-
-}
-
-
-
-document.getElementById("high").innerHTML=high;
-
-document.getElementById("finalScore").innerHTML=score;
-
-document.getElementById("finalHigh").innerHTML=high;
-
-
-document.getElementById("gameOver").style.display="block";
-
-
-}
-
-
-
-
-function loop(){
-
-game();
-
-setTimeout(loop,speed);
-
-}
-
-
-
-
-start();
 
 draw();
 
-loop();
+
+}
+
+
+
+
 
 
 </script>
-<div class="panel">
+<div class="shopBox">
 
 <h2>🛒 Snake Shop</h2>
 
-<p>Choose your skin</p>
+<p>Choose your snake skin</p>
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>🟢 Classic Green</h3>
 
@@ -777,7 +1043,7 @@ Equip
 
 
 
-<div class="panel">
+<div class="skinCard">
 
 <h3>🔵 Ocean Blue</h3>
 
@@ -791,7 +1057,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>🟡 Gold Snake</h3>
 
@@ -805,7 +1072,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>🌈 Rainbow Snake</h3>
 
@@ -819,7 +1087,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>🔥 Fire Snake</h3>
 
@@ -833,7 +1102,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>❄️ Ice Snake</h3>
 
@@ -847,7 +1117,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>💜 Galaxy Snake</h3>
 
@@ -861,7 +1132,8 @@ Buy
 
 
 
-<div class="panel">
+
+<div class="skinCard">
 
 <h3>⚫ Shadow Snake</h3>
 
@@ -874,6 +1146,7 @@ Buy
 </div>
 
 
+
 <p>
 Current Skin:
 <span id="skin">green</span>
@@ -881,6 +1154,7 @@ Current Skin:
 
 
 </div>
+
 
 
 
@@ -898,9 +1172,6 @@ localStorage.getItem("ownedSkins")
 ||
 ["green"];
 
-
-
-document.getElementById("skin").innerHTML=skin;
 
 
 
@@ -946,15 +1217,16 @@ JSON.stringify(ownedSkins)
 equipSkin(type);
 
 
-
 document.getElementById("coins").innerHTML=coins;
 
 
 }
 
 
-
 }
+
+
+
 
 
 
@@ -977,7 +1249,7 @@ skin
 document.getElementById("skin").innerHTML=skin;
 
 
-updateShopButtons();
+updateShop();
 
 
 }
@@ -989,10 +1261,10 @@ updateShopButtons();
 
 
 
-function updateShopButtons(){
+function updateShop(){
 
 
-let skins=[
+let list=[
 
 "blue",
 "gold",
@@ -1006,15 +1278,12 @@ let skins=[
 
 
 
-skins.forEach(function(type){
+list.forEach(function(type){
 
 
 let button=
 document.getElementById(type+"Btn");
 
-
-
-if(button){
 
 
 if(skin===type){
@@ -1037,75 +1306,79 @@ button.innerHTML="🪙 Buy";
 
 
 
-}
-
-
-
 });
 
 
-
 }
 
 
 
-updateShopButtons();
+updateShop();
+
 
 
 </script>
-<div class="panel">
+<div class="menu">
 
-<h2>🎁 Daily Reward</h2>
+<h2>🎁 Rewards & Stats</h2>
+
 
 <button onclick="claimDaily()">
-Claim 25 Coins
+🎁 Claim Daily Reward
 </button>
+
 
 <p id="dailyMessage"></p>
 
+
+
+<h3>🎯 Missions</h3>
+
+
+<p>
+🍎 Collect 10 apples:
+<span id="appleMission">0/10</span>
+</p>
+
+
+<p>
+🏆 Get score 50:
+<span id="scoreMission">0/50</span>
+</p>
+
+
+<p>
+🎮 Play 10 games:
+<span id="gameMission">0/10</span>
+</p>
+
+
+
+
+<h3>📊 Stats</h3>
+
+
+<p>
+Games Played:
+<span id="gamesPlayed">0</span>
+</p>
+
+
+<p>
+Apples Collected:
+<span id="applesCollected">0</span>
+</p>
+
+
+<p>
+Best Score:
+<span id="bestScore">0</span>
+</p>
+
+
+
 </div>
 
-
-
-<div class="panel">
-
-<h2>🎯 Missions</h2>
-
-<p>🍎 Collect 10 apples: <span id="missionApple">0/10</span></p>
-
-<p>🏆 Reach score 25: <span id="missionScore">0/25</span></p>
-
-<p>🎮 Play 5 games: <span id="missionGames">0/5</span></p>
-
-</div>
-
-
-
-<div class="panel">
-
-<h2>🏆 Achievements</h2>
-
-<p>🍎 First Apple: <span id="achApple">❌</span></p>
-
-<p>🐍 Score 50: <span id="achScore">❌</span></p>
-
-<p>💰 250 Coins: <span id="achCoins">❌</span></p>
-
-</div>
-
-
-
-<div class="panel">
-
-<h2>📊 Stats</h2>
-
-<p>Games Played: <span id="games">0</span></p>
-
-<p>Apples Collected: <span id="apples">0</span></p>
-
-<p>Best Score: <span id="best">0</span></p>
-
-</div>
 
 
 
@@ -1120,17 +1393,43 @@ let applesCollected=
 Number(localStorage.getItem("applesCollected"))||0;
 
 
-
 let bestScore=
 Number(localStorage.getItem("bestScore"))||0;
 
 
 
-document.getElementById("games").innerHTML=gamesPlayed;
 
-document.getElementById("apples").innerHTML=applesCollected;
+function updateStats(){
 
-document.getElementById("best").innerHTML=bestScore;
+
+document.getElementById("gamesPlayed").innerHTML=
+gamesPlayed;
+
+
+document.getElementById("applesCollected").innerHTML=
+applesCollected;
+
+
+document.getElementById("bestScore").innerHTML=
+bestScore;
+
+
+
+document.getElementById("appleMission").innerHTML=
+Math.min(applesCollected,10)+"/10";
+
+
+document.getElementById("scoreMission").innerHTML=
+Math.min(bestScore,50)+"/50";
+
+
+document.getElementById("gameMission").innerHTML=
+Math.min(gamesPlayed,10)+"/10";
+
+
+
+}
+
 
 
 
@@ -1144,7 +1443,7 @@ new Date().toDateString();
 
 
 let last=
-localStorage.getItem("daily");
+localStorage.getItem("dailyReward");
 
 
 
@@ -1152,6 +1451,7 @@ if(last!==today){
 
 
 coins+=25;
+
 
 
 localStorage.setItem(
@@ -1162,18 +1462,18 @@ coins
 
 
 localStorage.setItem(
-"daily",
+"dailyReward",
 today
 );
 
 
 
-document.getElementById("coins").innerHTML=coins;
-
+document.getElementById("coins").innerHTML=
+coins;
 
 
 document.getElementById("dailyMessage").innerHTML=
-"🎉 Reward claimed!";
+"🎉 +25 coins added!";
 
 
 }
@@ -1194,13 +1494,17 @@ document.getElementById("dailyMessage").innerHTML=
 
 
 
-let oldStart=start;
+
+
+// count games
+
+let oldStartStats=start;
 
 
 start=function(){
 
 
-oldStart();
+oldStartStats();
 
 
 gamesPlayed++;
@@ -1212,9 +1516,7 @@ gamesPlayed
 );
 
 
-
-document.getElementById("games").innerHTML=
-gamesPlayed;
+updateStats();
 
 
 };
@@ -1223,18 +1525,16 @@ gamesPlayed;
 
 
 
-let oldGame=game;
+// track score
 
 
-game=function(){
+let oldEnd=endGame;
 
 
-oldGame();
-
+endGame=function(){
 
 
 if(score>bestScore){
-
 
 bestScore=score;
 
@@ -1245,19 +1545,11 @@ bestScore
 );
 
 
-
-document.getElementById("best").innerHTML=
-bestScore;
-
-
 }
 
 
 
-if(score>applesCollected){
-
-
-applesCollected=score;
+applesCollected+=score;
 
 
 localStorage.setItem(
@@ -1266,16 +1558,12 @@ applesCollected
 );
 
 
-document.getElementById("apples").innerHTML=
-applesCollected;
 
-
-}
+oldEnd();
 
 
 
-updateProgress();
-
+updateStats();
 
 
 };
@@ -1284,83 +1572,41 @@ updateProgress();
 
 
 
-function updateProgress(){
-
-
-document.getElementById("missionApple").innerHTML=
-Math.min(applesCollected,10)+"/10";
-
-
-document.getElementById("missionScore").innerHTML=
-Math.min(bestScore,25)+"/25";
-
-
-document.getElementById("missionGames").innerHTML=
-Math.min(gamesPlayed,5)+"/5";
-
-
-
-if(applesCollected>=1){
-
-document.getElementById("achApple").innerHTML="✅";
-
-}
-
-
-
-if(bestScore>=50){
-
-document.getElementById("achScore").innerHTML="✅";
-
-}
-
-
-
-if(coins>=250){
-
-document.getElementById("achCoins").innerHTML="✅";
-
-}
-
-
-
-}
-
-
-
-updateProgress();
+updateStats();
 
 
 </script>
-<div class="panel">
+<div class="menu">
 
 <h2>🌟 MiniGameHQ Profile</h2>
 
 <p>
 Level:
-<span id="level">1</span>
+<span id="playerLevel">1</span>
 </p>
+
 
 <p>
 XP:
-<span id="xp">0</span>
+<span id="playerXP">0</span>
 /
 <span id="xpNeeded">100</span>
 </p>
 
 
+
 <div style="
 background:#222;
-border-radius:15px;
 height:20px;
+border-radius:15px;
 overflow:hidden;
 ">
 
 
 <div id="xpBar" style="
-background:#22c55e;
 height:100%;
 width:0%;
+background:#22c55e;
 ">
 </div>
 
@@ -1370,51 +1616,52 @@ width:0%;
 
 <p id="levelMessage"></p>
 
+
 </div>
+
 
 
 
 <script>
 
 
-let playerXP=
-Number(localStorage.getItem("playerXP"))||0;
-
-
 let playerLevel=
 Number(localStorage.getItem("playerLevel"))||1;
 
 
+let playerXP=
+Number(localStorage.getItem("playerXP"))||0;
 
-function xpNeeded(){
 
+
+
+function neededXP(){
 
 return playerLevel*100;
-
 
 }
 
 
 
-function updateProfile(){
+
+function updateLevel(){
 
 
-document.getElementById("level").innerHTML=
+document.getElementById("playerLevel").innerHTML=
 playerLevel;
 
 
-document.getElementById("xp").innerHTML=
+document.getElementById("playerXP").innerHTML=
 playerXP;
 
 
 document.getElementById("xpNeeded").innerHTML=
-xpNeeded();
+neededXP();
 
 
 
 let percent=
-(playerXP/xpNeeded())*100;
-
+(playerXP/neededXP())*100;
 
 
 document.getElementById("xpBar").style.width=
@@ -1426,6 +1673,8 @@ Math.min(percent,100)+"%";
 
 
 
+
+
 function addXP(amount){
 
 
@@ -1433,10 +1682,10 @@ playerXP+=amount;
 
 
 
-while(playerXP>=xpNeeded()){
+while(playerXP>=neededXP()){
 
 
-playerXP-=xpNeeded();
+playerXP-=neededXP();
 
 
 playerLevel++;
@@ -1446,11 +1695,16 @@ playerLevel++;
 coins+=25;
 
 
+
 localStorage.setItem(
 "snakeCoins",
 coins
 );
 
+
+
+document.getElementById("coins").innerHTML=
+coins;
 
 
 document.getElementById("levelMessage").innerHTML=
@@ -1467,7 +1721,6 @@ playerXP
 );
 
 
-
 localStorage.setItem(
 "playerLevel",
 playerLevel
@@ -1475,7 +1728,112 @@ playerLevel
 
 
 
-updateProfile();
+updateLevel();
+
+
+}
+
+
+
+
+
+// Give XP when scoring
+
+let oldEndXP=endGame;
+
+
+endGame=function(){
+
+
+let oldScore=score;
+
+
+oldEndXP();
+
+
+
+if(oldScore>0){
+
+addXP(oldScore*5);
+
+}
+
+
+};
+
+
+
+
+updateLevel();
+
+
+</script>
+  <div class="menu">
+
+<h2>🔥 Challenges</h2>
+
+<p>
+🔥 Current Streak:
+<span id="streak">0</span>
+</p>
+
+
+<p>
+🎯 Challenge:
+<span id="challenge">
+Collect 5 apples
+</span>
+</p>
+
+
+<p>
+Progress:
+<span id="challengeProgress">0/5</span>
+</p>
+
+
+</div>
+
+
+
+
+<script>
+
+
+let streak=
+Number(localStorage.getItem("snakeStreak"))||0;
+
+
+let challengeProgress=
+Number(localStorage.getItem("challengeProgress"))||0;
+
+
+
+let challengeTarget=5;
+
+
+
+document.getElementById("streak").innerHTML=
+streak;
+
+
+
+
+
+function updateChallenges(){
+
+
+document.getElementById("challengeProgress").innerHTML=
+Math.min(challengeProgress,challengeTarget)
++
+"/"
++
+challengeTarget;
+
+
+
+document.getElementById("streak").innerHTML=
+streak;
 
 
 
@@ -1484,25 +1842,89 @@ updateProfile();
 
 
 
-// give XP when collecting apples
 
-let oldGameXP=game;
+
+// Add rewards when apples are collected
+
+let oldGameChallenge=game;
 
 
 game=function(){
 
 
-let oldScore=score;
+let beforeScore=score;
 
 
-oldGameXP();
+oldGameChallenge();
 
 
 
-if(score>oldScore){
+if(score>beforeScore){
 
 
-addXP(10);
+challengeProgress++;
+
+
+streak++;
+
+
+
+if(streak%5===0){
+
+
+coins+=10;
+
+
+
+localStorage.setItem(
+"snakeCoins",
+coins
+);
+
+
+
+document.getElementById("coins").innerHTML=
+coins;
+
+
+
+}
+
+
+
+
+if(challengeProgress>=challengeTarget){
+
+
+coins+=50;
+
+
+addXP(50);
+
+
+
+challengeProgress=0;
+
+
+
+}
+
+
+
+localStorage.setItem(
+"snakeStreak",
+streak
+);
+
+
+localStorage.setItem(
+"challengeProgress",
+challengeProgress
+);
+
+
+
+updateChallenges();
 
 
 }
@@ -1515,27 +1937,99 @@ addXP(10);
 
 
 
-updateProfile();
+
+// Reset streak after game over
+
+let oldEndChallenge=endGame;
+
+
+endGame=function(){
+
+
+streak=0;
+
+
+localStorage.setItem(
+"snakeStreak",
+streak
+);
+
+
+
+oldEndChallenge();
+
+
+
+updateChallenges();
+
+
+};
+
+
+
+
+
+updateChallenges();
 
 
 </script>
+  <style>
+
+button{
+transition:0.15s;
+}
+
+button:active{
+transform:scale(0.92);
+}
+
+
+.controls button{
+background:#ffffff;
+}
+
+
+.menu h2{
+margin-top:5px;
+}
+
+
+canvas{
+box-shadow:0 0 15px rgba(255,255,255,0.3);
+}
+
+</style>
+
+
+
 <script>
 
 
 function snakeColour(){
 
 
-if(skin==="blue") return "#008cff";
+if(skin==="blue")
+return "#008cff";
 
-if(skin==="gold") return "#ffd700";
 
-if(skin==="fire") return "#ff6600";
+if(skin==="gold")
+return "#ffd700";
 
-if(skin==="ice") return "#b9f2ff";
 
-if(skin==="galaxy") return "#8a2be2";
+if(skin==="fire")
+return "#ff6600";
 
-if(skin==="shadow") return "#111111";
+
+if(skin==="ice")
+return "#b9f2ff";
+
+
+if(skin==="galaxy")
+return "#8a2be2";
+
+
+if(skin==="shadow")
+return "#111111";
 
 
 
@@ -1563,6 +2057,7 @@ Math.floor(Date.now()/200)
 }
 
 
+
 return "#00ff00";
 
 
@@ -1571,81 +2066,24 @@ return "#00ff00";
 
 
 
-// smoother drawing
+
+let oldDrawStyle=draw;
+
 
 draw=function(){
 
 
-ctx.clearRect(
-0,
-0,
-300,
-300
-);
+oldDrawStyle();
 
 
-
-ctx.strokeStyle=
-"rgba(255,255,255,0.15)";
-
-
-
-for(let i=0;i<=300;i+=10){
-
-
-ctx.beginPath();
-
-ctx.moveTo(i,0);
-
-ctx.lineTo(i,300);
-
-ctx.stroke();
-
-
-
-ctx.beginPath();
-
-ctx.moveTo(0,i);
-
-ctx.lineTo(300,i);
-
-ctx.stroke();
-
-
-}
-
-
-
-// apple glow
-
-ctx.font="22px Arial";
-
-
-ctx.fillText(
-
-"🍎",
-
-food.x*size,
-
-food.y*size+17
-
-);
-
-
-
-
-// snake
 
 snake.forEach(function(part,index){
 
 
-ctx.fillStyle=
-snakeColour();
-
+ctx.fillStyle=snakeColour();
 
 
 ctx.beginPath();
-
 
 
 ctx.roundRect(
@@ -1663,44 +2101,32 @@ size,
 );
 
 
-
 ctx.fill();
-
 
 
 });
 
 
 
-// eyes
 
+// redraw face
 
 ctx.fillStyle="black";
 
 
 ctx.fillRect(
-
 snake[0].x*size+2,
-
 snake[0].y*size+2,
-
 2,
-
 2
-
 );
 
 
 ctx.fillRect(
-
 snake[0].x*size+6,
-
 snake[0].y*size+2,
-
 2,
-
 2
-
 );
 
 
@@ -1710,27 +2136,8 @@ snake[0].y*size+2,
 
 
 
-
-// mobile improvements
-
-document.addEventListener(
-"touchstart",
-function(e){
-
-if(e.target.tagName==="BUTTON"){
-
-return;
-
-}
-
-},
-{passive:true}
-);
-
-
-
 </script>
-<script>
+  <script>
 
 
 // Keyboard controls
@@ -1773,7 +2180,8 @@ move(1,0);
 
 
 
-// Save everything when leaving
+
+// Save all MiniGameHQ progress
 
 window.addEventListener(
 "beforeunload",
@@ -1805,14 +2213,14 @@ JSON.stringify(ownedSkins)
 
 
 localStorage.setItem(
-"playerXP",
-playerXP
+"playerLevel",
+playerLevel
 );
 
 
 localStorage.setItem(
-"playerLevel",
-playerLevel
+"playerXP",
+playerXP
 );
 
 
@@ -1834,22 +2242,31 @@ bestScore
 );
 
 
+localStorage.setItem(
+"snakeStreak",
+streak
+);
+
+
+localStorage.setItem(
+"challengeProgress",
+challengeProgress
+);
+
+
 });
 
 
 
 
-// Stop accidental page zoom on buttons
+// Load menu information
 
-document.addEventListener(
-"gesturestart",
-function(e){
+document.getElementById("menuCoins").innerHTML=
+coins;
 
-e.preventDefault();
 
-}
-
-);
+document.getElementById("menuLevel").innerHTML=
+playerLevel;
 
 
 
@@ -1859,3 +2276,4 @@ e.preventDefault();
 </body>
 
 </html>
+ 
