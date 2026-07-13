@@ -11,8 +11,8 @@
 body{
 background:#0b3d0b;
 color:white;
-text-align:center;
 font-family:Arial;
+text-align:center;
 margin:0;
 padding-top:10px;
 }
@@ -28,13 +28,13 @@ display:block;
 margin:auto;
 }
 
+.info{
+font-size:18px;
+}
+
 .gameArea{
 width:300px;
 margin:auto;
-}
-
-.info{
-font-size:18px;
 }
 
 .controls{
@@ -64,13 +64,29 @@ border:none;
 margin:5px;
 }
 
+.panel{
+background:#1d5c1d;
+border:3px solid white;
+border-radius:15px;
+width:280px;
+margin:15px auto;
+padding:10px;
+}
+
+.shopItem{
+background:#2e8b2e;
+border-radius:12px;
+margin:8px;
+padding:8px;
+}
+
 #gameOver{
 display:none;
 background:#222;
+border-radius:15px;
+padding:15px;
 width:260px;
 margin:15px auto;
-padding:15px;
-border-radius:15px;
 }
 
 </style>
@@ -90,6 +106,8 @@ border-radius:15px;
 
 <p>🏆 High Score: <span id="high">0</span></p>
 
+<p>🪙 Coins: <span id="coins">0</span></p>
+
 </div>
 
 
@@ -100,10 +118,10 @@ border-radius:15px;
 </div>
 
 
+
 <div class="controls">
 
 <button onclick="move(0,-1)">⬆️</button>
-
 
 <div class="middle">
 
@@ -113,10 +131,11 @@ border-radius:15px;
 
 </div>
 
-
 <button onclick="move(0,1)">⬇️</button>
 
 </div>
+
+
 <div class="buttons">
 
 <button onclick="pauseGame()">⏸️ Pause</button>
@@ -124,15 +143,13 @@ border-radius:15px;
 <button onclick="restart()">🔄 Restart</button>
 
 </div>
-
-
 <div id="gameOver">
 
 <h2>💀 Game Over</h2>
 
 <p>Score: <span id="finalScore">0</span></p>
 
-<button onclick="restart()">Play Again</button>
+<button onclick="restart()">🔄 Play Again</button>
 
 </div>
 
@@ -140,29 +157,25 @@ border-radius:15px;
 
 <script>
 
-
 const canvas=document.getElementById("game");
-
 const ctx=canvas.getContext("2d");
 
 
 const size=10;
-
 const tiles=30;
 
 
 let snake;
-
 let food;
 
 let dx;
-
 let dy;
 
 let score=0;
 
 let high=Number(localStorage.getItem("snakeHigh"))||0;
 
+let coins=Number(localStorage.getItem("snakeCoins"))||0;
 
 let paused=false;
 
@@ -170,6 +183,7 @@ let dead=false;
 
 
 document.getElementById("high").innerHTML=high;
+document.getElementById("coins").innerHTML=coins;
 
 
 
@@ -221,7 +235,6 @@ food=randomFood();
 dx=1;
 
 dy=0;
-
 
 score=0;
 
@@ -284,7 +297,9 @@ start();
 
 function draw(){
 
+
 ctx.clearRect(0,0,300,300);
+
 
 
 ctx.strokeStyle="rgba(255,255,255,0.15)";
@@ -323,31 +338,23 @@ food.y*size+10
 
 
 
-snake.forEach((part)=>{
-
+snake.forEach(part=>{
 
 ctx.fillStyle="#00ff00";
 
-
 ctx.fillRect(
-
 part.x*size,
-
 part.y*size,
-
 size,
-
 size
-
 );
-
 
 });
 
 
+// snake face
 
 ctx.fillStyle="black";
-
 
 ctx.fillRect(
 snake[0].x*size+2,
@@ -355,7 +362,6 @@ snake[0].y*size+2,
 2,
 2
 );
-
 
 ctx.fillRect(
 snake[0].x*size+6,
@@ -366,13 +372,13 @@ snake[0].y*size+2,
 
 
 }
- function game(){
 
+
+
+function game(){
 
 if(paused || dead){
-
 return;
-
 }
 
 
@@ -426,8 +432,15 @@ playAppleSound();
 
 score++;
 
+coins++;
+
+
+localStorage.setItem("snakeCoins",coins);
+
 
 document.getElementById("score").innerHTML=score;
+
+document.getElementById("coins").innerHTML=coins;
 
 
 food=randomFood();
@@ -451,7 +464,6 @@ draw();
 
 function endGame(){
 
-
 dead=true;
 
 
@@ -471,7 +483,6 @@ document.getElementById("finalScore").innerHTML=score;
 
 document.getElementById("gameOver").style.display="block";
 
-
 }
 
 
@@ -485,12 +496,336 @@ setTimeout(loop,100);
 }
 
 
-
 start();
 
 draw();
 
 loop();
+
+
+</script>
+<div class="panel">
+
+<h2>🛒 Snake Shop</h2>
+
+<p>Buy and equip skins</p>
+
+
+<div class="shopItem">
+🟢 Classic Green
+<br>
+<button onclick="equipSkin('green')">Equip</button>
+</div>
+
+
+<div class="shopItem">
+🔵 Ocean Blue
+<br>
+🪙 20 coins
+<br>
+<button onclick="buySkin('blue',20)">Buy</button>
+</div>
+
+
+<div class="shopItem">
+🟡 Gold Snake
+<br>
+🪙 50 coins
+<br>
+<button onclick="buySkin('gold',50)">Buy</button>
+</div>
+
+
+<div class="shopItem">
+🌈 Rainbow Snake
+<br>
+🪙 100 coins
+<br>
+<button onclick="buySkin('rainbow',100)">Buy</button>
+</div>
+
+
+<div class="shopItem">
+🔥 Fire Snake
+<br>
+🪙 150 coins
+<br>
+<button onclick="buySkin('fire',150)">Buy</button>
+</div>
+
+
+<div class="shopItem">
+❄️ Ice Snake
+<br>
+🪙 150 coins
+<br>
+<button onclick="buySkin('ice',150)">Buy</button>
+</div>
+
+
+<p>Current Skin: <span id="skin">green</span></p>
+
+</div>
+
+
+
+<div class="panel">
+
+<h2>🎁 Daily Reward</h2>
+
+<button onclick="dailyReward()">
+Claim Reward
+</button>
+
+</div>
+
+
+
+<div class="panel">
+
+<h2>🏆 Achievements</h2>
+
+<p>🍎 First Apple: <span id="appleAch">❌</span></p>
+
+<p>🐍 Score 20: <span id="scoreAch">❌</span></p>
+
+</div>
+
+
+
+<script>
+
+
+let skin=localStorage.getItem("snakeSkin")||"green";
+
+
+document.getElementById("skin").innerHTML=skin;
+
+
+
+function buySkin(type,cost){
+
+if(coins>=cost){
+
+coins-=cost;
+
+skin=type;
+
+
+localStorage.setItem("snakeCoins",coins);
+
+localStorage.setItem("snakeSkin",skin);
+
+
+document.getElementById("coins").innerHTML=coins;
+
+document.getElementById("skin").innerHTML=skin;
+
+}
+
+}
+
+
+
+function equipSkin(type){
+
+skin=type;
+
+localStorage.setItem("snakeSkin",skin);
+
+document.getElementById("skin").innerHTML=skin;
+
+}
+
+
+
+function dailyReward(){
+
+let last=localStorage.getItem("dailyReward");
+
+let today=new Date().toDateString();
+
+
+if(last!==today){
+
+coins+=25;
+
+localStorage.setItem("snakeCoins",coins);
+
+localStorage.setItem("dailyReward",today);
+
+
+document.getElementById("coins").innerHTML=coins;
+
+
+alert("🎁 You got 25 coins!");
+
+}
+
+else{
+
+alert("Come back tomorrow!");
+
+}
+
+}
+
+
+</script>
+<script>
+
+
+function snakeColour(){
+
+
+if(skin==="blue"){
+return "#008cff";
+}
+
+
+if(skin==="gold"){
+return "#ffd700";
+}
+
+
+if(skin==="rainbow"){
+
+let colours=[
+"red",
+"orange",
+"yellow",
+"green",
+"blue",
+"purple"
+];
+
+return colours[Math.floor(Date.now()/200)%colours.length];
+
+}
+
+
+if(skin==="fire"){
+return "orange";
+}
+
+
+if(skin==="ice"){
+return "#b9f2ff";
+}
+
+
+return "#00ff00";
+
+}
+
+
+
+// update snake colour
+
+let oldDraw=draw;
+
+
+draw=function(){
+
+ctx.clearRect(0,0,300,300);
+
+
+ctx.strokeStyle="rgba(255,255,255,0.15)";
+
+
+for(let i=0;i<=300;i+=10){
+
+ctx.beginPath();
+ctx.moveTo(i,0);
+ctx.lineTo(i,300);
+ctx.stroke();
+
+
+ctx.beginPath();
+ctx.moveTo(0,i);
+ctx.lineTo(300,i);
+ctx.stroke();
+
+}
+
+
+
+ctx.font="14px Arial";
+
+ctx.fillText(
+"🍎",
+food.x*size,
+food.y*size+10
+);
+
+
+
+snake.forEach((part)=>{
+
+
+ctx.fillStyle=snakeColour();
+
+
+ctx.fillRect(
+part.x*size,
+part.y*size,
+size,
+size
+);
+
+
+});
+
+
+// face
+
+ctx.fillStyle="black";
+
+
+ctx.fillRect(
+snake[0].x*size+2,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+ctx.fillRect(
+snake[0].x*size+6,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+};
+
+
+
+// achievements
+
+let oldGame=game;
+
+
+game=function(){
+
+oldGame();
+
+
+if(score>=1){
+
+document.getElementById("appleAch").innerHTML="✅";
+
+}
+
+
+if(score>=20){
+
+document.getElementById("scoreAch").innerHTML="✅";
+
+}
+
+};
 
 
 </script>
