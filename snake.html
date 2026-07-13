@@ -2,82 +2,94 @@
 <html>
 <head>
 
-<title>MiniGameHQ Snake</title>
+<title>MiniGameHQ Snake v2</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
-    background:#0b3d0b;
-    color:white;
-    font-family:Arial,sans-serif;
-    text-align:center;
-    margin:0;
-    padding:10px;
+background:#0b3d0b;
+color:white;
+font-family:Arial,sans-serif;
+text-align:center;
+margin:0;
+padding:10px;
 }
+
 
 h1{
-    margin:5px;
+margin:5px;
 }
 
+
 .info{
-    font-size:18px;
+font-size:18px;
 }
 
 
 .gameArea{
-    position:relative;
-    width:300px;
-    margin:auto;
+
+position:relative;
+width:300px;
+margin:auto;
+
 }
 
 
 canvas{
-    background:#3f9b3f;
-    border:3px solid white;
-    border-radius:10px;
+
+background:#3f9b3f;
+border:3px solid white;
+border-radius:15px;
+display:block;
+
 }
+
 
 
 #gameOver{
-    display:none;
-    position:absolute;
-    top:75px;
-    left:20px;
-    width:260px;
-    background:rgba(0,0,0,0.85);
-    border-radius:20px;
-    padding:20px 0;
-    animation:fade 0.3s;
+
+display:none;
+
+position:absolute;
+
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+width:240px;
+
+background:rgba(0,0,0,0.85);
+
+padding:20px;
+
+border-radius:20px;
+
+z-index:5;
+
 }
 
 
-@keyframes fade{
+#gameOver h2{
 
-from{
-opacity:0;
-transform:scale(.8);
-}
-
-to{
-opacity:1;
-transform:scale(1);
-}
+font-size:30px;
 
 }
 
 
 #gameOver button{
 
-background:#21c45b;
+background:#22c55e;
 color:white;
 font-size:20px;
-padding:12px 20px;
 border:none;
+padding:12px 20px;
 border-radius:15px;
 
 }
+
 
 
 .controls{
@@ -86,6 +98,7 @@ width:230px;
 margin:15px auto;
 
 }
+
 
 
 .controls button{
@@ -100,6 +113,7 @@ margin:5px;
 }
 
 
+
 .middle{
 
 display:flex;
@@ -108,15 +122,17 @@ justify-content:space-between;
 }
 
 
+
 .mainButtons button{
 
 font-size:18px;
 padding:10px 15px;
-border:none;
 border-radius:12px;
+border:none;
 margin:5px;
 
 }
+
 
 
 .panel{
@@ -127,16 +143,6 @@ border-radius:20px;
 width:280px;
 margin:15px auto;
 padding:10px;
-
-}
-
-
-.shopItem{
-
-background:#2e8b2e;
-border-radius:15px;
-padding:10px;
-margin:10px;
 
 }
 
@@ -179,13 +185,15 @@ margin:10px;
 
 <p>High Score: <span id="finalHigh">0</span></p>
 
-<button onclick="restart()">🔄 Play Again</button>
+<button onclick="restart()">
+🔄 Play Again
+</button>
+
 
 </div>
 
 
 </div>
-
 
 
 
@@ -197,9 +205,12 @@ margin:10px;
 
 <div class="middle">
 
+
 <button onclick="move(-1,0)">⬅️</button>
 
+
 <button onclick="move(1,0)">➡️</button>
+
 
 </div>
 
@@ -240,6 +251,7 @@ let high=Number(localStorage.getItem("snakeHigh"))||0;
 
 let coins=Number(localStorage.getItem("snakeCoins"))||0;
 
+
 let paused=false;
 let dead=false;
 
@@ -249,36 +261,8 @@ document.getElementById("coins").innerHTML=coins;
 
 
 
-function playAppleSound(){
-
-let audio=new AudioContext();
-
-let oscillator=audio.createOscillator();
-
-let gain=audio.createGain();
-
-
-oscillator.type="sine";
-
-oscillator.frequency.value=700;
-
-gain.gain.value=0.1;
-
-
-oscillator.connect(gain);
-
-gain.connect(audio.destination);
-
-
-oscillator.start();
-
-oscillator.stop(audio.currentTime+0.1);
-
-}
-
-
-
 function start(){
+
 
 snake=[
 
@@ -295,19 +279,19 @@ food=randomFood();
 
 
 dx=1;
-
 dy=0;
+
 
 score=0;
 
 paused=false;
-
 dead=false;
 
 
 document.getElementById("score").innerHTML=0;
 
 document.getElementById("gameOver").style.display="none";
+
 
 }
 
@@ -332,7 +316,6 @@ function move(x,y){
 if(!dead && (x!==-dx || y!==-dy)){
 
 dx=x;
-
 dy=y;
 
 }
@@ -390,70 +373,59 @@ ctx.stroke();
 
 
 
-ctx.font="16px Arial";
+ctx.font="18px Arial";
 
 ctx.fillText(
-
 "🍎",
-
 food.x*size,
-
-food.y*size+12
-
+food.y*size+15
 );
 
 
 
-snake.forEach((part,index)=>{
+snake.forEach((part)=>{
 
 
 ctx.fillStyle="#00ff00";
 
 
-ctx.fillRect(
+ctx.beginPath();
 
+
+ctx.roundRect(
 part.x*size,
-
 part.y*size,
-
 size,
-
-size
-
+size,
+3
 );
+
+
+ctx.fill();
 
 
 });
 
 
-// eyes
+
+// snake eyes
 
 ctx.fillStyle="black";
 
 
 ctx.fillRect(
-
 snake[0].x*size+2,
-
 snake[0].y*size+2,
-
 2,
-
 2
-
 );
 
 
 ctx.fillRect(
-
 snake[0].x*size+6,
-
 snake[0].y*size+2,
-
 2,
-
 2
-
 );
 
 
@@ -492,7 +464,9 @@ head.y<0 ||
 
 head.y>=tiles ||
 
-snake.some(p=>p.x===head.x && p.y===head.y)
+snake.some(
+p=>p.x===head.x && p.y===head.y
+)
 
 ){
 
@@ -509,15 +483,9 @@ snake.unshift(head);
 
 
 if(
-
 head.x===food.x &&
-
 head.y===food.y
-
 ){
-
-
-playAppleSound();
 
 
 score++;
@@ -525,7 +493,10 @@ score++;
 coins++;
 
 
-localStorage.setItem("snakeCoins",coins);
+localStorage.setItem(
+"snakeCoins",
+coins
+);
 
 
 document.getElementById("score").innerHTML=score;
@@ -540,7 +511,9 @@ food=randomFood();
 
 else{
 
+
 snake.pop();
+
 
 }
 
@@ -554,6 +527,7 @@ draw();
 
 function endGame(){
 
+
 dead=true;
 
 
@@ -561,7 +535,12 @@ if(score>high){
 
 high=score;
 
-localStorage.setItem("snakeHigh",high);
+
+localStorage.setItem(
+"snakeHigh",
+high
+);
+
 
 }
 
@@ -589,25 +568,25 @@ setTimeout(loop,100);
 }
 
 
+
 start();
 
 draw();
 
 loop();
 
+
 </script>
 <div class="panel">
 
 <h2>🛒 Snake Shop</h2>
 
-<p>Buy and equip skins</p>
+<p>Choose your snake skin</p>
 
 
-<div class="shopItem">
+<div class="panel">
 
-🟢 Classic Green
-
-<br>
+<h3>🟢 Classic Green</h3>
 
 <button onclick="equipSkin('green')">
 Equip
@@ -617,17 +596,13 @@ Equip
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-🔵 Ocean Blue
+<h3>🔵 Ocean Blue</h3>
 
-<br>
+<p>🪙 20 coins</p>
 
-🪙 20 coins
-
-<br>
-
-<button onclick="buySkin('blue',20)">
+<button id="blueBtn" onclick="buySkin('blue',20)">
 Buy
 </button>
 
@@ -635,17 +610,13 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-🟡 Gold Snake
+<h3>🟡 Gold Snake</h3>
 
-<br>
+<p>🪙 50 coins</p>
 
-🪙 50 coins
-
-<br>
-
-<button onclick="buySkin('gold',50)">
+<button id="goldBtn" onclick="buySkin('gold',50)">
 Buy
 </button>
 
@@ -653,17 +624,13 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-🌈 Rainbow Snake
+<h3>🌈 Rainbow Snake</h3>
 
-<br>
+<p>🪙 100 coins</p>
 
-🪙 100 coins
-
-<br>
-
-<button onclick="buySkin('rainbow',100)">
+<button id="rainbowBtn" onclick="buySkin('rainbow',100)">
 Buy
 </button>
 
@@ -671,17 +638,13 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-🔥 Fire Snake
+<h3>🔥 Fire Snake</h3>
 
-<br>
+<p>🪙 150 coins</p>
 
-🪙 150 coins
-
-<br>
-
-<button onclick="buySkin('fire',150)">
+<button id="fireBtn" onclick="buySkin('fire',150)">
 Buy
 </button>
 
@@ -689,17 +652,13 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-❄️ Ice Snake
+<h3>❄️ Ice Snake</h3>
 
-<br>
+<p>🪙 150 coins</p>
 
-🪙 150 coins
-
-<br>
-
-<button onclick="buySkin('ice',150)">
+<button id="iceBtn" onclick="buySkin('ice',150)">
 Buy
 </button>
 
@@ -707,17 +666,13 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-💜 Galaxy Snake
+<h3>💜 Galaxy Snake</h3>
 
-<br>
+<p>🪙 250 coins</p>
 
-🪙 250 coins
-
-<br>
-
-<button onclick="buySkin('galaxy',250)">
+<button id="galaxyBtn" onclick="buySkin('galaxy',250)">
 Buy
 </button>
 
@@ -725,21 +680,18 @@ Buy
 
 
 
-<div class="shopItem">
+<div class="panel">
 
-⚫ Shadow Snake
+<h3>⚫ Shadow Snake</h3>
 
-<br>
+<p>🪙 300 coins</p>
 
-🪙 300 coins
-
-<br>
-
-<button onclick="buySkin('shadow',300)">
+<button id="shadowBtn" onclick="buySkin('shadow',300)">
 Buy
 </button>
 
 </div>
+
 
 
 <p>
@@ -755,11 +707,14 @@ Current Skin:
 <script>
 
 
-let skin=localStorage.getItem("snakeSkin")||"green";
+let skin=
+localStorage.getItem("snakeSkin")||"green";
 
 
 let ownedSkins=
-JSON.parse(localStorage.getItem("ownedSkins"))
+JSON.parse(
+localStorage.getItem("ownedSkins")
+)
 ||
 ["green"];
 
@@ -791,6 +746,7 @@ coins-=cost;
 ownedSkins.push(type);
 
 
+
 localStorage.setItem(
 "snakeCoins",
 coins
@@ -803,13 +759,16 @@ JSON.stringify(ownedSkins)
 );
 
 
+
 equipSkin(type);
+
 
 
 document.getElementById("coins").innerHTML=coins;
 
 
 }
+
 
 }
 
@@ -830,13 +789,76 @@ skin
 );
 
 
+
 document.getElementById("skin").innerHTML=skin;
 
 
-}
+updateShopButtons();
+
 
 }
 
+
+}
+
+
+
+function updateShopButtons(){
+
+
+let skins=[
+
+"blue",
+"gold",
+"rainbow",
+"fire",
+"ice",
+"galaxy",
+"shadow"
+
+];
+
+
+
+skins.forEach(function(type){
+
+
+let button=document.getElementById(type+"Btn");
+
+
+if(button){
+
+
+if(skin===type){
+
+button.innerHTML="⭐ Equipped";
+
+}
+
+else if(ownedSkins.includes(type)){
+
+button.innerHTML="✅ Equip";
+
+}
+
+else{
+
+button.innerHTML="🪙 Buy";
+
+}
+
+
+}
+
+
+});
+
+
+}
+
+
+
+updateShopButtons();
 
 
 </script>
@@ -848,7 +870,7 @@ document.getElementById("skin").innerHTML=skin;
 Claim Reward
 </button>
 
-<p id="dailyText"></p>
+<p id="dailyMessage"></p>
 
 </div>
 
@@ -858,11 +880,11 @@ Claim Reward
 
 <h2>🏆 Achievements</h2>
 
-<p>🍎 First Apple: <span id="appleAchievement">❌</span></p>
+<p>🍎 First Apple: <span id="appleAch">❌</span></p>
 
-<p>🐍 Score 20: <span id="scoreAchievement">❌</span></p>
+<p>🐍 Score 20: <span id="scoreAch">❌</span></p>
 
-<p>🪙 100 Coins: <span id="coinAchievement">❌</span></p>
+<p>🪙 100 Coins: <span id="coinAch">❌</span></p>
 
 </div>
 
@@ -872,9 +894,9 @@ Claim Reward
 
 <h2>📊 Stats</h2>
 
-<p>Games Played: <span id="games">0</span></p>
+<p>Games Played: <span id="gamesPlayed">0</span></p>
 
-<p>Apples Collected: <span id="apples">0</span></p>
+<p>Apples Collected: <span id="applesCollected">0</span></p>
 
 </div>
 
@@ -883,18 +905,18 @@ Claim Reward
 <script>
 
 
-let games=
-Number(localStorage.getItem("games"))||0;
+let gamesPlayed=
+Number(localStorage.getItem("gamesPlayed"))||0;
 
 
-let apples=
-Number(localStorage.getItem("apples"))||0;
+let applesCollected=
+Number(localStorage.getItem("applesCollected"))||0;
 
 
 
-document.getElementById("games").innerHTML=games;
+document.getElementById("gamesPlayed").innerHTML=gamesPlayed;
 
-document.getElementById("apples").innerHTML=apples;
+document.getElementById("applesCollected").innerHTML=applesCollected;
 
 
 
@@ -931,8 +953,8 @@ today
 document.getElementById("coins").innerHTML=coins;
 
 
-document.getElementById("dailyText").innerHTML=
-"🎉 You got 25 coins!";
+document.getElementById("dailyMessage").innerHTML=
+"🎉 +25 coins received!";
 
 
 }
@@ -940,18 +962,18 @@ document.getElementById("dailyText").innerHTML=
 else{
 
 
-document.getElementById("dailyText").innerHTML=
-"Come back tomorrow!";
-
-}
+document.getElementById("dailyMessage").innerHTML=
+"⏰ Come back tomorrow!";
 
 
 }
 
 
+}
 
 
-// add stats when game starts
+
+// count games
 
 let oldStart=start;
 
@@ -962,24 +984,23 @@ start=function(){
 oldStart();
 
 
-games++;
+gamesPlayed++;
 
 
 localStorage.setItem(
-"games",
-games
+"gamesPlayed",
+gamesPlayed
 );
 
 
-document.getElementById("games").innerHTML=games;
+document.getElementById("gamesPlayed").innerHTML=gamesPlayed;
 
 
-}
+};
 
 
 
-
-// update apple count
+// achievements update
 
 let oldGame=game;
 
@@ -990,32 +1011,29 @@ game=function(){
 oldGame();
 
 
+
 if(score>0){
 
 
-apples=score;
+applesCollected=score;
 
 
 localStorage.setItem(
-"apples",
-apples
+"applesCollected",
+applesCollected
 );
 
 
-document.getElementById("apples").innerHTML=apples;
+document.getElementById("applesCollected").innerHTML=applesCollected;
 
 
 }
 
 
-// achievements
 
+if(applesCollected>=1){
 
-if(apples>=1){
-
-document.getElementById(
-"appleAchievement"
-).innerHTML="✅";
+document.getElementById("appleAch").innerHTML="✅";
 
 }
 
@@ -1023,9 +1041,7 @@ document.getElementById(
 
 if(score>=20){
 
-document.getElementById(
-"scoreAchievement"
-).innerHTML="✅";
+document.getElementById("scoreAch").innerHTML="✅";
 
 }
 
@@ -1033,12 +1049,9 @@ document.getElementById(
 
 if(coins>=100){
 
-document.getElementById(
-"coinAchievement"
-).innerHTML="✅";
+document.getElementById("coinAch").innerHTML="✅";
 
 }
-
 
 
 };
@@ -1049,7 +1062,7 @@ document.getElementById(
 <script>
 
 
-function getSkinColour(){
+function snakeColour(){
 
 
 if(skin==="blue"){
@@ -1073,6 +1086,7 @@ let colours=[
 "purple"
 ];
 
+
 return colours[
 Math.floor(Date.now()/200)
 %colours.length
@@ -1081,8 +1095,9 @@ Math.floor(Date.now()/200)
 }
 
 
+
 if(skin==="fire"){
-return "orange";
+return "#ff6600";
 }
 
 
@@ -1107,7 +1122,8 @@ return "#00ff00";
 
 
 
-// replace drawing with improved version
+
+// improved snake drawing
 
 draw=function(){
 
@@ -1116,7 +1132,8 @@ ctx.clearRect(0,0,300,300);
 
 
 
-ctx.strokeStyle="rgba(255,255,255,0.15)";
+ctx.strokeStyle=
+"rgba(255,255,255,0.15)";
 
 
 for(let i=0;i<=300;i+=10){
@@ -1129,6 +1146,7 @@ ctx.moveTo(i,0);
 ctx.lineTo(i,300);
 
 ctx.stroke();
+
 
 
 ctx.beginPath();
@@ -1144,7 +1162,7 @@ ctx.stroke();
 
 
 
-ctx.font="18px Arial";
+ctx.font="20px Arial";
 
 
 ctx.fillText(
@@ -1153,19 +1171,21 @@ ctx.fillText(
 
 food.x*size,
 
-food.y*size+15
+food.y*size+16
 
 );
 
 
 
-snake.forEach((part,index)=>{
+
+snake.forEach(function(part){
 
 
-ctx.fillStyle=getSkinColour();
+ctx.fillStyle=snakeColour();
 
 
 ctx.beginPath();
+
 
 ctx.roundRect(
 
@@ -1177,7 +1197,7 @@ size,
 
 size,
 
-3
+4
 
 );
 
@@ -1185,12 +1205,11 @@ size,
 ctx.fill();
 
 
-
 });
 
 
 
-// eyes
+// face
 
 ctx.fillStyle="black";
 
@@ -1206,7 +1225,6 @@ snake[0].y*size+2,
 2
 
 );
-
 
 
 ctx.fillRect(
@@ -1227,56 +1245,110 @@ snake[0].y*size+2,
 
 
 
-// game over animation
 
-document.getElementById("gameOver").style.backdropFilter=
-"blur(3px)";
+// smoother game over
 
+document.getElementById("gameOver").style.transition=
+"0.3s";
 
 
 </script>
 <script>
 
-// make sure saved values display
 
-document.getElementById("coins").innerHTML=coins;
-document.getElementById("high").innerHTML=high;
-document.getElementById("skin").innerHTML=skin;
+// keyboard controls
 
-
-// add a little apple collection animation
-
-let oldRandomFood=randomFood;
-
-randomFood=function(){
-
-return oldRandomFood();
-
-};
+document.addEventListener(
+"keydown",
+function(e){
 
 
-// keyboard controls too
+if(e.key==="ArrowUp"){
 
-document.addEventListener("keydown",function(e){
+move(0,-1);
 
-if(e.key==="ArrowUp") move(0,-1);
+}
 
-if(e.key==="ArrowDown") move(0,1);
 
-if(e.key==="ArrowLeft") move(-1,0);
+if(e.key==="ArrowDown"){
 
-if(e.key==="ArrowRight") move(1,0);
+move(0,1);
+
+}
+
+
+if(e.key==="ArrowLeft"){
+
+move(-1,0);
+
+}
+
+
+if(e.key==="ArrowRight"){
+
+move(1,0);
+
+}
+
 
 });
 
 
-// stop double clicks causing issues
 
-document.addEventListener("dblclick",function(e){
+
+// keep values saved
+
+window.addEventListener(
+"beforeunload",
+function(){
+
+
+localStorage.setItem(
+"snakeHigh",
+high
+);
+
+
+localStorage.setItem(
+"snakeCoins",
+coins
+);
+
+
+localStorage.setItem(
+"snakeSkin",
+skin
+);
+
+
+localStorage.setItem(
+"ownedSkins",
+JSON.stringify(ownedSkins)
+);
+
+
+});
+
+
+
+
+// prevent accidental zooming on buttons
+
+document.addEventListener(
+"touchmove",
+function(e){
+
+if(e.target.tagName==="BUTTON"){
 
 e.preventDefault();
 
-});
+}
+
+},
+{passive:false}
+);
+
+
 
 </script>
 
