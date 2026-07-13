@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>Snake v7 - GameHub</title>
+<title>MiniGameHQ Snake</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,99 +14,63 @@ color:white;
 text-align:center;
 font-family:Arial;
 margin:0;
-padding-top:5px;
+padding-top:10px;
 }
-
 
 h1{
 margin:5px;
 }
 
-
-.gameArea{
-position:relative;
-width:300px;
-margin:auto;
-}
-
-
 canvas{
 background:#3f9b3f;
 border:3px solid white;
 display:block;
+margin:auto;
 }
 
+.gameArea{
+width:300px;
+margin:auto;
+}
 
-#gameOver{
+.info{
+font-size:18px;
+}
 
-display:none;
-position:absolute;
-top:80px;
-left:20px;
-width:260px;
-background:#222;
-padding:15px;
+.controls{
+width:230px;
+margin:15px auto;
+}
+
+.controls button{
+width:65px;
+height:65px;
+font-size:28px;
 border-radius:15px;
-box-sizing:border-box;
-
+border:none;
+margin:5px;
 }
 
+.middle{
+display:flex;
+justify-content:space-between;
+}
 
-button{
-
-font-size:20px;
+.buttons button{
+font-size:18px;
 padding:10px 15px;
 border-radius:12px;
 border:none;
 margin:5px;
-
 }
 
-
-.controls{
-
-width:230px;
-margin:10px auto;
-
-}
-
-
-.middle{
-
-display:flex;
-justify-content:space-between;
-
-}
-
-
-.controls button{
-
-width:65px;
-height:65px;
-font-size:28px;
-
-}
-
-
-.shop{
-
-background:#1d5c1d;
-border:3px solid white;
-border-radius:20px;
-width:280px;
+#gameOver{
+display:none;
+background:#222;
+width:260px;
 margin:15px auto;
-padding:10px;
-
-}
-
-
-.skin{
-
-background:#2e8b2e;
+padding:15px;
 border-radius:15px;
-margin:10px;
-padding:10px;
-
 }
 
 </style>
@@ -117,48 +81,25 @@ padding:10px;
 <body>
 
 
-<h1>🐍 Snake v7</h1>
+<h1>🐍 MiniGameHQ Snake</h1>
 
+
+<div class="info">
 
 <p>Score: <span id="score">0</span></p>
 
-<p>🪙 Coins: <span id="coins">0</span></p>
-
 <p>🏆 High Score: <span id="high">0</span></p>
 
+</div>
 
 
 <div class="gameArea">
 
-
 <canvas id="game" width="300" height="300"></canvas>
 
-
-
-<div id="gameOver">
-
-<h2>💀 Game Over</h2>
-
-<p>Score: <span id="finalScore">0</span></p>
-
-<button onclick="restart()">
-🔄 Play Again
-</button>
-
-<br>
-
-<a href="index.html">
-
-<button>
-🏠 GameHub
-</button>
-
-</a>
-
 </div>
 
 
-</div>
 <div class="controls">
 
 <button onclick="move(0,-1)">⬆️</button>
@@ -176,10 +117,7 @@ padding:10px;
 <button onclick="move(0,1)">⬇️</button>
 
 </div>
-
-
-
-<div>
+<div class="buttons">
 
 <button onclick="pauseGame()">⏸️ Pause</button>
 
@@ -188,70 +126,13 @@ padding:10px;
 </div>
 
 
+<div id="gameOver">
 
-<div class="shop">
+<h2>💀 Game Over</h2>
 
-<h2>🛒 Snake Shop</h2>
+<p>Score: <span id="finalScore">0</span></p>
 
-<p>Buy skins and equip them anytime!</p>
-
-
-<div class="skin">
-<h3>🟢 Classic Green</h3>
-<button onclick="equipSkin('green')">Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>🔵 Ocean Blue</h3>
-<p>🪙 20 coins</p>
-<button onclick="buyOrEquip('blue',20)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>🟡 Gold Snake</h3>
-<p>🪙 50 coins</p>
-<button onclick="buyOrEquip('gold',50)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>🌈 Rainbow Snake</h3>
-<p>🪙 100 coins</p>
-<button onclick="buyOrEquip('rainbow',100)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>🔥 Fire Snake</h3>
-<p>🪙 150 coins</p>
-<button onclick="buyOrEquip('fire',150)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>❄️ Ice Snake</h3>
-<p>🪙 150 coins</p>
-<button onclick="buyOrEquip('ice',150)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>💜 Galaxy Snake</h3>
-<p>🪙 250 coins</p>
-<button onclick="buyOrEquip('galaxy',250)">Buy / Equip</button>
-</div>
-
-
-<div class="skin">
-<h3>⚫ Shadow Snake</h3>
-<p>🪙 300 coins</p>
-<button onclick="buyOrEquip('shadow',300)">Buy / Equip</button>
-</div>
-
-
-<p>Current Skin: <span id="skin">green</span></p>
+<button onclick="restart()">Play Again</button>
 
 </div>
 
@@ -278,9 +159,9 @@ let dx;
 
 let dy;
 
-let score;
+let score=0;
 
-let speed;
+let high=Number(localStorage.getItem("snakeHigh"))||0;
 
 
 let paused=false;
@@ -288,27 +169,40 @@ let paused=false;
 let dead=false;
 
 
-let coins=Number(localStorage.getItem("snakeCoins"))||0;
-
-let high=Number(localStorage.getItem("snakeHigh"))||0;
-
-let skin=localStorage.getItem("snakeSkin")||"green";
-
-
-let ownedSkins=JSON.parse(localStorage.getItem("ownedSkins"))||["green"];
-
-
-
-document.getElementById("coins").innerHTML=coins;
-
 document.getElementById("high").innerHTML=high;
 
-document.getElementById("skin").innerHTML=skin;
+
+
+function playAppleSound(){
+
+let audio=new AudioContext();
+
+let oscillator=audio.createOscillator();
+
+let gain=audio.createGain();
+
+
+oscillator.type="sine";
+
+oscillator.frequency.value=700;
+
+gain.gain.value=0.1;
+
+
+oscillator.connect(gain);
+
+gain.connect(audio.destination);
+
+
+oscillator.start();
+
+oscillator.stop(audio.currentTime+0.1);
+
+}
 
 
 
 function start(){
-
 
 snake=[
 
@@ -328,9 +222,8 @@ dx=1;
 
 dy=0;
 
-score=0;
 
-speed=100;
+score=0;
 
 paused=false;
 
@@ -386,113 +279,10 @@ function restart(){
 start();
 
 }
- function buyOrEquip(type,cost){
-
-if(ownedSkins.includes(type)){
-
-equipSkin(type);
-
-return;
-
-}
-
-
-if(coins>=cost){
-
-coins-=cost;
-
-ownedSkins.push(type);
-
-
-localStorage.setItem("snakeCoins",coins);
-
-localStorage.setItem("ownedSkins",JSON.stringify(ownedSkins));
-
-
-equipSkin(type);
-
-
-document.getElementById("coins").innerHTML=coins;
-
-}
-
-}
-
-
-
-function equipSkin(type){
-
-if(ownedSkins.includes(type)){
-
-skin=type;
-
-localStorage.setItem("snakeSkin",skin);
-
-document.getElementById("skin").innerHTML=skin;
-
-}
-
-}
-
-
-
-function endGame(){
-
-dead=true;
-
-
-if(score>high){
-
-high=score;
-
-localStorage.setItem("snakeHigh",high);
-
-}
-
-
-document.getElementById("high").innerHTML=high;
-
-document.getElementById("finalScore").innerHTML=score;
-
-
-document.getElementById("gameOver").style.display="block";
-
-}
-
-
-
-function snakeColor(){
-
-if(skin==="blue") return "#008cff";
-
-if(skin==="gold") return "#ffd700";
-
-if(skin==="fire") return "orange";
-
-if(skin==="ice") return "#b9f2ff";
-
-if(skin==="galaxy") return "purple";
-
-if(skin==="shadow") return "#111";
-
-
-if(skin==="rainbow"){
-
-let colors=["red","orange","yellow","green","blue","purple"];
-
-return colors[Math.floor(Date.now()/200)%colors.length];
-
-}
-
-
-return "#00ff00";
-
-}
 
 
 
 function draw(){
-
 
 ctx.clearRect(0,0,300,300);
 
@@ -525,21 +315,30 @@ ctx.stroke();
 
 ctx.font="14px Arial";
 
-ctx.fillText("🍎",food.x*size,food.y*size+10);
+ctx.fillText(
+"🍎",
+food.x*size,
+food.y*size+10
+);
 
 
 
-snake.forEach((part,index)=>{
+snake.forEach((part)=>{
 
 
-ctx.fillStyle=snakeColor();
+ctx.fillStyle="#00ff00";
 
 
 ctx.fillRect(
+
 part.x*size,
+
 part.y*size,
+
 size,
+
 size
+
 );
 
 
@@ -567,10 +366,7 @@ snake[0].y*size+2,
 
 
 }
-
-
-
-function game(){
+ function game(){
 
 
 if(paused || dead){
@@ -591,10 +387,15 @@ y:snake[0].y+dy
 
 
 if(
+
 head.x<0 ||
+
 head.x>=tiles ||
+
 head.y<0 ||
+
 head.y>=tiles ||
+
 snake.some(p=>p.x===head.x && p.y===head.y)
 
 ){
@@ -611,20 +412,22 @@ snake.unshift(head);
 
 
 
-if(head.x===food.x && head.y===food.y){
+if(
+
+head.x===food.x &&
+
+head.y===food.y
+
+){
+
+
+playAppleSound();
 
 
 score++;
 
-coins++;
-
-
-localStorage.setItem("snakeCoins",coins);
-
 
 document.getElementById("score").innerHTML=score;
-
-document.getElementById("coins").innerHTML=coins;
 
 
 food=randomFood();
@@ -646,11 +449,38 @@ draw();
 
 
 
+function endGame(){
+
+
+dead=true;
+
+
+if(score>high){
+
+high=score;
+
+localStorage.setItem("snakeHigh",high);
+
+}
+
+
+document.getElementById("high").innerHTML=high;
+
+document.getElementById("finalScore").innerHTML=score;
+
+
+document.getElementById("gameOver").style.display="block";
+
+
+}
+
+
+
 function loop(){
 
 game();
 
-setTimeout(loop,speed);
+setTimeout(loop,100);
 
 }
 
@@ -665,6 +495,7 @@ loop();
 
 </script>
 
+
 </body>
 
-</html>   
+</html>
