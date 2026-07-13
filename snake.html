@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>MiniGameHQ Snake v2</title>
+<title>MiniGameHQ Snake v3</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -23,9 +23,33 @@ margin:5px;
 }
 
 
-.info{
+button{
+
 font-size:18px;
+padding:10px 15px;
+border:none;
+border-radius:12px;
+margin:5px;
+cursor:pointer;
+
 }
+
+
+.difficulty button{
+
+background:#2e8b57;
+color:white;
+
+}
+
+
+
+.info{
+
+font-size:18px;
+
+}
+
 
 
 .gameArea{
@@ -37,12 +61,12 @@ margin:auto;
 }
 
 
+
 canvas{
 
 background:#3f9b3f;
 border:3px solid white;
 border-radius:15px;
-display:block;
 
 }
 
@@ -67,9 +91,10 @@ padding:20px;
 
 border-radius:20px;
 
-z-index:5;
+z-index:10;
 
 }
+
 
 
 #gameOver h2{
@@ -79,14 +104,11 @@ font-size:30px;
 }
 
 
+
 #gameOver button{
 
 background:#22c55e;
 color:white;
-font-size:20px;
-border:none;
-padding:12px 20px;
-border-radius:15px;
 
 }
 
@@ -106,9 +128,6 @@ margin:15px auto;
 width:65px;
 height:65px;
 font-size:28px;
-border:none;
-border-radius:15px;
-margin:5px;
 
 }
 
@@ -123,18 +142,6 @@ justify-content:space-between;
 
 
 
-.mainButtons button{
-
-font-size:18px;
-padding:10px 15px;
-border-radius:12px;
-border:none;
-margin:5px;
-
-}
-
-
-
 .panel{
 
 background:#1d5c1d;
@@ -143,6 +150,7 @@ border-radius:20px;
 width:280px;
 margin:15px auto;
 padding:10px;
+box-sizing:border-box;
 
 }
 
@@ -158,6 +166,34 @@ padding:10px;
 <h1>🐍 MiniGameHQ Snake</h1>
 
 
+
+<div class="difficulty">
+
+<h3>Choose Difficulty</h3>
+
+<button onclick="setDifficulty('easy')">
+🟢 Easy
+</button>
+
+<button onclick="setDifficulty('medium')">
+🟡 Medium
+</button>
+
+<button onclick="setDifficulty('hard')">
+🔴 Hard
+</button>
+
+
+<p>
+Difficulty:
+<span id="difficulty">Medium</span>
+</p>
+
+</div>
+
+
+
+
 <div class="info">
 
 <p>🏆 High Score: <span id="high">0</span></p>
@@ -170,6 +206,8 @@ padding:10px;
 
 
 
+
+
 <div class="gameArea">
 
 
@@ -179,11 +217,22 @@ padding:10px;
 
 <div id="gameOver">
 
+
 <h2>💀 Game Over</h2>
 
-<p>Score: <span id="finalScore">0</span></p>
 
-<p>High Score: <span id="finalHigh">0</span></p>
+<p>
+Score:
+<span id="finalScore">0</span>
+</p>
+
+
+<p>
+High Score:
+<span id="finalHigh">0</span>
+</p>
+
+
 
 <button onclick="restart()">
 🔄 Play Again
@@ -193,40 +242,58 @@ padding:10px;
 </div>
 
 
+
 </div>
+
+
 
 
 
 <div class="controls">
 
 
-<button onclick="move(0,-1)">⬆️</button>
+<button onclick="move(0,-1)">
+⬆️
+</button>
+
 
 
 <div class="middle">
 
-
-<button onclick="move(-1,0)">⬅️</button>
-
-
-<button onclick="move(1,0)">➡️</button>
+<button onclick="move(-1,0)">
+⬅️
+</button>
 
 
-</div>
-
-
-<button onclick="move(0,1)">⬇️</button>
+<button onclick="move(1,0)">
+➡️
+</button>
 
 
 </div>
 
 
 
-<div class="mainButtons">
+<button onclick="move(0,1)">
+⬇️
+</button>
 
-<button onclick="pauseGame()">⏸️ Pause</button>
 
-<button onclick="restart()">🔄 Restart</button>
+</div>
+
+
+
+<div>
+
+<button onclick="pauseGame()">
+⏸️ Pause
+</button>
+
+
+<button onclick="restart()">
+🔄 Restart
+</button>
+
 
 </div>
 <script>
@@ -242,22 +309,71 @@ const tiles=30;
 let snake=[];
 let food={};
 
+
 let dx=1;
 let dy=0;
 
+
 let score=0;
 
-let high=Number(localStorage.getItem("snakeHigh"))||0;
+let high=
+Number(localStorage.getItem("snakeHigh"))||0;
 
-let coins=Number(localStorage.getItem("snakeCoins"))||0;
+
+let coins=
+Number(localStorage.getItem("snakeCoins"))||0;
+
+
+
+let speed=100;
 
 
 let paused=false;
 let dead=false;
 
 
+let difficulty="medium";
+
+
+
 document.getElementById("high").innerHTML=high;
 document.getElementById("coins").innerHTML=coins;
+
+
+
+function setDifficulty(level){
+
+
+difficulty=level;
+
+
+document.getElementById("difficulty").innerHTML=
+level.charAt(0).toUpperCase()+level.slice(1);
+
+
+
+if(level==="easy"){
+
+speed=140;
+
+}
+
+
+if(level==="medium"){
+
+speed=100;
+
+}
+
+
+if(level==="hard"){
+
+speed=60;
+
+}
+
+
+}
 
 
 
@@ -285,6 +401,7 @@ dy=0;
 score=0;
 
 paused=false;
+
 dead=false;
 
 
@@ -301,9 +418,9 @@ function randomFood(){
 
 return{
 
-x:Math.floor(Math.random()*tiles),
+x:Math.floor(Math.random()*(tiles-1)),
 
-y:Math.floor(Math.random()*tiles)
+y:Math.floor(Math.random()*(tiles-1))
 
 };
 
@@ -313,12 +430,15 @@ y:Math.floor(Math.random()*tiles)
 
 function move(x,y){
 
+
 if(!dead && (x!==-dx || y!==-dy)){
 
 dx=x;
+
 dy=y;
 
 }
+
 
 }
 
@@ -340,6 +460,39 @@ start();
 
 
 
+function appleSound(){
+
+
+let audio=new AudioContext();
+
+
+let beep=audio.createOscillator();
+
+let volume=audio.createGain();
+
+
+beep.frequency.value=700;
+
+volume.gain.value=0.08;
+
+
+beep.connect(volume);
+
+volume.connect(audio.destination);
+
+
+beep.start();
+
+beep.stop(
+audio.currentTime+0.1
+);
+
+
+}
+
+
+
+
 function draw(){
 
 
@@ -347,10 +500,13 @@ ctx.clearRect(0,0,300,300);
 
 
 
-ctx.strokeStyle="rgba(255,255,255,0.15)";
+ctx.strokeStyle=
+"rgba(255,255,255,0.15)";
+
 
 
 for(let i=0;i<=300;i+=10){
+
 
 ctx.beginPath();
 
@@ -361,6 +517,7 @@ ctx.lineTo(i,300);
 ctx.stroke();
 
 
+
 ctx.beginPath();
 
 ctx.moveTo(0,i);
@@ -369,21 +526,23 @@ ctx.lineTo(300,i);
 
 ctx.stroke();
 
+
 }
 
 
 
-ctx.font="18px Arial";
+ctx.font="20px Arial";
+
 
 ctx.fillText(
 "🍎",
 food.x*size,
-food.y*size+15
+food.y*size+16
 );
 
 
 
-snake.forEach((part)=>{
+snake.forEach(function(part){
 
 
 ctx.fillStyle="#00ff00";
@@ -393,11 +552,17 @@ ctx.beginPath();
 
 
 ctx.roundRect(
+
 part.x*size,
+
 part.y*size,
+
 size,
+
 size,
-3
+
+4
+
 );
 
 
@@ -408,7 +573,8 @@ ctx.fill();
 
 
 
-// snake eyes
+
+// face
 
 ctx.fillStyle="black";
 
@@ -429,7 +595,9 @@ snake[0].y*size+2,
 );
 
 
+
 }
+
 
 
 
@@ -465,7 +633,8 @@ head.y<0 ||
 head.y>=tiles ||
 
 snake.some(
-p=>p.x===head.x && p.y===head.y
+p=>p.x===head.x &&
+p.y===head.y
 )
 
 ){
@@ -483,9 +652,16 @@ snake.unshift(head);
 
 
 if(
-head.x===food.x &&
-head.y===food.y
+
+head.x>=food.x &&
+head.x<=food.x+1 &&
+head.y>=food.y &&
+head.y<=food.y+1
+
 ){
+
+
+appleSound();
 
 
 score++;
@@ -518,6 +694,7 @@ snake.pop();
 }
 
 
+
 draw();
 
 
@@ -529,6 +706,7 @@ function endGame(){
 
 
 dead=true;
+
 
 
 if(score>high){
@@ -545,6 +723,7 @@ high
 }
 
 
+
 document.getElementById("high").innerHTML=high;
 
 document.getElementById("finalScore").innerHTML=score;
@@ -559,13 +738,15 @@ document.getElementById("gameOver").style.display="block";
 
 
 
+
 function loop(){
 
 game();
 
-setTimeout(loop,100);
+setTimeout(loop,speed);
 
 }
+
 
 
 
@@ -581,7 +762,7 @@ loop();
 
 <h2>🛒 Snake Shop</h2>
 
-<p>Choose your snake skin</p>
+<p>Choose your skin</p>
 
 
 <div class="panel">
@@ -693,7 +874,6 @@ Buy
 </div>
 
 
-
 <p>
 Current Skin:
 <span id="skin">green</span>
@@ -724,10 +904,13 @@ document.getElementById("skin").innerHTML=skin;
 
 
 
+
 function buySkin(type,cost){
 
 
+
 if(ownedSkins.includes(type)){
+
 
 equipSkin(type);
 
@@ -770,6 +953,7 @@ document.getElementById("coins").innerHTML=coins;
 }
 
 
+
 }
 
 
@@ -803,6 +987,8 @@ updateShopButtons();
 
 
 
+
+
 function updateShopButtons(){
 
 
@@ -823,7 +1009,9 @@ let skins=[
 skins.forEach(function(type){
 
 
-let button=document.getElementById(type+"Btn");
+let button=
+document.getElementById(type+"Btn");
+
 
 
 if(button){
@@ -848,10 +1036,13 @@ button.innerHTML="🪙 Buy";
 }
 
 
+
 }
 
 
+
 });
+
 
 
 }
@@ -867,7 +1058,7 @@ updateShopButtons();
 <h2>🎁 Daily Reward</h2>
 
 <button onclick="claimDaily()">
-Claim Reward
+Claim 25 Coins
 </button>
 
 <p id="dailyMessage"></p>
@@ -878,13 +1069,27 @@ Claim Reward
 
 <div class="panel">
 
+<h2>🎯 Missions</h2>
+
+<p>🍎 Collect 10 apples: <span id="missionApple">0/10</span></p>
+
+<p>🏆 Reach score 25: <span id="missionScore">0/25</span></p>
+
+<p>🎮 Play 5 games: <span id="missionGames">0/5</span></p>
+
+</div>
+
+
+
+<div class="panel">
+
 <h2>🏆 Achievements</h2>
 
-<p>🍎 First Apple: <span id="appleAch">❌</span></p>
+<p>🍎 First Apple: <span id="achApple">❌</span></p>
 
-<p>🐍 Score 20: <span id="scoreAch">❌</span></p>
+<p>🐍 Score 50: <span id="achScore">❌</span></p>
 
-<p>🪙 100 Coins: <span id="coinAch">❌</span></p>
+<p>💰 250 Coins: <span id="achCoins">❌</span></p>
 
 </div>
 
@@ -894,9 +1099,11 @@ Claim Reward
 
 <h2>📊 Stats</h2>
 
-<p>Games Played: <span id="gamesPlayed">0</span></p>
+<p>Games Played: <span id="games">0</span></p>
 
-<p>Apples Collected: <span id="applesCollected">0</span></p>
+<p>Apples Collected: <span id="apples">0</span></p>
+
+<p>Best Score: <span id="best">0</span></p>
 
 </div>
 
@@ -914,20 +1121,30 @@ Number(localStorage.getItem("applesCollected"))||0;
 
 
 
-document.getElementById("gamesPlayed").innerHTML=gamesPlayed;
+let bestScore=
+Number(localStorage.getItem("bestScore"))||0;
 
-document.getElementById("applesCollected").innerHTML=applesCollected;
+
+
+document.getElementById("games").innerHTML=gamesPlayed;
+
+document.getElementById("apples").innerHTML=applesCollected;
+
+document.getElementById("best").innerHTML=bestScore;
+
 
 
 
 function claimDaily(){
 
 
-let today=new Date().toDateString();
+let today=
+new Date().toDateString();
+
 
 
 let last=
-localStorage.getItem("dailyReward");
+localStorage.getItem("daily");
 
 
 
@@ -943,8 +1160,9 @@ coins
 );
 
 
+
 localStorage.setItem(
-"dailyReward",
+"daily",
 today
 );
 
@@ -953,8 +1171,9 @@ today
 document.getElementById("coins").innerHTML=coins;
 
 
+
 document.getElementById("dailyMessage").innerHTML=
-"🎉 +25 coins received!";
+"🎉 Reward claimed!";
 
 
 }
@@ -963,17 +1182,17 @@ else{
 
 
 document.getElementById("dailyMessage").innerHTML=
-"⏰ Come back tomorrow!";
+"⏰ Already claimed today!";
 
 
 }
 
 
+
 }
 
 
 
-// count games
 
 let oldStart=start;
 
@@ -993,14 +1212,16 @@ gamesPlayed
 );
 
 
-document.getElementById("gamesPlayed").innerHTML=gamesPlayed;
+
+document.getElementById("games").innerHTML=
+gamesPlayed;
 
 
 };
 
 
 
-// achievements update
+
 
 let oldGame=game;
 
@@ -1012,7 +1233,28 @@ oldGame();
 
 
 
-if(score>0){
+if(score>bestScore){
+
+
+bestScore=score;
+
+
+localStorage.setItem(
+"bestScore",
+bestScore
+);
+
+
+
+document.getElementById("best").innerHTML=
+bestScore;
+
+
+}
+
+
+
+if(score>applesCollected){
 
 
 applesCollected=score;
@@ -1024,38 +1266,256 @@ applesCollected
 );
 
 
-document.getElementById("applesCollected").innerHTML=applesCollected;
+document.getElementById("apples").innerHTML=
+applesCollected;
 
 
 }
+
+
+
+updateProgress();
+
+
+
+};
+
+
+
+
+
+function updateProgress(){
+
+
+document.getElementById("missionApple").innerHTML=
+Math.min(applesCollected,10)+"/10";
+
+
+document.getElementById("missionScore").innerHTML=
+Math.min(bestScore,25)+"/25";
+
+
+document.getElementById("missionGames").innerHTML=
+Math.min(gamesPlayed,5)+"/5";
 
 
 
 if(applesCollected>=1){
 
-document.getElementById("appleAch").innerHTML="✅";
+document.getElementById("achApple").innerHTML="✅";
 
 }
 
 
 
-if(score>=20){
+if(bestScore>=50){
 
-document.getElementById("scoreAch").innerHTML="✅";
+document.getElementById("achScore").innerHTML="✅";
+
+}
+
+
+
+if(coins>=250){
+
+document.getElementById("achCoins").innerHTML="✅";
 
 }
 
 
 
-if(coins>=100){
+}
 
-document.getElementById("coinAch").innerHTML="✅";
+
+
+updateProgress();
+
+
+</script>
+<div class="panel">
+
+<h2>🌟 MiniGameHQ Profile</h2>
+
+<p>
+Level:
+<span id="level">1</span>
+</p>
+
+<p>
+XP:
+<span id="xp">0</span>
+/
+<span id="xpNeeded">100</span>
+</p>
+
+
+<div style="
+background:#222;
+border-radius:15px;
+height:20px;
+overflow:hidden;
+">
+
+
+<div id="xpBar" style="
+background:#22c55e;
+height:100%;
+width:0%;
+">
+</div>
+
+
+</div>
+
+
+<p id="levelMessage"></p>
+
+</div>
+
+
+
+<script>
+
+
+let playerXP=
+Number(localStorage.getItem("playerXP"))||0;
+
+
+let playerLevel=
+Number(localStorage.getItem("playerLevel"))||1;
+
+
+
+function xpNeeded(){
+
+
+return playerLevel*100;
+
 
 }
+
+
+
+function updateProfile(){
+
+
+document.getElementById("level").innerHTML=
+playerLevel;
+
+
+document.getElementById("xp").innerHTML=
+playerXP;
+
+
+document.getElementById("xpNeeded").innerHTML=
+xpNeeded();
+
+
+
+let percent=
+(playerXP/xpNeeded())*100;
+
+
+
+document.getElementById("xpBar").style.width=
+Math.min(percent,100)+"%";
+
+
+
+}
+
+
+
+function addXP(amount){
+
+
+playerXP+=amount;
+
+
+
+while(playerXP>=xpNeeded()){
+
+
+playerXP-=xpNeeded();
+
+
+playerLevel++;
+
+
+
+coins+=25;
+
+
+localStorage.setItem(
+"snakeCoins",
+coins
+);
+
+
+
+document.getElementById("levelMessage").innerHTML=
+"🎉 Level Up! +25 Coins";
+
+
+}
+
+
+
+localStorage.setItem(
+"playerXP",
+playerXP
+);
+
+
+
+localStorage.setItem(
+"playerLevel",
+playerLevel
+);
+
+
+
+updateProfile();
+
+
+
+}
+
+
+
+
+// give XP when collecting apples
+
+let oldGameXP=game;
+
+
+game=function(){
+
+
+let oldScore=score;
+
+
+oldGameXP();
+
+
+
+if(score>oldScore){
+
+
+addXP(10);
+
+
+}
+
 
 
 };
 
+
+
+
+
+updateProfile();
 
 
 </script>
@@ -1065,25 +1525,32 @@ document.getElementById("coinAch").innerHTML="✅";
 function snakeColour(){
 
 
-if(skin==="blue"){
-return "#008cff";
-}
+if(skin==="blue") return "#008cff";
 
+if(skin==="gold") return "#ffd700";
 
-if(skin==="gold"){
-return "#ffd700";
-}
+if(skin==="fire") return "#ff6600";
+
+if(skin==="ice") return "#b9f2ff";
+
+if(skin==="galaxy") return "#8a2be2";
+
+if(skin==="shadow") return "#111111";
+
 
 
 if(skin==="rainbow"){
 
+
 let colours=[
+
 "red",
 "orange",
 "yellow",
 "green",
 "blue",
 "purple"
+
 ];
 
 
@@ -1092,48 +1559,35 @@ Math.floor(Date.now()/200)
 %colours.length
 ];
 
-}
 
-
-
-if(skin==="fire"){
-return "#ff6600";
-}
-
-
-if(skin==="ice"){
-return "#b9f2ff";
-}
-
-
-if(skin==="galaxy"){
-return "#8a2be2";
-}
-
-
-if(skin==="shadow"){
-return "#111111";
 }
 
 
 return "#00ff00";
 
+
 }
 
 
 
 
-// improved snake drawing
+// smoother drawing
 
 draw=function(){
 
 
-ctx.clearRect(0,0,300,300);
+ctx.clearRect(
+0,
+0,
+300,
+300
+);
 
 
 
 ctx.strokeStyle=
 "rgba(255,255,255,0.15)";
+
 
 
 for(let i=0;i<=300;i+=10){
@@ -1162,7 +1616,9 @@ ctx.stroke();
 
 
 
-ctx.font="20px Arial";
+// apple glow
+
+ctx.font="22px Arial";
 
 
 ctx.fillText(
@@ -1171,20 +1627,25 @@ ctx.fillText(
 
 food.x*size,
 
-food.y*size+16
+food.y*size+17
 
 );
 
 
 
 
-snake.forEach(function(part){
+// snake
+
+snake.forEach(function(part,index){
 
 
-ctx.fillStyle=snakeColour();
+ctx.fillStyle=
+snakeColour();
+
 
 
 ctx.beginPath();
+
 
 
 ctx.roundRect(
@@ -1197,19 +1658,22 @@ size,
 
 size,
 
-4
+5
 
 );
 
 
+
 ctx.fill();
+
 
 
 });
 
 
 
-// face
+// eyes
+
 
 ctx.fillStyle="black";
 
@@ -1246,17 +1710,30 @@ snake[0].y*size+2,
 
 
 
-// smoother game over
 
-document.getElementById("gameOver").style.transition=
-"0.3s";
+// mobile improvements
+
+document.addEventListener(
+"touchstart",
+function(e){
+
+if(e.target.tagName==="BUTTON"){
+
+return;
+
+}
+
+},
+{passive:true}
+);
+
 
 
 </script>
 <script>
 
 
-// keyboard controls
+// Keyboard controls
 
 document.addEventListener(
 "keydown",
@@ -1296,7 +1773,7 @@ move(1,0);
 
 
 
-// keep values saved
+// Save everything when leaving
 
 window.addEventListener(
 "beforeunload",
@@ -1327,25 +1804,51 @@ JSON.stringify(ownedSkins)
 );
 
 
+localStorage.setItem(
+"playerXP",
+playerXP
+);
+
+
+localStorage.setItem(
+"playerLevel",
+playerLevel
+);
+
+
+localStorage.setItem(
+"gamesPlayed",
+gamesPlayed
+);
+
+
+localStorage.setItem(
+"applesCollected",
+applesCollected
+);
+
+
+localStorage.setItem(
+"bestScore",
+bestScore
+);
+
+
 });
 
 
 
 
-// prevent accidental zooming on buttons
+// Stop accidental page zoom on buttons
 
 document.addEventListener(
-"touchmove",
+"gesturestart",
 function(e){
-
-if(e.target.tagName==="BUTTON"){
 
 e.preventDefault();
 
 }
 
-},
-{passive:false}
 );
 
 
