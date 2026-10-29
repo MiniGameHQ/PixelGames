@@ -1,399 +1,1392 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>MiniGameHQ Snake</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <style>
-:root{--bg:#0c1019;--panel:#171e2c;--panel2:#202a3b;--border:#344158;--green:#46f58b;--text:#f5f7fb;--muted:#a4afc2}
-*{box-sizing:border-box}
-body{margin:0;padding:16px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-button,input,select{font:inherit}
-button{border:0;border-radius:9px;padding:11px 14px;background:var(--green);color:#08130c;font-weight:bold;cursor:pointer;transition:filter .15s,transform .15s}
-button:hover{filter:brightness(1.12)}button:active{transform:scale(.97)}button:disabled{opacity:.45;cursor:not-allowed}
-button.secondary{background:#344158;color:white}button.danger{background:#ef5363;color:white}
-input,select{padding:10px;border-radius:8px;border:1px solid var(--border);background:#101725;color:white;max-width:100%}
-h1,h2,h3,p{margin-top:0}h1{color:var(--green);margin-bottom:6px}h2{font-size:19px;color:var(--green)}small,.muted{color:var(--muted)}
-.app{max-width:1050px;margin:auto}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.brand{font-size:26px;font-weight:900}.brand span{color:var(--green)}.header-right{display:flex;gap:8px;flex-wrap:wrap}
-.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}.tabs button{white-space:nowrap}.tabs button.active{outline:2px solid white}
-.page{display:none}.page.active{display:block}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:14px}
-.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;min-width:0}
-.stat label{color:var(--muted);font-size:12px}.stat strong{display:block;font-size:22px;margin-top:6px;overflow-wrap:anywhere}
-.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:14px;align-items:start}
-.game-panel{text-align:center}
-canvas{display:block;width:100%;max-width:500px;height:auto;aspect-ratio:1;margin:12px auto;background:#080c12;border:2px solid var(--green);border-radius:10px;touch-action:none}
-.game-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:5px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}.setting-row label{color:var(--muted)}
-.dpad{display:grid;grid-template-columns:repeat(3,55px);gap:5px;justify-content:center;margin:15px auto 5px}
-.dpad button{padding:0;height:45px;font-size:19px;touch-action:manipulation}.empty{visibility:hidden}
-.notice{min-height:22px;margin:10px 0 0;color:var(--green);font-size:14px}
-.progress{height:11px;background:#303b50;border-radius:10px;overflow:hidden;margin:9px 0}
-.progress-bar{height:100%;width:0;background:var(--green);transition:width .2s}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.item{background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:12px;min-width:0}
-.item p{margin:7px 0}.item button{width:100%;margin-top:5px}
-.skin-swatch{height:12px;width:100%;border-radius:8px;margin-bottom:10px}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{max-width:100%}
-.quest,.achievement{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;margin:8px 0}
-.quest-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.tag{display:inline-block;border-radius:6px;padding:4px 7px;background:#303b50;font-size:12px}.tag.done{background:#174b32;color:#8dffba}
-.hidden{display:none!important}footer{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 6px}
-@media(max-width:720px){.game-layout{grid-template-columns:1fr}.side-panel{display:grid;grid-template-columns:1fr}}
-@media(max-width:450px){body{padding:9px}.brand{font-size:22px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.panel{padding:12px}.setting-row{align-items:flex-start}}
+
+body{
+margin:0;
+padding:10px;
+background:#0b3d0b;
+color:white;
+font-family:Arial;
+text-align:center;
+touch-action:manipulation;
+}
+
+h1{
+margin:5px;
+}
+
+.gameArea{
+position:relative;
+width:300px;
+margin:auto;
+}
+
+canvas{
+background:#3f9b3f;
+border:3px solid white;
+}
+
+#play{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:black;
+color:white;
+font-size:30px;
+font-weight:bold;
+padding:20px 50px;
+border-radius:15px;
+}
+
+button{
+font-size:20px;
+padding:12px;
+margin:5px;
+border-radius:12px;
+border:none;
+}
+
+.controls{
+width:230px;
+margin:auto;
+}
+
+.controls button{
+width:65px;
+height:65px;
+}
+
+.middle{
+display:flex;
+justify-content:space-between;
+}
+
 </style>
+
 </head>
+
 <body>
-<div class="app">
-<header>
-  <div><div class="brand">MiniGame<span>HQ</span></div><div class="muted">Snake Arcade</div></div>
-  <div class="header-right"><button class="secondary" id="soundBtn">🔊 Sound On</button><button class="secondary" id="menuBtn">⌂ Menu</button></div>
-</header>
-<nav class="tabs">
-  <button class="active" data-page="gamePage">🎮 Play</button><button data-page="shopPage">🛍️ Shop</button><button data-page="progressPage">🏆 Progress</button><button data-page="questsPage">🎯 Quests</button><button data-page="settingsPage">⚙️ Settings</button>
-</nav>
-<div class="stats">
-  <div class="stat"><label>BEST SCORE</label><strong id="best">0</strong></div><div class="stat"><label>COINS</label><strong id="coins">0</strong></div><div class="stat"><label>LEVEL</label><strong id="level">1</strong></div><div class="stat"><label>APPLES EATEN</label><strong id="totalApples">0</strong></div>
+
+<h1>🐍 MiniGameHQ Snake</h1>
+
+<div>
+🪙 Coins: <span id="coins">0</span>
 </div>
-<section id="gamePage" class="page active">
-<div class="game-layout">
-<div class="panel game-panel">
-  <div class="row" style="justify-content:space-between"><strong>🐍 Snake</strong><span class="tag" id="statusTag">READY</span></div>
-  <canvas id="gameCanvas" width="400" height="400" aria-label="Snake game board"></canvas>
-  <div class="stats">
-    <div class="stat"><label>SCORE</label><strong id="score">0</strong></div><div class="stat"><label>XP</label><strong id="xp">0</strong></div><div class="stat"><label>GAMES</label><strong id="games">0</strong></div><div class="stat"><label>SKIN</label><strong id="skinName" style="font-size:15px">Green</strong></div>
-  </div>
-  <div class="game-actions"><button id="playBtn">▶ Play</button><button id="pauseBtn" class="secondary">Ⅱ Pause</button><button id="restartBtn" class="secondary">↻ Restart</button></div>
-  <div class="dpad"><span class="empty"></span><button data-dir="up" aria-label="Move up">▲</button><span class="empty"></span><button data-dir="left" aria-label="Move left">◀</button><button data-dir="down" aria-label="Move down">▼</button><button data-dir="right" aria-label="Move right">▶</button></div>
-  <p class="muted">Use arrow keys or WASD. Space pauses the game.</p><p id="notice" class="notice" aria-live="polite">Press Play to begin!</p>
+
+<div class="gameArea">
+
+<canvas id="game" width="300" height="300"></canvas>
+
+<div id="play" onclick="startGame()">
+PLAY
 </div>
-<aside class="side-panel">
-  <div class="panel"><h2>⚙️ Game Settings</h2>
-    <div class="setting-row"><label for="difficulty">Difficulty</label><select id="difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></div>
-    <div class="setting-row"><label for="walls">Wall mode</label><select id="walls"><option value="solid">Solid walls</option><option value="wrap">Wrap around</option></select></div>
-    <button id="quickPlay" style="width:100%">Start Game</button>
-  </div>
-  <div class="panel"><h2>⭐ Level Progress</h2><p>Level <strong id="levelText">1</strong></p><div class="progress"><div id="xpBar" class="progress-bar"></div></div><small><span id="xpText">0</span> / <span id="xpGoal">100</span> XP</small><p class="muted" style="margin-top:12px">Earn XP by eating apples and completing quests.</p></div>
-  <div class="panel"><h2>🎁 Daily Reward</h2><p id="dailyStatus">Your reward is ready!</p><button id="dailyReward" style="width:100%">Claim 25 Coins</button></div>
-</aside>
+
 </div>
-</section>
-<section id="shopPage" class="page"><div class="panel"><h2>🛍️ Snake Skin Shop</h2><p class="muted">Buy skins with coins and equip your favourites.</p><div id="skinShop" class="grid"></div></div></section>
-<section id="progressPage" class="page">
-  <div class="panel"><h2>🏆 Achievements</h2><p class="muted">Complete challenges to unlock achievements.</p><div id="achievements"></div></div>
-  <div class="panel"><h2>📊 Lifetime Statistics</h2><p>Games played: <strong id="statGames">0</strong></p><p>Total apples: <strong id="statApples">0</strong></p><p>Total coins earned: <strong id="statEarned">0</strong></p><p>Highest score: <strong id="statBest">0</strong></p><p>Current level: <strong id="statLevel">1</strong></p></div>
-</section>
-<section id="questsPage" class="page"><div class="panel"><h2>🎯 Daily Quests</h2><p class="muted">Quests refresh each day. Claim rewards when you finish them.</p><p id="questDate"></p><div id="quests"></div></div></section>
-<section id="settingsPage" class="page">
-  <div class="panel"><h2>⚙️ Settings and Save Data</h2><p>Sound effects</p><button id="toggleSound">Sound Effects: On</button>
-  <hr style="border-color:#344158;margin:18px 0"><p>Export your save to keep a backup.</p><div class="row"><button id="exportBtn">Export Save</button><button id="importBtn" class="secondary">Import Save</button><input id="importFile" type="file" accept=".json,application/json" hidden></div>
-  <hr style="border-color:#344158;margin:18px 0"><p>Reset all progress and return to the original skin.</p><button id="resetData" class="danger">Reset All Data</button></div>
-</section>
-<footer>MiniGameHQ Snake • Progress saves in this browser</footer>
+
+<div class="controls">
+
+<button onclick="move(0,-1)">⬆️</button>
+
+<div class="middle">
+<button onclick="move(-1,0)">⬅️</button>
+<button onclick="move(1,0)">➡️</button>
+</div>
+
+<button onclick="move(0,1)">⬇️</button>
+
 </div>
 <script>
-"use strict";
-const $=id=>document.getElementById(id);
-const canvas=$("gameCanvas");
+
+const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
-const SIZE=400,CELL=20,COUNT=SIZE/CELL;
-const SAVE_KEY="minigamehq_snake_full_v1";
-const skins=[
-{name:"Green",price:0,color:"#46f58b"},{name:"Blue",price:50,color:"#38bdf8"},{name:"Gold",price:100,color:"#ffd447"},
-{name:"Rainbow",price:200,color:"rainbow"},{name:"Fire",price:150,color:"#ff6542"},{name:"Ice",price:125,color:"#a5f3fc"},
-{name:"Galaxy",price:250,color:"#bd7bff"},{name:"Shadow",price:175,color:"#a3a3a3"}];
-const achievements=[
-{id:"first",name:"First Apple",desc:"Eat your first apple.",test:d=>d.totalApples>=1,reward:10},
-{id:"ten",name:"Snack Time",desc:"Eat 10 apples in total.",test:d=>d.totalApples>=10,reward:20},
-{id:"fifty",name:"Apple Expert",desc:"Eat 50 apples in total.",test:d=>d.totalApples>=50,reward:50},
-{id:"hundred",name:"Century",desc:"Eat 100 apples in total.",test:d=>d.totalApples>=100,reward:100},
-{id:"score50",name:"Getting Good",desc:"Score 50 points in one game.",test:d=>d.best>=50,reward:20},
-{id:"score200",name:"Snake Pro",desc:"Score 200 points in one game.",test:d=>d.best>=200,reward:60},
-{id:"level5",name:"Rising Star",desc:"Reach level 5.",test:d=>d.level>=5,reward:50},
-{id:"skins",name:"Fashion Snake",desc:"Own 5 different skins.",test:d=>d.owned.length>=5,reward:50},
-{id:"games10",name:"Dedicated",desc:"Play 10 games.",test:d=>d.games>=10,reward:30}];
-function freshData(){return{coins:0,earned:0,best:0,xp:0,level:1,totalApples:0,games:0,owned:["Green"],selected:"Green",lastReward:"",lastQuestDate:"",quests:{},unlocked:[],sound:true};}
-let data=freshData(),snake=[],apple={x:12,y:10},direction={x:1,y:0},nextDirection={x:1,y:0};
-let score=0,running=false,paused=false,over=false,loop=null,gameCounted=false,audioContext=null;
-function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-function notify(message){$("notice").textContent=message;}
-function validNumber(v,min=0,max=Number.MAX_SAFE_INTEGER){return typeof v==="number"&&Number.isFinite(v)&&v>=min&&v<=max;}
-function loadData(){
- try{
-  const raw=localStorage.getItem(SAVE_KEY);
-  if(raw){
-   const saved=JSON.parse(raw);
-   if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
-    const base=freshData();
-    data={...base,...saved};
-    if(!validNumber(data.coins))data.coins=base.coins;
-    if(!validNumber(data.earned))data.earned=base.earned;
-    if(!validNumber(data.best))data.best=base.best;
-    if(!validNumber(data.xp))data.xp=base.xp;
-    if(!validNumber(data.level,1))data.level=base.level;
-    if(!validNumber(data.totalApples))data.totalApples=base.totalApples;
-    if(!validNumber(data.games))data.games=base.games;
-    if(!Array.isArray(data.owned))data.owned=["Green"];
-    data.owned=data.owned.filter(n=>skins.some(s=>s.name===n));
-    if(!data.owned.includes("Green"))data.owned.unshift("Green");
-    if(!data.owned.includes(data.selected))data.selected="Green";
-    if(!Array.isArray(data.unlocked))data.unlocked=[];
-    data.unlocked=data.unlocked.filter(id=>achievements.some(a=>a.id===id));
-    if(typeof data.sound!=="boolean")data.sound=true;
-    if(typeof data.lastReward!=="string")data.lastReward="";
-    if(typeof data.lastQuestDate!=="string")data.lastQuestDate="";
-    if(!data.quests||typeof data.quests!=="object"||Array.isArray(data.quests))data.quests={};
-   }
-  }
- }catch(error){data=freshData();}
-}
-function saveData(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));}catch(error){notify("Unable to save in this browser.");}}
-function beep(frequency=500,duration=.06){
- if(!data.sound)return;
- try{
-  const AudioCtor=window.AudioContext||window.webkitAudioContext;
-  if(!AudioCtor)return;
-  audioContext=audioContext||new AudioCtor();
-  if(audioContext.state==="suspended")audioContext.resume().catch(()=>{});
-  const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();
-  oscillator.frequency.value=frequency;gain.gain.value=.045;
-  oscillator.connect(gain);gain.connect(audioContext.destination);oscillator.start();
-  gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
-  oscillator.stop(audioContext.currentTime+duration);
- }catch(error){}
-}
-function addCoins(amount){data.coins+=amount;data.earned+=amount;}
-function addXP(amount){
- data.xp+=amount;let levelled=false;
- while(data.xp>=data.level*100){data.xp-=data.level*100;data.level++;addCoins(25);levelled=true;}
- if(levelled){notify("Level up! You're now level "+data.level+"!");beep(800,.16);}
-}
-function updateStats(){
- $("score").textContent=score;$("best").textContent=data.best;$("coins").textContent=data.coins;$("level").textContent=data.level;
- $("levelText").textContent=data.level;$("xp").textContent=data.xp;$("xpText").textContent=data.xp;$("xpGoal").textContent=data.level*100;
- $("xpBar").style.width=(data.xp/(data.level*100)*100)+"%";$("totalApples").textContent=data.totalApples;$("games").textContent=data.games;
- $("statGames").textContent=data.games;$("statApples").textContent=data.totalApples;$("statEarned").textContent=data.earned;
- $("statBest").textContent=data.best;$("statLevel").textContent=data.level;$("skinName").textContent=data.selected;
- $("soundBtn").textContent=data.sound?"🔊 Sound On":"🔇 Sound Off";
- $("toggleSound").textContent=data.sound?"Sound Effects: On":"Sound Effects: Off";
-}
-function setStatus(text){$("statusTag").textContent=text;}
-function showPage(pageId){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===pageId));
- document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===pageId));
- if(pageId==="shopPage")renderShop();if(pageId==="progressPage")renderAchievements();if(pageId==="questsPage")renderQuests();
-}
-document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-$("menuBtn").addEventListener("click",()=>showPage("gamePage"));
-function randomApple(){
- const empty=[];
- for(let y=0;y<COUNT;y++)for(let x=0;x<COUNT;x++)if(!snake.some(p=>p.x===x&&p.y===y))empty.push({x,y});
- if(!empty.length){endGame(true);return;}
- apple=empty[Math.floor(Math.random()*empty.length)];
-}
-function resetGame(){
- clearInterval(loop);loop=null;
- snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
- direction={x:1,y:0};nextDirection={x:1,y:0};score=0;running=false;paused=false;over=false;gameCounted=false;
- randomApple();setStatus("READY");updateStats();draw();
-}
-function getSpeed(){const speeds={easy:180,normal:125,hard:85};return Math.max(50,speeds[$("difficulty").value]-Math.floor(score/50)*5);}
+
+const size=10;
+const tiles=30;
+
+
+let snake=[];
+let food={x:10,y:10};
+
+let dx=1;
+let dy=0;
+
+let score=0;
+let coins=Number(localStorage.getItem("coins"))||0;
+
+let playing=false;
+let dead=false;
+
+let speed=120;
+
+
+
+document.getElementById("coins").innerHTML=coins;
+
+
+
 function startGame(){
- if(running&&!paused)return;
- if(running&&paused){paused=false;setStatus("PLAYING");notify("Game resumed.");clearInterval(loop);loop=setInterval(tick,getSpeed());draw();return;}
- if(over)resetGame();
- running=true;paused=false;
- if(!gameCounted){
-  gameCounted=true;data.games++;ensureQuests();
-  data.quests.games.progress=Math.min(data.quests.games.goal,data.quests.games.progress+1);
- }
- saveData();updateStats();renderQuests();setStatus("PLAYING");notify("Good luck!");
- clearInterval(loop);loop=setInterval(tick,getSpeed());draw();
+
+document.getElementById("play").style.display="none";
+
+snake=[
+{x:15,y:15},
+{x:14,y:15},
+{x:13,y:15}
+];
+
+dx=1;
+dy=0;
+
+score=0;
+
+dead=false;
+playing=true;
+
+food=randomFood();
+
+draw();
+
 }
-function pauseGame(){
- if(!running)return;
- paused=!paused;
- if(paused){clearInterval(loop);loop=null;setStatus("PAUSED");notify("Game paused.");}
- else{setStatus("PLAYING");loop=setInterval(tick,getSpeed());notify("Game resumed.");}
- draw();
+
+
+
+function randomFood(){
+
+return{
+x:Math.floor(Math.random()*28),
+y:Math.floor(Math.random()*28)
+};
+
 }
-function setDirection(name){
- const dirs={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
- const chosen=dirs[name];if(!chosen)return;
- if(chosen.x===-nextDirection.x&&chosen.y===-nextDirection.y)return;
- if(!running&&!over){nextDirection=chosen;startGame();return;}
- if(!running||paused||over)return;
- nextDirection=chosen;
+
+
+
+function move(x,y){
+
+if(x!==-dx || y!==-dy){
+
+dx=x;
+dy=y;
+
 }
-function tick(){
- if(!running||paused||over)return;
- direction=nextDirection;
- const head={x:snake[0].x+direction.x,y:snake[0].y+direction.y};
- const wrap=$("walls").value==="wrap";
- if(wrap){head.x=(head.x+COUNT)%COUNT;head.y=(head.y+COUNT)%COUNT;}
- else if(head.x<0||head.x>=COUNT||head.y<0||head.y>=COUNT){endGame();return;}
- const ate=head.x===apple.x&&head.y===apple.y;
- const body=ate?snake:snake.slice(0,-1);
- if(body.some(p=>p.x===head.x&&p.y===head.y)){endGame();return;}
- snake.unshift(head);
- if(ate){
-  score+=10;data.totalApples++;addCoins(5);addXP(10);
-  randomApple();if(over){updateStats();saveData();draw();return;}
-  beep(650,.07);ensureQuests();
-  data.quests.apples.progress=Math.min(data.quests.apples.goal,data.quests.apples.progress+1);
-  data.quests.score.progress=Math.min(data.quests.score.goal,Math.max(data.quests.score.progress,score));
-  renderQuests();checkAchievements();
-  clearInterval(loop);loop=setInterval(tick,getSpeed());
- }else snake.pop();
- updateStats();saveData();draw();
+
 }
-function endGame(won=false){
- clearInterval(loop);loop=null;running=false;paused=false;over=true;
- if(score>data.best)data.best=score;
- ensureQuests();
- data.quests.score.progress=Math.min(data.quests.score.goal,Math.max(data.quests.score.progress,score));
- setStatus(won?"BOARD CLEARED":"GAME OVER");
- notify(won?"Amazing! You filled the board. Score: "+score:"Game over! Score: "+score+". Press Play to try again.");
- checkAchievements();renderQuests();updateStats();saveData();draw();
+
+
+
+function update(){
+
+if(!playing || dead)return;
+
+
+let head={
+x:snake[0].x+dx,
+y:snake[0].y+dy
+};
+
+
+
+if(
+head.x<0 ||
+head.y<0 ||
+head.x>=tiles ||
+head.y>=tiles ||
+snake.some(p=>p.x===head.x&&p.y===head.y)
+){
+
+dead=true;
+playing=false;
+
+document.getElementById("play").innerHTML="PLAY AGAIN";
+document.getElementById("play").style.display="block";
+
+return;
+
 }
-function draw(){
- ctx.fillStyle="#080c12";ctx.fillRect(0,0,SIZE,SIZE);ctx.strokeStyle="#17202d";ctx.lineWidth=.5;
- for(let i=0;i<=COUNT;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,SIZE);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(SIZE,i*CELL);ctx.stroke();}
- ctx.fillStyle="#ff5964";ctx.beginPath();ctx.arc(apple.x*CELL+CELL/2,apple.y*CELL+CELL/2,7,0,Math.PI*2);ctx.fill();
- const skin=skins.find(s=>s.name===data.selected)||skins[0];
- snake.forEach((part,index)=>{
-  if(skin.color==="rainbow")ctx.fillStyle=`hsl(${(index*24+Date.now()/18)%360},90%,60%)`;
-  else if(skin.name==="Galaxy")ctx.fillStyle=index%2?"#7c3aed":"#bd7bff";
-  else if(skin.name==="Fire")ctx.fillStyle=index%2?"#ff6542":"#ffd447";
-  else ctx.fillStyle=skin.color;
-  ctx.fillRect(part.x*CELL+1,part.y*CELL+1,CELL-2,CELL-2);
-  if(index===0){ctx.fillStyle="#08130c";const ex=part.x*CELL,ey=part.y*CELL;
-   if(direction.x!==0){ctx.fillRect(ex+(direction.x>0?13:4),ey+5,3,3);ctx.fillRect(ex+(direction.x>0?13:4),ey+12,3,3);}
-   else{ctx.fillRect(ex+5,ey+(direction.y>0?13:4),3,3);ctx.fillRect(ex+12,ey+(direction.y>0?13:4),3,3);}
-  }
- });
- if(!running&&!over){ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(0,0,SIZE,SIZE);ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="bold 22px Arial";ctx.fillText("MINIGAMEHQ SNAKE",200,185);ctx.font="16px Arial";ctx.fillText("Press Play to start",200,218);}
- if(over){ctx.fillStyle="rgba(0,0,0,.68)";ctx.fillRect(0,0,SIZE,SIZE);ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="bold 30px Arial";ctx.fillText("GAME OVER",200,185);ctx.font="18px Arial";ctx.fillText("Score: "+score,200,220);ctx.font="14px Arial";ctx.fillText("Press Play to try again",200,250);}
- if(paused){ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(0,0,SIZE,SIZE);ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="bold 30px Arial";ctx.fillText("PAUSED",200,205);}
+
+
+
+snake.unshift(head);
+
+
+
+if(head.x===food.x && head.y===food.y){
+
+
+score++;
+
+coins++;
+
+localStorage.setItem("coins",coins);
+
+document.getElementById("coins").innerHTML=coins;
+
+
+food=randomFood();
+
+
+}else{
+
+snake.pop();
+
 }
-function defaultQuests(){return{apples:{progress:0,goal:5,reward:20,claimed:false},score:{progress:0,goal:50,reward:30,claimed:false},games:{progress:0,goal:3,reward:25,claimed:false}};}
-function ensureQuests(){
- const date=today();
- if(data.lastQuestDate!==date){data.lastQuestDate=date;data.quests=defaultQuests();saveData();}
- if(!data.quests||!data.quests.apples||!data.quests.score||!data.quests.games)data.quests=defaultQuests();
- for(const [key,q] of Object.entries(data.quests)){
-  const def=defaultQuests()[key];
-  if(!def||!q||typeof q!=="object"){delete data.quests[key];continue;}
-  q.goal=def.goal;q.reward=def.reward;
-  if(!validNumber(q.progress))q.progress=0;
-  q.progress=Math.min(q.goal,q.progress);
-  if(typeof q.claimed!=="boolean")q.claimed=false;
- }
- for(const [key,q] of Object.entries(defaultQuests()))if(!data.quests[key])data.quests[key]=q;
+
+
+draw();
+
 }
-function renderQuests(){
- ensureQuests();$("questDate").textContent="Today's quests: "+today();
- const names={apples:"Eat 5 apples",score:"Score 50 points in one game",games:"Play 3 games"};
- const container=$("quests");container.innerHTML="";
- Object.entries(data.quests).forEach(([key,q])=>{
-  const complete=q.progress>=q.goal,item=document.createElement("div");item.className="quest";
-  const title=document.createElement("div");title.className="quest-title";
-  const label=document.createElement("strong");label.textContent=names[key];
-  const tag=document.createElement("span");tag.className="tag"+(q.claimed?" done":"");tag.textContent=q.claimed?"Claimed":complete?"Reward ready":"In progress";
-  title.append(label,tag);item.appendChild(title);
-  const detail=document.createElement("p");
-  detail.textContent=Math.min(q.progress,q.goal)+"/"+q.goal+" • Reward: "+q.reward+" coins";item.appendChild(detail);
-  if(complete&&!q.claimed){const button=document.createElement("button");button.textContent="Claim reward";button.onclick=()=>{
-   if(q.claimed)return;q.claimed=true;addCoins(q.reward);addXP(15);saveData();renderQuests();updateStats();checkAchievements();notify("Quest complete! Coins and XP earned.");
-  };item.appendChild(button);}
-  container.appendChild(item);
- });
+  function draw(){
+
+ctx.clearRect(0,0,300,300);
+
+
+// grid lines
+
+ctx.strokeStyle="rgba(255,255,255,0.15)";
+
+for(let i=0;i<=300;i+=10){
+
+ctx.beginPath();
+ctx.moveTo(i,0);
+ctx.lineTo(i,300);
+ctx.stroke();
+
+
+ctx.beginPath();
+ctx.moveTo(0,i);
+ctx.lineTo(300,i);
+ctx.stroke();
+
 }
-function checkAchievements(){
- achievements.forEach(a=>{if(a.test(data)&&!data.unlocked.includes(a.id)){data.unlocked.push(a.id);addCoins(a.reward);notify("Achievement unlocked: "+a.name+"! +"+a.reward+" coins");beep(900,.12);}});
- saveData();renderAchievements();
-}
-function renderAchievements(){
- const container=$("achievements");container.innerHTML="";
- achievements.forEach(a=>{
-  const unlocked=data.unlocked.includes(a.id),item=document.createElement("div");item.className="achievement";
-  const title=document.createElement("strong");title.textContent=(unlocked?"🏆 ":"🔒 ")+a.name;
-  const status=document.createElement("span");status.className="tag"+(unlocked?" done":"");status.textContent=unlocked?"Unlocked":"+"+a.reward+" coins";
-  const description=document.createElement("p");description.className="muted";description.textContent=a.desc;
-  item.append(title,document.createTextNode(" "),status,description);container.appendChild(item);
- });
-}
-function renderShop(){
- const shop=$("skinShop");shop.innerHTML="";
- skins.forEach(skin=>{
-  const owned=data.owned.includes(skin.name),selected=data.selected===skin.name,item=document.createElement("div");item.className="item";
-  const swatch=document.createElement("div");swatch.className="skin-swatch";swatch.style.background=skin.color==="rainbow"?"linear-gradient(90deg,red,orange,yellow,green,blue,purple)":skin.color;
-  const title=document.createElement("strong");title.textContent=skin.name;
-  const price=document.createElement("p");price.textContent=owned?(selected?"Currently equipped":"Owned"):skin.price+" coins";
-  const button=document.createElement("button");button.textContent=selected?"Equipped":owned?"Equip":"Buy";button.disabled=selected;
-  button.onclick=()=>{
-   if(!owned){if(data.coins<skin.price){notify("You need more coins!");return;}data.coins-=skin.price;data.owned.push(skin.name);}
-   data.selected=skin.name;saveData();renderShop();updateStats();draw();checkAchievements();notify(skin.name+" skin equipped!");
-  };
-  item.append(swatch,title,price,button);shop.appendChild(item);
- });
-}
-$("playBtn").onclick=startGame;
-$("quickPlay").onclick=()=>{showPage("gamePage");startGame();};
-$("pauseBtn").onclick=pauseGame;
-$("restartBtn").onclick=()=>{resetGame();startGame();};
-document.querySelectorAll("[data-dir]").forEach(b=>b.addEventListener("click",()=>setDirection(b.dataset.dir)));
-document.addEventListener("keydown",event=>{
- const target=event.target;
- if(target instanceof HTMLInputElement||target instanceof HTMLSelectElement||target instanceof HTMLTextAreaElement)return;
- if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(event.key))event.preventDefault();
- const key=event.key.toLowerCase(),keys={arrowup:"up",w:"up",arrowdown:"down",s:"down",arrowleft:"left",a:"left",arrowright:"right",d:"right"};
- if(keys[key])setDirection(keys[key]);
- if(event.code==="Space"){if(running)pauseGame();else startGame();}
+
+
+// apple
+
+ctx.font="20px Arial";
+
+ctx.fillText(
+"🍎",
+food.x*size,
+food.y*size+18
+);
+
+
+
+// snake
+
+snake.forEach(function(part,index){
+
+
+ctx.fillStyle="#00ff00";
+
+
+ctx.beginPath();
+
+ctx.roundRect(
+part.x*size,
+part.y*size,
+size,
+size,
+4
+);
+
+ctx.fill();
+
+
+
 });
-$("difficulty").addEventListener("change",()=>{if(running&&!paused){clearInterval(loop);loop=setInterval(tick,getSpeed());}});
-$("dailyReward").onclick=()=>{
- if(data.lastReward===today()){notify("You've already claimed today's reward!");updateDailyReward();return;}
- data.lastReward=today();addCoins(25);addXP(10);updateDailyReward();saveData();updateStats();checkAchievements();beep(700,.1);notify("You received 25 coins and 10 XP!");
-};
-function updateDailyReward(){const claimed=data.lastReward===today();$("dailyStatus").textContent=claimed?"Today's reward has been claimed.":"Claim your free 25 coins today!";$("dailyReward").disabled=claimed;$("dailyReward").textContent=claimed?"Claimed":"Claim 25 Coins";}
-$("soundBtn").onclick=toggleSound;$("toggleSound").onclick=toggleSound;
-function toggleSound(){data.sound=!data.sound;saveData();updateStats();}
-$("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");
- link.href=url;link.download="minigamehq-snake-save.json";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-};
-$("importBtn").onclick=()=>$("importFile").click();
-$("importFile").onchange=event=>{
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=()=>{
-  try{
-   const imported=JSON.parse(reader.result);
-   if(!imported||typeof imported!=="object"||Array.isArray(imported))throw new Error("Invalid save");
-   const candidate={...freshData(),...imported};
-   if(!validNumber(candidate.coins)||!validNumber(candidate.earned)||!validNumber(candidate.best)||!validNumber(candidate.xp)||!validNumber(candidate.level,1)||!validNumber(candidate.totalApples)||!validNumber(candidate.games))throw new Error("Invalid save values");
-   if(!Array.isArray(candidate.owned)||!candidate.owned.every(n=>skins.some(s=>s.name===n))||!Array.isArray(candidate.unlocked)||!candidate.unlocked.every(id=>achievements.some(a=>a.id===id)))throw new Error("Invalid collections");
-   if(!skins.some(s=>s.name===candidate.selected)||!candidate.owned.includes(candidate.selected))throw new Error("Invalid selected skin");
-   if(typeof candidate.sound!=="boolean"||typeof candidate.lastReward!=="string"||typeof candidate.lastQuestDate!=="string")throw new Error("Invalid settings");
-   if(candidate.xp>=candidate.level*100)throw new Error("Invalid XP");
-   data=candidate;ensureQuests();saveData();updateStats();updateDailyReward();renderShop();renderQuests();renderAchievements();resetGame();notify("Save imported successfully!");
-  }catch(error){notify("That save file is invalid. Your current save was kept.");}
-  event.target.value="";
- };
- reader.onerror=()=>{notify("Could not read that save file.");event.target.value="";};
- reader.readAsText(file);
-};
-$("resetData").onclick=()=>{
- if(!confirm("Reset all MiniGameHQ Snake progress? This cannot be undone."))return;
- clearInterval(loop);data=freshData();saveData();ensureQuests();updateStats();updateDailyReward();renderShop();renderQuests();renderAchievements();resetGame();notify("All progress has been reset.");
-};
-function initialise(){loadData();ensureQuests();updateStats();updateDailyReward();renderShop();renderQuests();renderAchievements();resetGame();}
-initialise();
+
+
+
+// eyes
+
+ctx.fillStyle="black";
+
+
+ctx.fillRect(
+snake[0].x*size+2,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+ctx.fillRect(
+snake[0].x*size+6,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+}
+
+
+
+
+function loop(){
+
+update();
+
+setTimeout(loop,speed);
+
+}
+
+
+loop();
+
+
+
+// keyboard controls
+
+document.addEventListener("keydown",function(e){
+
+
+if(e.key==="ArrowUp") move(0,-1);
+
+if(e.key==="ArrowDown") move(0,1);
+
+if(e.key==="ArrowLeft") move(-1,0);
+
+if(e.key==="ArrowRight") move(1,0);
+
+
+});
+
+
+
 </script>
+<!-- MINI GAME HQ SHOP -->
+
+<div class="shopBox">
+
+<h2>🛒 Snake Shop</h2>
+
+<div class="skinCard">
+
+<h3>🟢 Classic Green</h3>
+
+<button onclick="equipSkin('green')">
+Equip
+</button>
+
+</div>
+
+
+<div class="skinCard">
+
+<h3>🔵 Ocean Blue</h3>
+
+<p>🪙 20 coins</p>
+
+<button id="blueBtn" onclick="buySkin('blue',20)">
+Buy
+</button>
+
+</div>
+
+
+<div class="skinCard">
+
+<h3>🟡 Gold Snake</h3>
+
+<p>🪙 50 coins</p>
+
+<button id="goldBtn" onclick="buySkin('gold',50)">
+Buy
+</button>
+
+</div>
+
+
+<p>
+Current Skin:
+<span id="skinName">green</span>
+</p>
+
+
+</div>
+
+
+<script>
+
+let currentSkin=
+localStorage.getItem("skin")||"green";
+
+
+let ownedSkins=
+JSON.parse(localStorage.getItem("ownedSkins"))
+||
+["green"];
+
+
+
+function buySkin(type,cost){
+
+
+if(ownedSkins.includes(type)){
+
+equipSkin(type);
+
+return;
+
+}
+
+
+if(coins>=cost){
+
+coins-=cost;
+
+ownedSkins.push(type);
+
+
+localStorage.setItem(
+"coins",
+coins
+);
+
+
+localStorage.setItem(
+"ownedSkins",
+JSON.stringify(ownedSkins)
+);
+
+
+equipSkin(type);
+
+
+}
+
+
+}
+
+
+
+function equipSkin(type){
+
+
+currentSkin=type;
+
+
+localStorage.setItem(
+"skin",
+currentSkin
+);
+
+
+document.getElementById("skinName").innerHTML=
+currentSkin;
+
+
+updateShop();
+
+
+}
+
+
+
+function updateShop(){
+
+
+let buttons=[
+"blue",
+"gold"
+];
+
+
+buttons.forEach(function(type){
+
+
+let btn=document.getElementById(type+"Btn");
+
+
+if(currentSkin===type){
+
+btn.innerHTML="⭐ Equipped";
+
+}
+
+else if(ownedSkins.includes(type)){
+
+btn.innerHTML="✅ Equip";
+
+}
+
+
+});
+
+
+}
+
+
+
+updateShop();
+
+
+</script>
+<style>
+
+.shopBox{
+
+background:#1d5c1d;
+border:3px solid white;
+border-radius:20px;
+width:300px;
+margin:15px auto;
+padding:10px;
+
+}
+
+.skinCard{
+
+background:#2e8b57;
+border-radius:15px;
+padding:10px;
+margin:10px;
+
+}
+
+
+#play{
+
+cursor:pointer;
+
+}
+
+
+</style>
+
+
+<script>
+
+
+// Change snake colour based on equipped skin
+
+function getSnakeColour(){
+
+
+if(currentSkin==="blue"){
+
+return "#008cff";
+
+}
+
+
+if(currentSkin==="gold"){
+
+return "#ffd700";
+
+}
+
+
+return "#00ff00";
+
+
+}
+
+
+
+
+
+// Apple sound effect
+
+function appleSound(){
+
+
+let audio=new AudioContext();
+
+let beep=audio.createOscillator();
+
+let volume=audio.createGain();
+
+
+
+beep.frequency.value=700;
+
+volume.gain.value=0.1;
+
+
+
+beep.connect(volume);
+
+volume.connect(audio.destination);
+
+
+
+beep.start();
+
+beep.stop(
+audio.currentTime+0.12
+);
+
+
+}
+
+
+
+
+
+// replace eating reward
+
+let oldUpdate=update;
+
+
+update=function(){
+
+
+if(!playing || dead)return;
+
+
+let oldFoodX=food.x;
+let oldFoodY=food.y;
+
+
+oldUpdate();
+
+
+
+if(
+food.x!==oldFoodX ||
+food.y!==oldFoodY
+){
+
+
+appleSound();
+
+
+}
+
+
+
+};
+
+
+
+</script>
+<!-- GAME HUB BUTTON -->
+
+<div>
+
+<button onclick="backToHub()">
+🏠 Back to Game Hub
+</button>
+
+</div>
+
+
+<script>
+
+
+function backToHub(){
+
+window.location.href="index.html";
+
+}
+
+
+
+
+// stop double tap zoom on mobile
+
+document.addEventListener(
+"touchend",
+function(e){
+
+let now=Date.now();
+
+if(window.lastTouch &&
+now-window.lastTouch<300){
+
+e.preventDefault();
+
+}
+
+window.lastTouch=now;
+
+},
+{passive:false}
+
+);
+
+
+
+
+
+// update snake drawing with skins
+
+let oldDraw=draw;
+
+
+draw=function(){
+
+
+ctx.clearRect(0,0,300,300);
+
+
+// grid
+
+ctx.strokeStyle="rgba(255,255,255,0.15)";
+
+
+for(let i=0;i<=300;i+=10){
+
+
+ctx.beginPath();
+
+ctx.moveTo(i,0);
+
+ctx.lineTo(i,300);
+
+ctx.stroke();
+
+
+
+ctx.beginPath();
+
+ctx.moveTo(0,i);
+
+ctx.lineTo(300,i);
+
+ctx.stroke();
+
+
+}
+
+
+
+
+// apple
+
+ctx.font="20px Arial";
+
+ctx.fillText(
+"🍎",
+food.x*size,
+food.y*size+18
+);
+
+
+
+
+
+// snake
+
+snake.forEach(function(part,index){
+
+
+ctx.fillStyle=getSnakeColour();
+
+
+ctx.beginPath();
+
+
+ctx.roundRect(
+
+part.x*size,
+
+part.y*size,
+
+size,
+
+size,
+
+4
+
+);
+
+
+ctx.fill();
+
+
+});
+
+
+
+
+// eyes
+
+ctx.fillStyle="black";
+
+
+ctx.fillRect(
+snake[0].x*size+2,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+ctx.fillRect(
+snake[0].x*size+6,
+snake[0].y*size+2,
+2,
+2
+);
+
+
+};
+
+
+
+</script>
+  <!-- DAILY REWARDS + STATS -->
+
+<div class="menu">
+
+<h2>🎁 Rewards & Stats</h2>
+
+
+<button onclick="claimDaily()">
+🎁 Claim Daily Reward
+</button>
+
+
+<p id="dailyMessage"></p>
+
+
+<h3>📊 Stats</h3>
+
+
+<p>
+Games Played:
+<span id="games">0</span>
+</p>
+
+
+<p>
+Apples Collected:
+<span id="apples">0</span>
+</p>
+
+
+<p>
+Best Score:
+<span id="best">0</span>
+</p>
+
+
+</div>
+
+
+
+<script>
+
+
+let gamesPlayed=
+Number(localStorage.getItem("games"))||0;
+
+
+let applesCollected=
+Number(localStorage.getItem("apples"))||0;
+
+
+let bestScore=
+Number(localStorage.getItem("best"))||0;
+
+
+
+
+function updateStats(){
+
+
+document.getElementById("games").innerHTML=
+gamesPlayed;
+
+
+document.getElementById("apples").innerHTML=
+applesCollected;
+
+
+document.getElementById("best").innerHTML=
+bestScore;
+
+
+}
+
+
+
+function claimDaily(){
+
+
+let today=
+new Date().toDateString();
+
+
+let last=
+localStorage.getItem("daily");
+
+
+if(last!==today){
+
+
+coins+=25;
+
+
+localStorage.setItem(
+"coins",
+coins
+);
+
+
+document.getElementById("coins").innerHTML=
+coins;
+
+
+localStorage.setItem(
+"daily",
+today
+);
+
+
+document.getElementById("dailyMessage").innerHTML=
+"🎉 +25 coins!";
+
+
+}
+
+else{
+
+
+document.getElementById("dailyMessage").innerHTML=
+"⏰ Already claimed";
+
+
+}
+
+
+}
+
+
+
+
+
+let oldStart=startGame;
+
+
+startGame=function(){
+
+
+oldStart();
+
+
+gamesPlayed++;
+
+
+localStorage.setItem(
+"games",
+gamesPlayed
+);
+
+
+updateStats();
+
+
+}
+
+
+
+
+
+let oldEnd=window.endGame;
+
+
+endGame=function(){
+
+
+if(score>bestScore){
+
+
+bestScore=score;
+
+
+localStorage.setItem(
+"best",
+bestScore
+);
+
+
+}
+
+
+oldEnd();
+
+
+}
+
+
+
+
+
+updateStats();
+
+
+
+</script>
+  <!-- CHALLENGES -->
+
+
+<div class="menu">
+
+<h2>🔥 Challenges</h2>
+
+
+<p>
+🎯 Challenge:
+Collect 5 apples
+</p>
+
+
+<p>
+Progress:
+<span id="challenge">
+0/5
+</span>
+</p>
+
+
+<p>
+🔥 Streak:
+<span id="streak">
+0
+</span>
+</p>
+
+
+</div>
+
+
+
+<script>
+
+
+let challengeProgress=
+Number(localStorage.getItem("challengeProgress"))||0;
+
+
+let streak=
+Number(localStorage.getItem("streak"))||0;
+
+
+
+
+function updateChallenge(){
+
+
+document.getElementById("challenge").innerHTML=
+Math.min(challengeProgress,5)+"/5";
+
+
+document.getElementById("streak").innerHTML=
+streak;
+
+
+}
+
+
+
+
+let oldCoins=coins;
+
+
+
+function checkChallenge(){
+
+
+if(coins>oldCoins){
+
+
+challengeProgress++;
+
+streak++;
+
+
+if(challengeProgress>=5){
+
+
+coins+=50;
+
+
+challengeProgress=0;
+
+
+}
+
+
+
+localStorage.setItem(
+"challengeProgress",
+challengeProgress
+);
+
+
+localStorage.setItem(
+"streak",
+streak
+);
+
+
+updateChallenge();
+
+
+}
+
+
+oldCoins=coins;
+
+
+}
+
+
+
+setInterval(checkChallenge,500);
+
+
+
+updateChallenge();
+
+
+</script>
+  <!-- PROFILE + XP SYSTEM -->
+
+
+<div class="menu">
+
+<h2>🌟 Profile</h2>
+
+
+<p>
+Level:
+<span id="level">1</span>
+</p>
+
+
+<p>
+XP:
+<span id="xp">0</span>
+</p>
+
+
+<div style="
+background:#222;
+height:20px;
+border-radius:15px;
+overflow:hidden;
+">
+
+<div id="xpBar" style="
+height:100%;
+width:0%;
+background:#22c55e;
+">
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+<script>
+
+
+let playerLevel=
+Number(localStorage.getItem("level"))||1;
+
+
+let playerXP=
+Number(localStorage.getItem("xp"))||0;
+
+
+
+function updateXP(){
+
+
+document.getElementById("level").innerHTML=
+playerLevel;
+
+
+document.getElementById("xp").innerHTML=
+playerXP;
+
+
+
+document.getElementById("xpBar").style.width=
+Math.min(playerXP,100)+"%";
+
+
+}
+
+
+
+
+function addXP(amount){
+
+
+playerXP+=amount;
+
+
+
+if(playerXP>=100){
+
+
+playerXP=0;
+
+playerLevel++;
+
+
+coins+=25;
+
+
+localStorage.setItem(
+"coins",
+coins
+);
+
+
+document.getElementById("coins").innerHTML=
+coins;
+
+
+}
+
+
+
+localStorage.setItem(
+"level",
+playerLevel
+);
+
+
+localStorage.setItem(
+"xp",
+playerXP
+);
+
+
+updateXP();
+
+
+}
+
+
+
+
+updateXP();
+
+
+
+</script>
+  <script>
+
+
+// FINAL SAVE SYSTEM
+
+
+window.addEventListener(
+"beforeunload",
+function(){
+
+
+localStorage.setItem(
+"coins",
+coins
+);
+
+
+localStorage.setItem(
+"skin",
+currentSkin
+);
+
+
+localStorage.setItem(
+"ownedSkins",
+JSON.stringify(ownedSkins)
+);
+
+
+localStorage.setItem(
+"level",
+playerLevel
+);
+
+
+localStorage.setItem(
+"xp",
+playerXP
+);
+
+
+localStorage.setItem(
+"games",
+gamesPlayed
+);
+
+
+localStorage.setItem(
+"apples",
+applesCollected
+);
+
+
+localStorage.setItem(
+"best",
+bestScore
+);
+
+
+localStorage.setItem(
+"streak",
+streak
+);
+
+
+localStorage.setItem(
+"challengeProgress",
+challengeProgress
+);
+
+
+});
+
+
+
+
+// Load saved skin text
+
+document.getElementById("skinName").innerHTML=
+currentSkin;
+
+
+
+// Make play button work after game over
+
+function showPlay(){
+
+document.getElementById("play").style.display="block";
+
+}
+
+
+
+// final mobile protection
+
+document.body.style.touchAction="manipulation";
+
+
+
+</script>
+
+
 </body>
 </html>
