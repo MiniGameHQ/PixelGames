@@ -16,21 +16,18 @@
   --green:#65e6a0;
   --blue:#65b9ff;
 }
-
-html, body {
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+html,body {
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
-
 * {
   box-sizing:border-box;
   -webkit-user-select:none;
   user-select:none;
   -webkit-tap-highlight-color:transparent;
 }
-
 body {
   margin:0;
   min-height:100vh;
@@ -39,7 +36,6 @@ body {
   font-family:Arial,sans-serif;
   overflow-x:hidden;
 }
-
 button {
   border:1px solid var(--line);
   border-radius:12px;
@@ -52,7 +48,6 @@ button {
   transition:.15s;
   touch-action:manipulation;
 }
-
 button:hover{filter:brightness(1.2);transform:translateY(-1px)}
 button:active{transform:scale(.97)}
 button:disabled{opacity:.4;cursor:not-allowed}
@@ -60,7 +55,6 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .blue{background:#225d91;border-color:#438acb}
 .gold{background:#8c651d;border-color:#dba941}
 .danger{background:#782d3a;border-color:#b84c60}
-
 header {
   max-width:1100px;
   margin:auto;
@@ -70,22 +64,11 @@ header {
   align-items:center;
   gap:12px;
 }
-
-.headerLeft{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.menuBtn{
-  padding:10px 13px;
-  white-space:nowrap;
-}
-
+.headerLeft{display:flex;align-items:center;gap:12px}
+.menuBtn{padding:10px 13px;white-space:nowrap}
 .logo{font-size:22px;font-weight:900;letter-spacing:-1px}
 .logo span{color:var(--green)}
 .stats{display:flex;gap:9px;flex-wrap:wrap}
-
 .stat {
   background:var(--panel);
   border:1px solid var(--line);
@@ -93,12 +76,10 @@ header {
   border-radius:12px;
   font-size:13px;
 }
-
 .stat b{color:var(--green)}
 main{max-width:1000px;margin:auto;padding:5px 16px 50px}
 h1{font-size:34px;margin:15px 0 7px}
 .subtitle{color:var(--muted);margin:0 0 22px}
-
 .panel {
   background:linear-gradient(145deg,#131e30,#0e1725);
   border:1px solid var(--line);
@@ -107,13 +88,11 @@ h1{font-size:34px;margin:15px 0 7px}
   margin-bottom:17px;
   box-shadow:0 15px 40px #0003;
 }
-
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .tab.active{background:#245e46;border-color:#56bd87}
 .page{display:none}
 .page.active{display:block}
-
-.gameWrap{
+.gameWrap {
   position:relative;
   max-width:650px;
   margin:auto;
@@ -121,7 +100,6 @@ h1{font-size:34px;margin:15px 0 7px}
   user-select:none;
   touch-action:manipulation;
 }
-
 canvas {
   width:100%;
   display:block;
@@ -135,7 +113,6 @@ canvas {
   -webkit-tap-highlight-color:transparent;
   outline:none;
 }
-
 .overlay {
   position:absolute;
   inset:0;
@@ -151,12 +128,10 @@ canvas {
   -webkit-user-select:none;
   user-select:none;
 }
-
 .overlay.hidden{display:none}
 .overlay h2{font-size:34px;margin:0 0 8px}
 .overlay p{color:#e2eafa;line-height:1.5}
 .overlay button{margin-top:10px;min-width:150px}
-
 .hud {
   display:flex;
   justify-content:space-between;
@@ -165,17 +140,14 @@ canvas {
   flex-wrap:wrap;
   font-weight:bold;
 }
-
 .hud span{color:var(--green)}
 .gameButtons{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .tapHint{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
-
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
   gap:12px;
 }
-
 .item {
   border:1px solid var(--line);
   background:var(--panel);
@@ -183,12 +155,10 @@ canvas {
   padding:13px;
   text-align:center;
 }
-
 .item .preview{font-size:45px;margin:8px}
 .item h3{margin:5px 0;font-size:16px}
 .item p{color:var(--muted);font-size:12px;min-height:29px}
 .item button{width:100%;margin-top:5px}
-
 .mapPreview {
   height:85px;
   border-radius:10px;
@@ -198,7 +168,6 @@ canvas {
   justify-content:center;
   font-size:35px;
 }
-
 .progress {
   height:9px;
   background:#26354b;
@@ -206,9 +175,7 @@ canvas {
   overflow:hidden;
   margin:10px 0;
 }
-
 .progress div{height:100%;background:linear-gradient(90deg,#45c58b,#a2efb9)}
-
 .quest {
   display:flex;
   justify-content:space-between;
@@ -217,11 +184,9 @@ canvas {
   padding:12px;
   border-bottom:1px solid var(--line);
 }
-
 .quest:last-child{border:0}
 .quest small{color:var(--muted)}
 .sectionTitle{margin:0 0 14px}
-
 .settingRow {
   display:flex;
   justify-content:space-between;
@@ -230,9 +195,7 @@ canvas {
   padding:13px 0;
   border-bottom:1px solid var(--line);
 }
-
 .settingRow:last-child{border:0}
-
 select {
   background:#1b2940;
   color:white;
@@ -240,9 +203,7 @@ select {
   border-radius:9px;
   padding:9px;
 }
-
 footer{text-align:center;color:#728198;font-size:12px;padding:20px}
-
 @media(max-width:500px){
  header{align-items:flex-start;flex-direction:column}
  h1{font-size:28px}
@@ -285,7 +246,6 @@ footer{text-align:center;color:#728198;font-size:12px;padding:20px}
     <div>Best: <span id="gameBest">0</span></div>
     <div>Map: <span id="currentMap">Classic</span></div>
   </div>
-
   <div class="gameWrap">
     <canvas id="game" width="600" height="650"></canvas>
     <div class="overlay" id="overlay">
@@ -294,7 +254,6 @@ footer{text-align:center;color:#728198;font-size:12px;padding:20px}
       <button class="primary" id="startBtn">START GAME</button>
     </div>
   </div>
-
   <div class="gameButtons">
     <button class="blue" id="pauseBtn">⏸ Pause</button>
     <button id="restartBtn">↻ Restart</button>
@@ -368,60 +327,36 @@ footer{text-align:center;color:#728198;font-size:12px;padding:20px}
 <script>
 "use strict";
 
-// ---------------- SAVE DATA ----------------
-
 const SAVE_KEY = "minigamehq_flappy_v1";
 
 const defaultData = {
-  coins:0,
-  xp:0,
-  best:0,
-  totalGames:0,
-  totalCoins:0,
-  totalPipes:0,
-  totalFlaps:0,
-  selectedMap:"classic",
-  selectedBird:"yellow",
-  unlockedMaps:["classic"],
-  unlockedBirds:["yellow"],
-  achievements:[],
-  quests:{},
-  questDate:"",
-  difficulty:"normal",
-  sound:true,
-  showFPS:false
+  coins:0,xp:0,best:0,totalGames:0,totalCoins:0,
+  totalPipes:0,totalFlaps:0,selectedMap:"classic",
+  selectedBird:"yellow",unlockedMaps:["classic"],
+  unlockedBirds:["yellow"],achievements:[],quests:{},
+  questDate:"",difficulty:"normal",sound:true,showFPS:false
 };
 
 let data;
-
 try {
-  data = {...defaultData,...JSON.parse(localStorage.getItem(SAVE_KEY) || "{}")};
+  data={...defaultData,...JSON.parse(localStorage.getItem(SAVE_KEY)||"{}")};
 } catch {
-  data = {...defaultData};
+  data={...defaultData};
 }
 
 function save(){
   localStorage.setItem(SAVE_KEY,JSON.stringify(data));
 }
-
 function addCoins(amount){
-  data.coins += amount;
-  data.totalCoins += amount;
-  save();
-  updateStats();
-  renderShop();
+  data.coins+=amount;
+  data.totalCoins+=amount;
+  save();updateStats();renderShop();
 }
-
 function addXP(amount){
-  data.xp += amount;
-  save();
-  updateStats();
+  data.xp+=amount;
+  save();updateStats();
 }
-
-function getLevel(){
-  return Math.floor(data.xp/100)+1;
-}
-
+function getLevel(){return Math.floor(data.xp/100)+1}
 function updateStats(){
   document.getElementById("coins").textContent=data.coins;
   document.getElementById("level").textContent=getLevel();
@@ -429,28 +364,26 @@ function updateStats(){
   document.getElementById("gameBest").textContent=data.best;
 }
 
-// ---------------- MAPS ----------------
-
-const maps = [
-  {id:"classic",name:"Classic",icon:"☀️",cost:0,sky:"#7ed0ff",ground:"#65ad4d",pipe:"#42b64b",pipeDark:"#26863b",accent:"#d6ff89",description:"The original Flappy experience."},
-  {id:"sunset",name:"Sunset",icon:"🌇",cost:150,sky:"#ff9878",ground:"#754a69",pipe:"#bd5b57",pipeDark:"#873e53",accent:"#ffe3a1",description:"Fly into a beautiful sunset."},
-  {id:"snow",name:"Snow",icon:"❄️",cost:250,sky:"#b9e7f6",ground:"#e9f6ff",pipe:"#67b5cc",pipeDark:"#347c9b",accent:"#ffffff",description:"A chilly winter adventure."},
-  {id:"space",name:"Space",icon:"🚀",cost:400,sky:"#15173e",ground:"#252454",pipe:"#a66bff",pipeDark:"#6941bb",accent:"#e5bdff",description:"Fly between the stars."},
-  {id:"jungle",name:"Jungle",icon:"🌴",cost:550,sky:"#397f65",ground:"#244d37",pipe:"#8bc34a",pipeDark:"#527d27",accent:"#c9f18d",description:"An adventure in the jungle."},
-  {id:"underwater",name:"Underwater",icon:"🌊",cost:700,sky:"#087d9e",ground:"#07546e",pipe:"#37c5c8",pipeDark:"#14818c",accent:"#a8ffff",description:"Explore the underwater world."}
+// MAPS
+const maps=[
+{id:"classic",name:"Classic",icon:"☀️",cost:0,sky:"#7ed0ff",ground:"#65ad4d",pipe:"#42b64b",pipeDark:"#26863b",accent:"#d6ff89",description:"The original Flappy experience."},
+{id:"sunset",name:"Sunset",icon:"🌇",cost:150,sky:"#ff9878",ground:"#754a69",pipe:"#bd5b57",pipeDark:"#873e53",accent:"#ffe3a1",description:"Fly into a beautiful sunset."},
+{id:"snow",name:"Snow",icon:"❄️",cost:250,sky:"#b9e7f6",ground:"#e9f6ff",pipe:"#67b5cc",pipeDark:"#347c9b",accent:"#ffffff",description:"A chilly winter adventure."},
+{id:"space",name:"Space",icon:"🚀",cost:400,sky:"#15173e",ground:"#252454",pipe:"#a66bff",pipeDark:"#6941bb",accent:"#e5bdff",description:"Fly between the stars."},
+{id:"jungle",name:"Jungle",icon:"🌴",cost:550,sky:"#397f65",ground:"#244d37",pipe:"#8bc34a",pipeDark:"#527d27",accent:"#c9f18d",description:"An adventure in the jungle."},
+{id:"underwater",name:"Underwater",icon:"🌊",cost:700,sky:"#087d9e",ground:"#07546e",pipe:"#37c5c8",pipeDark:"#14818c",accent:"#a8ffff",description:"Explore the underwater world."}
 ];
 
-// ---------------- BIRDS ----------------
-
-const birds = [
-  {id:"yellow",name:"Classic",icon:"🐤",cost:0,description:"The original bird."},
-  {id:"blue",name:"Bluebird",icon:"🐦",cost:100,description:"A bright blue bird."},
-  {id:"red",name:"Redbird",icon:"🐦",cost:150,description:"A fiery red bird."},
-  {id:"owl",name:"Owl",icon:"🦉",cost:250,description:"A wise little flyer."},
-  {id:"chick",name:"Chick",icon:"🐥",cost:350,description:"Small but speedy."},
-  {id:"parrot",name:"Parrot",icon:"🦜",cost:450,description:"A colourful companion."},
-  {id:"ghost",name:"Ghost",icon:"👻",cost:650,description:"A mysterious flyer."},
-  {id:"dragon",name:"Dragon",icon:"🐉",cost:900,description:"A legendary bird."}
+// BIRDS
+const birds=[
+{id:"yellow",name:"Classic",icon:"🐤",cost:0,description:"The original bird."},
+{id:"blue",name:"Bluebird",icon:"🐦",cost:100,description:"A bright blue bird."},
+{id:"red",name:"Redbird",icon:"🐦",cost:150,description:"A fiery red bird."},
+{id:"owl",name:"Owl",icon:"🦉",cost:250,description:"A wise little flyer."},
+{id:"chick",name:"Chick",icon:"🐥",cost:350,description:"Small but speedy."},
+{id:"parrot",name:"Parrot",icon:"🦜",cost:450,description:"A colourful companion."},
+{id:"ghost",name:"Ghost",icon:"👻",cost:650,description:"A mysterious flyer."},
+{id:"dragon",name:"Dragon",icon:"🐉",cost:900,description:"A legendary bird."}
 ];
 
 function renderShop(){
@@ -459,12 +392,10 @@ function renderShop(){
     const selected=data.selectedMap===m.id;
     return `<div class="item">
       <div class="mapPreview" style="background:${m.sky}">${m.icon}</div>
-      <h3>${m.name}</h3>
-      <p>${m.description}</p>
+      <h3>${m.name}</h3><p>${m.description}</p>
       <button ${selected?"disabled":""} class="${selected?"primary":""}" onclick="selectMap('${m.id}')">
         ${selected?"Selected":unlocked?"Select":"🪙 "+m.cost+" Unlock"}
-      </button>
-    </div>`;
+      </button></div>`;
   }).join("");
 
   document.getElementById("birdGrid").innerHTML=birds.map(b=>{
@@ -472,115 +403,85 @@ function renderShop(){
     const selected=data.selectedBird===b.id;
     return `<div class="item">
       <div class="preview">${b.icon}</div>
-      <h3>${b.name}</h3>
-      <p>${b.description}</p>
+      <h3>${b.name}</h3><p>${b.description}</p>
       <button ${selected?"disabled":""} class="${selected?"primary":""}" onclick="selectBird('${b.id}')">
         ${selected?"Selected":unlocked?"Select":"🪙 "+b.cost+" Unlock"}
-      </button>
-    </div>`;
+      </button></div>`;
   }).join("");
 }
-
 function selectMap(id){
   const m=maps.find(x=>x.id===id);
   if(!m)return;
   if(!data.unlockedMaps.includes(id)){
     if(data.coins<m.cost)return alert("You need "+m.cost+" coins to unlock this map!");
-    data.coins-=m.cost;
-    data.unlockedMaps.push(id);
+    data.coins-=m.cost;data.unlockedMaps.push(id);
   }
-  data.selectedMap=id;
-  save();
-  updateStats();
-  renderShop();
+  data.selectedMap=id;save();updateStats();renderShop();
   document.getElementById("currentMap").textContent=m.name;
+  draw();
 }
-
 function selectBird(id){
   const b=birds.find(x=>x.id===id);
   if(!b)return;
   if(!data.unlockedBirds.includes(id)){
     if(data.coins<b.cost)return alert("You need "+b.cost+" coins to unlock this bird!");
-    data.coins-=b.cost;
-    data.unlockedBirds.push(id);
+    data.coins-=b.cost;data.unlockedBirds.push(id);
   }
-  data.selectedBird=id;
-  save();
-  updateStats();
-  renderShop();
+  data.selectedBird=id;save();updateStats();renderShop();draw();
 }
 
-// ---------------- ACHIEVEMENTS ----------------
-
-const achievements = [
-  {id:"first",name:"First Flight",desc:"Play your first game.",icon:"🐣",reward:30,check:()=>data.totalGames>=1},
-  {id:"five",name:"Getting Started",desc:"Score 5 points in one game.",icon:"⭐",reward:50,check:()=>data.best>=5},
-  {id:"ten",name:"Flying High",desc:"Score 10 points in one game.",icon:"🚀",reward:75,check:()=>data.best>=10},
-  {id:"twenty",name:"Unstoppable",desc:"Score 20 points in one game.",icon:"🏆",reward:120,check:()=>data.best>=20},
-  {id:"coins100",name:"Coin Collector",desc:"Collect 100 coins overall.",icon:"🪙",reward:50,check:()=>data.totalCoins>=100},
-  {id:"games10",name:"Regular Flyer",desc:"Play 10 games.",icon:"🎮",reward:75,check:()=>data.totalGames>=10},
-  {id:"pipes50",name:"Pipe Master",desc:"Pass 50 pipes.",icon:"🟢",reward:100,check:()=>data.totalPipes>=50},
-  {id:"level5",name:"Experienced",desc:"Reach level 5.",icon:"⭐",reward:150,check:()=>getLevel()>=5},
-  {id:"allmaps",name:"World Traveller",desc:"Unlock every map.",icon:"🌍",reward:250,check:()=>data.unlockedMaps.length===maps.length},
-  {id:"allbirds",name:"Bird Collector",desc:"Unlock every bird.",icon:"🐦",reward:250,check:()=>data.unlockedBirds.length===birds.length}
+// ACHIEVEMENTS
+const achievements=[
+{id:"first",name:"First Flight",desc:"Play your first game.",icon:"🐣",reward:30,check:()=>data.totalGames>=1},
+{id:"five",name:"Getting Started",desc:"Score 5 points in one game.",icon:"⭐",reward:50,check:()=>data.best>=5},
+{id:"ten",name:"Flying High",desc:"Score 10 points in one game.",icon:"🚀",reward:75,check:()=>data.best>=10},
+{id:"twenty",name:"Unstoppable",desc:"Score 20 points in one game.",icon:"🏆",reward:120,check:()=>data.best>=20},
+{id:"coins100",name:"Coin Collector",desc:"Collect 100 coins overall.",icon:"🪙",reward:50,check:()=>data.totalCoins>=100},
+{id:"games10",name:"Regular Flyer",desc:"Play 10 games.",icon:"🎮",reward:75,check:()=>data.totalGames>=10},
+{id:"pipes50",name:"Pipe Master",desc:"Pass 50 pipes.",icon:"🟢",reward:100,check:()=>data.totalPipes>=50},
+{id:"level5",name:"Experienced",desc:"Reach level 5.",icon:"⭐",reward:150,check:()=>getLevel()>=5},
+{id:"allmaps",name:"World Traveller",desc:"Unlock every map.",icon:"🌍",reward:250,check:()=>data.unlockedMaps.length===maps.length},
+{id:"allbirds",name:"Bird Collector",desc:"Unlock every bird.",icon:"🐦",reward:250,check:()=>data.unlockedBirds.length===birds.length}
 ];
-
 function checkAchievements(){
   let changed=false;
-
   achievements.forEach(a=>{
     if(a.check()&&!data.achievements.includes(a.id)){
       data.achievements.push(a.id);
-      data.coins+=a.reward;
-      data.totalCoins+=a.reward;
-      changed=true;
+      data.coins+=a.reward;data.totalCoins+=a.reward;changed=true;
     }
   });
-
   if(changed){
-    save();
-    updateStats();
-    renderAchievements();
-    renderShop();
+    save();updateStats();renderAchievements();renderShop();
   }
 }
-
 function renderAchievements(){
   document.getElementById("achievementGrid").innerHTML=achievements.map(a=>{
     const done=data.achievements.includes(a.id);
     return `<div class="item">
       <div class="preview">${done?a.icon:"🔒"}</div>
-      <h3>${a.name}</h3>
-      <p>${a.desc}</p>
+      <h3>${a.name}</h3><p>${a.desc}</p>
       <small>${done?"✓ Completed":"Reward: "+a.reward+" coins"}</small>
     </div>`;
   }).join("");
 }
 
-// ---------------- DAILY QUESTS ----------------
-
+// DAILY QUESTS
 function setupQuests(){
   const today=new Date().toDateString();
   if(data.questDate!==today){
     data.questDate=today;
-    data.quests={
-      score5:false,
-      games3:0,
-      coins10:0
-    };
+    data.quests={score5:false,games3:0,coins10:0};
     save();
   }
 }
-
 function updateQuests(){
   const q=data.quests;
   if(!q)return;
   if(game.score>=5)q.score5=true;
   if(data.totalGames>=3)q.games3=Math.max(q.games3,3);
-  save();
-  renderQuests();
+  save();renderQuests();
 }
-
 function renderQuests(){
   const q=data.quests;
   if(!q)return;
@@ -590,71 +491,44 @@ function renderQuests(){
     {id:"coins10",name:"Collect 10 coins in one game",progress:Math.min(q.coins10||0,10),target:10,reward:50}
   ];
   document.getElementById("questList").innerHTML=list.map(x=>{
-    const completed=!!q[x.id]&&x.id==="score5" || (x.id!=="score5"&&q[x.id]>=x.target);
+    const completed=x.id==="score5"?!!q.score5:q[x.id]>=x.target;
     const claimed=!!q["claimed_"+x.id];
-    return `<div class="quest">
-      <div style="flex:1">
-        <b>${x.name}</b><br>
-        <small>${x.progress}/${x.target} • Reward: ${x.reward} coins</small>
-        <div class="progress"><div style="width:${Math.min(100,x.progress/x.target*100)}%"></div></div>
-      </div>
-      <button ${!completed||claimed?"disabled":""} onclick="claimQuest('${x.id}',${x.reward})">
-        ${claimed?"Claimed":completed?"Claim":"In progress"}
-      </button>
-    </div>`;
+    return `<div class="quest"><div style="flex:1">
+      <b>${x.name}</b><br>
+      <small>${x.progress}/${x.target} • Reward: ${x.reward} coins</small>
+      <div class="progress"><div style="width:${Math.min(100,x.progress/x.target*100)}%"></div></div>
+      </div><button ${!completed||claimed?"disabled":""} onclick="claimQuest('${x.id}',${x.reward})">
+      ${claimed?"Claimed":completed?"Claim":"In progress"}</button></div>`;
   }).join("");
 }
-
 function claimQuest(id,reward){
   if(data.quests["claimed_"+id])return;
   data.quests["claimed_"+id]=true;
-  addCoins(reward);
-  addXP(25);
-  renderQuests();
+  addCoins(reward);addXP(25);renderQuests();
 }
 
-// ---------------- GAME ENGINE ----------------
-
+// GAME ENGINE
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
-
-const W=600,H=650;
-const groundH=65;
+const W=600,H=650,groundH=65;
 
 let game={
-  state:"ready",
-  score:0,
-  coins:0,
+  state:"ready",score:0,coins:0,
   bird:{x:145,y:300,vy:0,r:17,rotation:0},
-  pipes:[],
-  particles:[],
-  frame:0,
-  frames:0,
-  fps:0,
-  lastTime:0,
-  coinCount:0
+  pipes:[],particles:[],frame:0,frames:0,fps:0,
+  lastTime:0,coinCount:0
 };
-
 const difficulties={
   easy:{gravity:.36,flap:-7.2,speed:2.5,gap:205,interval:105},
   normal:{gravity:.43,flap:-7.7,speed:3.1,gap:175,interval:95},
   hard:{gravity:.48,flap:-8,speed:3.7,gap:150,interval:88},
   insane:{gravity:.53,flap:-8.3,speed:4.4,gap:132,interval:82}
 };
-
-function getDifficulty(){
-  return difficulties[data.difficulty]||difficulties.normal;
-}
-
+function getDifficulty(){return difficulties[data.difficulty]||difficulties.normal}
 function resetGame(){
-  game.state="ready";
-  game.score=0;
-  game.coins=0;
+  game.state="ready";game.score=0;game.coins=0;
   game.bird={x:145,y:300,vy:0,r:17,rotation:0};
-  game.pipes=[];
-  game.particles=[];
-  game.frame=0;
-  game.coinCount=0;
+  game.pipes=[];game.particles=[];game.frame=0;game.coinCount=0;
   document.getElementById("score").textContent="0";
   document.getElementById("overlayTitle").textContent="Flappy!";
   document.getElementById("overlayText").textContent="Tap, click or press SPACE to fly through the pipes.";
@@ -662,371 +536,203 @@ function resetGame(){
   document.getElementById("overlay").classList.remove("hidden");
   draw();
 }
-
 function startGame(){
   if(game.state==="paused")return;
   if(game.state==="ready"||game.state==="over"){
-    game.score=0;
-    game.coins=0;
+    game.score=0;game.coins=0;
     game.bird={x:145,y:300,vy:0,r:17,rotation:0};
-    game.pipes=[];
-    game.particles=[];
-    game.frame=0;
-    game.coinCount=0;
+    game.pipes=[];game.particles=[];game.frame=0;game.coinCount=0;
     game.state="playing";
-    data.totalGames++;
-    save();
-    checkAchievements();
+    data.totalGames++;save();checkAchievements();updateQuests();
   }
   game.state="playing";
   document.getElementById("overlay").classList.add("hidden");
   flap();
 }
-
 function flap(){
-  if(game.state==="ready"||game.state==="over"){
-    startGame();
-    return;
-  }
-  if(game.state==="paused")return;
-  if(game.state!=="playing")return;
+  if(game.state==="ready"||game.state==="over"){startGame();return}
+  if(game.state==="paused"||game.state!=="playing")return;
   game.bird.vy=getDifficulty().flap;
   data.totalFlaps++;
   if(data.sound)playSound(500,.045);
   for(let i=0;i<3;i++){
     game.particles.push({
-      x:game.bird.x-12,
-      y:game.bird.y+8,
-      vx:-Math.random()*2-1,
-      vy:Math.random()*2-1,
-      life:20
+      x:game.bird.x-12,y:game.bird.y+8,
+      vx:-Math.random()*2-1,vy:Math.random()*2-1,life:20
     });
   }
   save();
 }
-
 function spawnPipe(){
-  const d=getDifficulty();
-  const gap=d.gap;
-  const margin=90;
+  const d=getDifficulty(),gap=d.gap,margin=90;
   const top=margin+Math.random()*(H-groundH-gap-margin*2);
-  game.pipes.push({
-    x:W+10,
-    top,
-    bottom:top+gap,
-    passed:false,
-    coinTaken:false
-  });
+  game.pipes.push({x:W+10,top,bottom:top+gap,passed:false,coinTaken:false});
 }
-
 function update(){
   if(game.state!=="playing")return;
-
-  const d=getDifficulty();
-  game.frame++;
-
+  const d=getDifficulty();game.frame++;
   const b=game.bird;
-  b.vy+=d.gravity;
-  b.y+=b.vy;
+  b.vy+=d.gravity;b.y+=b.vy;
   b.rotation=Math.min(.9,Math.max(-.5,b.vy*.08));
-
   if(game.frame%d.interval===1)spawnPipe();
-
   game.pipes.forEach(p=>{
     p.x-=d.speed;
-
     if(!p.passed&&p.x+65<b.x){
-      p.passed=true;
-      game.score++;
-      data.totalPipes++;
+      p.passed=true;game.score++;data.totalPipes++;
       addXP(5);
       document.getElementById("score").textContent=game.score;
       if(data.sound)playSound(800,.06);
-      checkAchievements();
-      updateQuests();
+      checkAchievements();updateQuests();
     }
-
-    if(!p.coinTaken&&!p.passed&&
-      b.x>p.x&&b.x<p.x+65&&
-      b.y>p.top&&b.y<p.bottom){
-      p.coinTaken=true;
-      game.coins++;
+    if(!p.coinTaken&&!p.passed&&b.x>p.x&&b.x<p.x+65&&b.y>p.top&&b.y<p.bottom){
+      p.coinTaken=true;game.coins++;
       data.quests.coins10=Math.min(10,(data.quests.coins10||0)+1);
-      addCoins(1);
-      addXP(2);
-      updateQuests();
+      addCoins(1);addXP(2);updateQuests();
     }
-
-    if(!p.passed&&!p.coinTaken&&
-      b.x>p.x-15&&b.x<p.x+80&&
-      b.y>p.top&&b.y<p.bottom){
+    if(!p.passed&&!p.coinTaken&&b.x>p.x-15&&b.x<p.x+80&&b.y>p.top&&b.y<p.bottom){
       if(Math.random()<.003){
-        p.coinTaken=true;
-        game.coins++;
+        p.coinTaken=true;game.coins++;
         data.quests.coins10=Math.min(10,(data.quests.coins10||0)+1);
-        addCoins(1);
-        updateQuests();
+        addCoins(1);updateQuests();
       }
     }
-
     if(b.x+b.r>p.x&&b.x-b.r<p.x+65){
       if(b.y-b.r<p.top||b.y+b.r>p.bottom)endGame();
     }
   });
-
   game.pipes=game.pipes.filter(p=>p.x>-90);
-
   if(b.y-b.r<0||b.y+b.r>H-groundH)endGame();
-
-  game.particles.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-    p.life--;
-  });
+  game.particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});
   game.particles=game.particles.filter(p=>p.life>0);
 }
-
 function endGame(){
   if(game.state!=="playing")return;
   game.state="over";
-
   const newBest=game.score>data.best;
   if(newBest)data.best=game.score;
-
-  addXP(game.score*3+10);
-  save();
-  checkAchievements();
-  updateQuests();
-  updateStats();
-
-  document.getElementById("overlayTitle").textContent=
-    newBest?"🏆 NEW HIGH SCORE!":"Game Over!";
-  document.getElementById("overlayText").innerHTML=
-    "Score: <b>"+game.score+"</b><br>"+
-    "Coins collected: <b>"+game.coins+"</b><br>"+
-    "Best score: <b>"+data.best+"</b>";
+  addXP(game.score*3+10);save();checkAchievements();updateQuests();updateStats();
+  document.getElementById("overlayTitle").textContent=newBest?"🏆 NEW HIGH SCORE!":"Game Over!";
+  document.getElementById("overlayText").innerHTML="Score: <b>"+game.score+"</b><br>Coins collected: <b>"+game.coins+"</b><br>Best score: <b>"+data.best+"</b>";
   document.getElementById("startBtn").textContent="PLAY AGAIN";
   document.getElementById("overlay").classList.remove("hidden");
 }
 
-// ---------------- DRAWING ----------------
-
-function roundRect(c,x,y,w,h,r){
-  c.beginPath();
-  c.roundRect(x,y,w,h,r);
-  c.fill();
-}
-
+// DRAWING
 function drawBackground(){
   const m=maps.find(x=>x.id===data.selectedMap)||maps[0];
-
-  ctx.fillStyle=m.sky;
-  ctx.fillRect(0,0,W,H);
-
+  ctx.fillStyle=m.sky;ctx.fillRect(0,0,W,H);
   if(data.selectedMap==="space"){
     for(let i=0;i<55;i++){
-      const x=(i*107)%W;
-      const y=(i*67)%H;
       ctx.fillStyle="rgba(255,255,255,.7)";
-      ctx.fillRect(x,y,2,2);
+      ctx.fillRect((i*107)%W,(i*67)%H,2,2);
     }
-    ctx.fillStyle="#e9d5ff";
-    ctx.beginPath();
-    ctx.arc(475,100,36,0,Math.PI*2);
-    ctx.fill();
-  } else if(data.selectedMap==="sunset"){
+    ctx.fillStyle="#e9d5ff";ctx.beginPath();ctx.arc(475,100,36,0,Math.PI*2);ctx.fill();
+  }else if(data.selectedMap==="sunset"){
     const g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#ffb178");
-    g.addColorStop(1,"#e56a87");
-    ctx.fillStyle=g;
-    ctx.fillRect(0,0,W,H);
-    ctx.fillStyle="#ffda9b";
-    ctx.beginPath();
-    ctx.arc(470,150,55,0,Math.PI*2);
-    ctx.fill();
-  } else if(data.selectedMap==="snow"){
+    g.addColorStop(0,"#ffb178");g.addColorStop(1,"#e56a87");
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle="#ffda9b";ctx.beginPath();ctx.arc(470,150,55,0,Math.PI*2);ctx.fill();
+  }else if(data.selectedMap==="snow"){
     ctx.fillStyle="#ffffff99";
-    for(let i=0;i<22;i++){
-      ctx.beginPath();
-      ctx.arc((i*83)%W,(i*91)%H,3,0,Math.PI*2);
-      ctx.fill();
-    }
-  } else if(data.selectedMap==="jungle"){
+    for(let i=0;i<22;i++){ctx.beginPath();ctx.arc((i*83)%W,(i*91)%H,3,0,Math.PI*2);ctx.fill()}
+  }else if(data.selectedMap==="jungle"){
     ctx.fillStyle="#245c43";
-    for(let i=0;i<8;i++){
-      ctx.beginPath();
-      ctx.arc(i*90,130+(i%3)*45,65,0,Math.PI*2);
-      ctx.fill();
-    }
-  } else if(data.selectedMap==="underwater"){
+    for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(i*90,130+(i%3)*45,65,0,Math.PI*2);ctx.fill()}
+  }else if(data.selectedMap==="underwater"){
     ctx.fillStyle="#ffffff20";
-    for(let i=0;i<15;i++){
-      ctx.beginPath();
-      ctx.arc((i*71)%W,(game.frame*.5+i*83)%H,8,0,Math.PI*2);
-      ctx.fill();
-    }
-  } else {
-    ctx.fillStyle="#ffffff99";
-    ctx.beginPath();
-    ctx.arc(480,100,40,0,Math.PI*2);
-    ctx.fill();
+    for(let i=0;i<15;i++){ctx.beginPath();ctx.arc((i*71)%W,(game.frame*.5+i*83)%H,8,0,Math.PI*2);ctx.fill()}
+  }else{
+    ctx.fillStyle="#ffffff99";ctx.beginPath();ctx.arc(480,100,40,0,Math.PI*2);ctx.fill();
   }
-
   if(["classic","snow"].includes(data.selectedMap)){
     ctx.fillStyle="#ffffff65";
     for(let i=0;i<4;i++){
-      const x=(i*180+game.frame*.25)%750-60;
-      const y=110+i%2*100;
-      ctx.beginPath();
-      ctx.arc(x,y,23,0,Math.PI*2);
+      const x=(i*180+game.frame*.25)%750-60,y=110+i%2*100;
+      ctx.beginPath();ctx.arc(x,y,23,0,Math.PI*2);
       ctx.arc(x+25,y-10,29,0,Math.PI*2);
-      ctx.arc(x+50,y,21,0,Math.PI*2);
-      ctx.fill();
+      ctx.arc(x+50,y,21,0,Math.PI*2);ctx.fill();
     }
   }
 }
-
 function drawPipes(){
   const m=maps.find(x=>x.id===data.selectedMap)||maps[0];
-
   game.pipes.forEach(p=>{
-    ctx.fillStyle=m.pipe;
-    ctx.strokeStyle=m.pipeDark;
-    ctx.lineWidth=4;
-
-    ctx.fillRect(p.x,0,65,p.top);
-    ctx.strokeRect(p.x,0,65,p.top);
-    ctx.fillRect(p.x-6,p.top-22,77,22);
-    ctx.strokeRect(p.x-6,p.top-22,77,22);
-
-    ctx.fillRect(p.x,p.bottom,65,H-groundH-p.bottom);
-    ctx.strokeRect(p.x,p.bottom,65,H-groundH-p.bottom);
-    ctx.fillRect(p.x-6,p.bottom,77,22);
-    ctx.strokeRect(p.x-6,p.bottom,77,22);
-
+    ctx.fillStyle=m.pipe;ctx.strokeStyle=m.pipeDark;ctx.lineWidth=4;
+    ctx.fillRect(p.x,0,65,p.top);ctx.strokeRect(p.x,0,65,p.top);
+    ctx.fillRect(p.x-6,p.top-22,77,22);ctx.strokeRect(p.x-6,p.top-22,77,22);
+    ctx.fillRect(p.x,p.bottom,65,H-groundH-p.bottom);ctx.strokeRect(p.x,p.bottom,65,H-groundH-p.bottom);
+    ctx.fillRect(p.x-6,p.bottom,77,22);ctx.strokeRect(p.x-6,p.bottom,77,22);
     ctx.fillStyle=m.accent;
     ctx.fillRect(p.x+9,0,5,p.top-23);
     ctx.fillRect(p.x+9,p.bottom+24,5,H-groundH-p.bottom-24);
   });
 }
-
 function drawBird(){
-  const b=game.bird;
-  const bird=birds.find(x=>x.id===data.selectedBird)||birds[0];
-
-  ctx.save();
-  ctx.translate(b.x,b.y);
-  ctx.rotate(b.rotation);
-
-  ctx.font="36px Arial";
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  ctx.fillText(bird.icon,0,0);
-
-  ctx.restore();
+  const b=game.bird,bird=birds.find(x=>x.id===data.selectedBird)||birds[0];
+  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.rotation);
+  ctx.font="36px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText(bird.icon,0,0);ctx.restore();
 }
-
 function drawGround(){
   const m=maps.find(x=>x.id===data.selectedMap)||maps[0];
-  ctx.fillStyle=m.ground;
-  ctx.fillRect(0,H-groundH,W,groundH);
-  ctx.fillStyle=m.accent;
-  ctx.fillRect(0,H-groundH,W,7);
-
+  ctx.fillStyle=m.ground;ctx.fillRect(0,H-groundH,W,groundH);
+  ctx.fillStyle=m.accent;ctx.fillRect(0,H-groundH,W,7);
   ctx.fillStyle="#ffffff20";
-  for(let i=0;i<20;i++){
-    const x=(i*50-game.frame*2)%W;
-    ctx.fillRect(x,H-groundH+20,20,4);
-  }
+  for(let i=0;i<20;i++)ctx.fillRect((i*50-game.frame*2)%W,H-groundH+20,20,4);
 }
-
 function drawParticles(){
   game.particles.forEach(p=>{
-    ctx.globalAlpha=p.life/20;
-    ctx.fillStyle="#fff2a8";
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,3,0,Math.PI*2);
-    ctx.fill();
+    ctx.globalAlpha=p.life/20;ctx.fillStyle="#fff2a8";
+    ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
   });
   ctx.globalAlpha=1;
 }
-
 function drawFPS(){
   if(!data.showFPS)return;
-  ctx.fillStyle="white";
-  ctx.font="13px Arial";
+  ctx.fillStyle="white";ctx.font="13px Arial";
   ctx.fillText("FPS: "+game.fps,10,20);
 }
-
-function draw(){
-  drawBackground();
-  drawPipes();
-  drawParticles();
-  drawBird();
-  drawGround();
-  drawFPS();
-}
-
+function draw(){drawBackground();drawPipes();drawParticles();drawBird();drawGround();drawFPS()}
 function loop(timestamp){
   if(!game.lastTime)game.lastTime=timestamp;
-  const delta=timestamp-game.lastTime;
-  game.lastTime=timestamp;
-
-  if(delta>0){
-    game.frames++;
-    if(game.frames%15===0)game.fps=Math.round(1000/delta);
-  }
-
-  update();
-  draw();
-  requestAnimationFrame(loop);
+  const delta=timestamp-game.lastTime;game.lastTime=timestamp;
+  if(delta>0){game.frames++;if(game.frames%15===0)game.fps=Math.round(1000/delta)}
+  update();draw();requestAnimationFrame(loop);
 }
 
-// ---------------- SOUND ----------------
-
+// SOUND
 let audioContext;
-
 function playSound(freq,duration){
   if(!data.sound)return;
   try{
     audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();
-    const oscillator=audioContext.createOscillator();
-    const gain=audioContext.createGain();
-    oscillator.type="sine";
-    oscillator.frequency.value=freq;
-    gain.gain.value=.045;
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
+    const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();
+    oscillator.type="sine";oscillator.frequency.value=freq;gain.gain.value=.045;
+    oscillator.connect(gain);gain.connect(audioContext.destination);
     oscillator.start();
     gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
     oscillator.stop(audioContext.currentTime+duration);
   }catch(e){}
 }
 
-// ---------------- CONTROLS ----------------
-
-canvas.addEventListener("pointerdown",e=>{
-  e.preventDefault();
-  flap();
-});
-
+// CONTROLS
+canvas.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
 document.addEventListener("keydown",e=>{
   if(e.code==="Space"||e.code==="ArrowUp"){
-    e.preventDefault();
-    if(!e.repeat)flap();
+    e.preventDefault();if(!e.repeat)flap();
   }
-  if(e.code==="Escape"){
-    togglePause();
-  }
+  if(e.code==="Escape")togglePause();
 });
 
-document.getElementById("startBtn").addEventListener("click",startGame);
-
+document.getElementById("startBtn").addEventListener("click",()=>{
+  if(game.state==="paused"){
+    game.state="playing";
+    document.getElementById("overlay").classList.add("hidden");
+  }else startGame();
+});
 document.getElementById("restartBtn").addEventListener("click",()=>{
-  resetGame();
-  startGame();
+  resetGame();startGame();
 });
-
 document.getElementById("pauseBtn").addEventListener("click",togglePause);
 
 function togglePause(){
@@ -1042,15 +748,7 @@ function togglePause(){
   }
 }
 
-document.getElementById("startBtn").addEventListener("click",()=>{
-  if(game.state==="paused"){
-    game.state="playing";
-    document.getElementById("overlay").classList.add("hidden");
-  }
-});
-
-// ---------------- NAVIGATION ----------------
-
+// NAVIGATION
 document.querySelectorAll(".tab").forEach(btn=>{
   btn.addEventListener("click",()=>{
     document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
@@ -1060,75 +758,47 @@ document.querySelectorAll(".tab").forEach(btn=>{
   });
 });
 
+// FIXED MENU BUTTON: RETURN TO THE MAIN GAME-SELECTION PAGE
 function goToMenu(){
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  document.querySelector('[data-page="play"]').classList.add("active");
-  document.getElementById("play").classList.add("active");
+  window.location.href="index.html";
 }
 
-// ---------------- SETTINGS ----------------
-
+// SETTINGS
 document.getElementById("difficulty").value=data.difficulty;
 document.getElementById("difficulty").addEventListener("change",e=>{
-  data.difficulty=e.target.value;
-  save();
+  data.difficulty=e.target.value;save();
 });
-
 document.getElementById("sound").checked=data.sound;
 document.getElementById("sound").addEventListener("change",e=>{
-  data.sound=e.target.checked;
-  save();
+  data.sound=e.target.checked;save();
 });
-
 document.getElementById("showFPS").checked=data.showFPS;
 document.getElementById("showFPS").addEventListener("change",e=>{
-  data.showFPS=e.target.checked;
-  save();
+  data.showFPS=e.target.checked;save();
 });
-
 document.getElementById("reset").addEventListener("click",()=>{
   if(confirm("Are you sure? This will erase ALL Flappy progress.")){
-    localStorage.removeItem(SAVE_KEY);
-    location.reload();
+    localStorage.removeItem(SAVE_KEY);location.reload();
   }
 });
 
-// ---------------- INITIALISE ----------------
-
-setupQuests();
-renderShop();
-renderAchievements();
-renderQuests();
-updateStats();
-
+// INITIALISE
+setupQuests();renderShop();renderAchievements();renderQuests();updateStats();
 document.getElementById("currentMap").textContent=
   maps.find(x=>x.id===data.selectedMap)?.name||"Classic";
+resetGame();requestAnimationFrame(loop);
 
-resetGame();
-requestAnimationFrame(loop);
-
-// ---------------- IPHONE ZOOM FIX ----------------
-
-const gameWrap = document.querySelector(".gameWrap");
-let lastGameTouchEnd = 0;
-
+// IPHONE ZOOM FIX
+const gameWrap=document.querySelector(".gameWrap");
+let lastGameTouchEnd=0;
 gameWrap.addEventListener("touchend",function(event){
-  const now = Date.now();
-
-  if(now - lastGameTouchEnd <= 350){
-    event.preventDefault();
-  }
-
-  lastGameTouchEnd = now;
+  const now=Date.now();
+  if(now-lastGameTouchEnd<=350)event.preventDefault();
+  lastGameTouchEnd=now;
 },{passive:false});
-
 ["gesturestart","gesturechange","gestureend"].forEach(type=>{
-  gameWrap.addEventListener(type,function(event){
-    event.preventDefault();
-  },{passive:false});
+  gameWrap.addEventListener(type,event=>event.preventDefault(),{passive:false});
 });
-
 </script>
 </body>
 </html>
