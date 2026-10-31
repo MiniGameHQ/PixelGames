@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,11 +34,11 @@ button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--li
 <aside class="side">
 <section class="card"><div class="tabs" role="tablist"><button class="tab active" data-tab="play">Play</button><button class="tab" data-tab="shop">Shop</button><button class="tab" data-tab="quests">Quests</button><button class="tab" data-tab="awards">Awards</button></div>
 <div class="tabcontent" id="tab-play"><h3>Game settings</h3><div class="row"><label for="difficulty">Difficulty</label><select id="difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option><option value="insane">Insane</option></select></div><div class="row"><label for="walls">Walls</label><select id="walls"><option value="solid">Solid walls</option><option value="wrap">Wrap around</option></select></div><div class="row"><label for="grid">Grid lines</label><select id="grid"><option value="on">On</option><option value="off">Off</option></select></div><div class="section"><h3>Current skin</h3><div id="currentSkin" class="muted">Classic Green</div></div><div class="section"><h3>How to play</h3><div class="help"><b>↑ ↓ ← →</b> or <b>W A S D</b> to steer.<br><b>Space</b> pauses the game.<br>Collect apples to score, earn coins and XP. Don't hit yourself!</div></div></div>
-<div class="tabcontent hidden" id="tab-shop"><h3>Skin shop</h3><p class="muted small">Buy a look with coins, then select it.</p><div class="skinlist" id="skinList"></div><div class="notice" id="shopNotice"></div></div>
+<div class="tabcontent hidden" id="tab-shop"><h3>Skin shop</h3><p class="muted small">Buy a look with Snake coins, then select it.</p><div class="skinlist" id="skinList"></div><div class="notice" id="shopNotice"></div></div>
 <div class="tabcontent hidden" id="tab-quests"><h3>Daily quests</h3><p class="muted small">Quests refresh each new day on this device.</p><div id="questList"></div><div class="section"><h3>Daily reward</h3><div class="row"><span>Daily login bonus</span><b id="dailyStatus">Ready</b></div><button class="primary" id="claimDaily">Claim 25 coins + 20 XP</button><div class="notice" id="dailyNotice"></div></div></div>
 <div class="tabcontent hidden" id="tab-awards"><h3>Achievements</h3><div id="achievementList"></div><div class="section"><h3>Player progress</h3><div class="row"><span>Level</span><b id="levelText">1</b></div><div class="bar"><i id="xpBar" style="width:0%"></i></div><p class="muted small" id="xpText">0 / 100 XP to next level</p></div></div>
 </section>
-<section class="card"><div class="gamehead"><div><h2>Save data</h2><div class="muted small">Your game settings and achievements save on this device. Coins and level save to your account when logged in.</div></div>💾</div><div class="tabcontent"><div class="inlinebuttons"><button id="exportBtn">Export save</button><button id="importBtn">Import save</button><input class="fileinput" type="file" id="importFile" accept=".json,application/json"></div><div class="section"><button class="danger" id="resetSave">Reset all progress</button><div class="notice" id="saveNotice"></div><div class="notice" id="cloudNotice">Connecting to your account...</div></div></div></section>
+<section class="card"><div class="gamehead"><div><h2>Save data</h2><div class="muted small">Game progress saves on this device. Snake coins are separate; Coins Earned, XP and Level are shared across games when logged in.</div></div>💾</div><div class="tabcontent"><div class="inlinebuttons"><button id="exportBtn">Export save</button><button id="importBtn">Import save</button><input class="fileinput" type="file" id="importFile" accept=".json,application/json"></div><div class="section"><button class="danger" id="resetSave">Reset all progress</button><div class="notice" id="saveNotice"></div><div class="notice" id="cloudNotice">Connecting to your account...</div></div></div></section>
 </aside>
 </main>
 </div>
@@ -73,7 +72,7 @@ const achievements=[
 {id:'twenty',title:'Snake Legend',desc:'Score 20 in one run',icon:'👑',test:s=>s.bestRun>=20,reward:60},
 {id:'level5',title:'Rising Star',desc:'Reach level 5',icon:'⭐',test:s=>s.level>=5,reward:50},
 {id:'skins',title:'Fashion Snake',desc:'Own 4 skins',icon:'🎨',test:s=>s.owned.length>=4,reward:30},
-{id:'rich',title:'Coin Collector',desc:'Have 500 coins at once',icon:'🪙',test:s=>s.coins>=500,reward:40},
+{id:'rich',title:'Coin Collector',desc:'Have 500 Snake coins at once',icon:'🪙',test:s=>s.coins>=500,reward:40},
 {id:'runs10',title:'Persistent',desc:'Play 10 runs',icon:'🎮',test:s=>s.runs>=10,reward:30}
 ];
 
@@ -84,7 +83,7 @@ const questDefs=[
 ];
 
 function today(){return new Date().toISOString().slice(0,10)}
-function defaultSave(){return {coins:0,xp:0,level:1,best:0,apples:0,runs:0,owned:['green'],skin:'green',unlocked:[],dailyClaim:'',questDate:today(),quests:{eat5:0,eat10:0,play3:0},questClaimed:[],sound:true,highLevel:1}}
+function defaultSave(){return {coins:0,coinsEarned:0,xp:0,level:1,best:0,apples:0,runs:0,owned:['green'],skin:'green',unlocked:[],dailyClaim:'',questDate:today(),quests:{eat5:0,eat10:0,play3:0},questClaimed:[],sound:true,highLevel:1}}
 function load(){
  try{
   const x=JSON.parse(localStorage.getItem(KEY));
@@ -110,7 +109,12 @@ function persist(){try{localStorage.setItem(KEY,JSON.stringify(save))}catch{}}
 
 function syncCloud(){
  if(!cloudUser||!cloudReady)return Promise.resolve();
- const snapshot={coins:save.coins,coins_earned:save.coinsEarned,level:save.level};
+ const snapshot={
+  snake_coins:save.coins,
+  coins_earned:save.coinsEarned,
+  xp:save.xp,
+  level:save.level
+ };
  cloudQueue=cloudQueue.then(async()=>{
   const {error}=await db.from('profiles').update(snapshot).eq('id',cloudUser.id);
   if(error)throw error;
@@ -162,9 +166,10 @@ function addXP(n){
   save.coins+=10;
   save.coinsEarned=(save.coinsEarned||0)+10;
   sound(760,.12);
-  notice('shopNotice',`Level up! You're level ${save.level} (+10 coins)`);
+  notice('shopNotice',`Level up! You're level ${save.level} (+10 Snake coins)`);
  }
  persist();
+ renderMeta();
  syncCloud();
 }
 
@@ -295,6 +300,7 @@ function pause(){
 function endRun(){
  running=false;over=true;clearTimeout(timer);
  save.runs++;save.best=Math.max(save.best,score);save.apples+=applesRun;
+ save.bestRun=Math.max(save.bestRun||0,score);
  updateQuest('play3');checkAchievements();addXP(Math.max(5,score*2));
  persist();renderMeta();
  showOverlay('Game over',`Score: ${score} · Earned ${runCoins} coins. Ready for another run?`,'Play again');
@@ -420,18 +426,39 @@ $('importFile').onchange=async e=>{
  try{
   const d=JSON.parse(await f.text());
   if(!d||typeof d!=='object'||!Number.isFinite(d.coins)||!Array.isArray(d.owned))throw Error();
+
+  // Import Snake progress, but never overwrite shared account progress.
+  const shared={
+   coinsEarned:save.coinsEarned||0,
+   xp:save.xp||0,
+   level:save.level||1,
+   highLevel:save.highLevel||save.level||1
+  };
+
   save={...defaultSave(),...d};
+  if(cloudUser)Object.assign(save,shared);
+
   save.owned=[...new Set(['green',...save.owned.filter(id=>skins.some(s=>s.id===id))])];
   if(!save.owned.includes(save.skin))save.skin='green';
-  persist();renderMeta();draw();notice('saveNotice','Save imported successfully.');
+  persist();renderMeta();draw();syncCloud();
+  notice('saveNotice','Snake save imported successfully.');
  }catch{notice('saveNotice','That save file is invalid.')}
  e.target.value='';
 };
 
 $('resetSave').onclick=()=>{
- if(confirm('Reset all Snake progress on this device? This cannot be undone.')){
-  save=defaultSave();save.coinsEarned=0;persist();renderMeta();resetRun();
-  syncCloud();notice('saveNotice','Local Snake progress reset. Cloud coins and level reset too.');
+ if(confirm('Reset all Snake progress on this device? Your shared Coins Earned, XP and Level will be kept.')){
+  const shared={
+   coinsEarned:save.coinsEarned||0,
+   xp:save.xp||0,
+   level:save.level||1,
+   highLevel:save.highLevel||save.level||1
+  };
+
+  save={...defaultSave(),...shared};
+  persist();renderMeta();resetRun();
+  syncCloud();
+  notice('saveNotice','Snake progress reset. Your shared Coins Earned, XP and Level have been kept.');
  }
 };
 
@@ -441,23 +468,29 @@ async function connectAccount(){
   if(error)throw error;
   if(!session){
    save.coinsEarned=Number(save.coinsEarned)||0;
-   notice('cloudNotice','Not logged in. Coins and level are saving on this device only.');
+   save.xp=Number(save.xp)||0;
+   save.level=Math.max(1,Number(save.level)||1);
+   notice('cloudNotice','Not logged in. Snake coins and shared progress are saving on this device only.');
    renderMeta();return;
   }
+
   cloudUser=session.user;
   const {data,error:profileError}=await db.from('profiles')
-   .select('coins,coins_earned,level')
+   .select('snake_coins,coins_earned,xp,level')
    .eq('id',cloudUser.id)
    .single();
+
   if(profileError)throw profileError;
-  save.coins=Math.max(0,Number(profileError?0:data.coins)||0);
+
+  save.coins=Math.max(0,Number(data.snake_coins)||0);
   save.coinsEarned=Math.max(0,Number(data.coins_earned)||0);
+  save.xp=Math.max(0,Number(data.xp)||0);
   save.level=Math.max(1,Number(data.level)||1);
-  save.xp=0;
   save.highLevel=Math.max(save.level,Number(save.highLevel)||1);
+
   cloudReady=true;
   persist();renderMeta();
-  notice('cloudNotice','✓ Connected! Coins and level are saving to your account.');
+  notice('cloudNotice','✓ Connected! Snake coins are separate. Coins Earned, XP and Level are shared across games.');
  }catch(error){
   console.error('MiniGameHQ account connection failed:',error);
   notice('cloudNotice','Could not load your account. Check your login and refresh.');
