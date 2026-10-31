@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,14 +39,22 @@ button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--li
 <div class="tabcontent hidden" id="tab-quests"><h3>Daily quests</h3><p class="muted small">Quests refresh each new day on this device.</p><div id="questList"></div><div class="section"><h3>Daily reward</h3><div class="row"><span>Daily login bonus</span><b id="dailyStatus">Ready</b></div><button class="primary" id="claimDaily">Claim 25 coins + 20 XP</button><div class="notice" id="dailyNotice"></div></div></div>
 <div class="tabcontent hidden" id="tab-awards"><h3>Achievements</h3><div id="achievementList"></div><div class="section"><h3>Player progress</h3><div class="row"><span>Level</span><b id="levelText">1</b></div><div class="bar"><i id="xpBar" style="width:0%"></i></div><p class="muted small" id="xpText">0 / 100 XP to next level</p></div></div>
 </section>
-<section class="card"><div class="gamehead"><div><h2>Save data</h2><div class="muted small">Your progress saves on this device.</div></div>💾</div><div class="tabcontent"><div class="inlinebuttons"><button id="exportBtn">Export save</button><button id="importBtn">Import save</button><input class="fileinput" type="file" id="importFile" accept=".json,application/json"></div><div class="section"><button class="danger" id="resetSave">Reset all progress</button><div class="notice" id="saveNotice"></div></div></div></section>
+<section class="card"><div class="gamehead"><div><h2>Save data</h2><div class="muted small">Your game settings and achievements save on this device. Coins and level save to your account when logged in.</div></div>💾</div><div class="tabcontent"><div class="inlinebuttons"><button id="exportBtn">Export save</button><button id="importBtn">Import save</button><input class="fileinput" type="file" id="importFile" accept=".json,application/json"></div><div class="section"><button class="danger" id="resetSave">Reset all progress</button><div class="notice" id="saveNotice"></div><div class="notice" id="cloudNotice">Connecting to your account...</div></div></div></section>
 </aside>
 </main>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (()=>{'use strict';
-const $=id=>document.getElementById(id), canvas=$('game'),ctx=canvas.getContext('2d');
-const KEY='minigamehq_snake_full_v1', SIZE=24, CELL=20;
+
+const SUPABASE_URL='https://vuvzrdxsnphhdcesbmue.supabase.co';
+const SUPABASE_KEY='sb_publishable_6XDHu2AbuwBS7VT8dL264w_dP9B9Dz9';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
+const KEY='minigamehq_snake_full_v1',SIZE=24,CELL=20;
+
 const skins=[
 {id:'green',name:'Classic Green',price:0,colors:['#4ef28c','#24bf6c']},
 {id:'blue',name:'Neon Blue',price:60,colors:['#70c7ff','#3d83ff']},
@@ -56,6 +65,7 @@ const skins=[
 {id:'galaxy',name:'Galaxy',price:300,colors:['#d5a2ff','#6d4bda']},
 {id:'shadow',name:'Shadow',price:350,colors:['#a7b4c8','#4b5568']}
 ];
+
 const achievements=[
 {id:'first',title:'First Bite',desc:'Eat your first apple',icon:'🍎',test:s=>s.apples>=1,reward:10},
 {id:'five',title:'Getting Hungry',desc:'Eat 5 apples in one run',icon:'🐍',test:s=>s.bestRun>=5,reward:20},
@@ -66,45 +76,403 @@ const achievements=[
 {id:'rich',title:'Coin Collector',desc:'Have 500 coins at once',icon:'🪙',test:s=>s.coins>=500,reward:40},
 {id:'runs10',title:'Persistent',desc:'Play 10 runs',icon:'🎮',test:s=>s.runs>=10,reward:30}
 ];
-const questDefs=[{id:'eat5',title:'Snack time',desc:'Eat 5 apples',goal:5,reward:20,xp:15},{id:'eat10',title:'Apple fan',desc:'Eat 10 apples',goal:10,reward:35,xp:25},{id:'play3',title:'Keep moving',desc:'Finish 3 runs',goal:3,reward:25,xp:20}];
+
+const questDefs=[
+{id:'eat5',title:'Snack time',desc:'Eat 5 apples',goal:5,reward:20,xp:15},
+{id:'eat10',title:'Apple fan',desc:'Eat 10 apples',goal:10,reward:35,xp:25},
+{id:'play3',title:'Keep moving',desc:'Finish 3 runs',goal:3,reward:25,xp:20}
+];
+
 function today(){return new Date().toISOString().slice(0,10)}
 function defaultSave(){return {coins:0,xp:0,level:1,best:0,apples:0,runs:0,owned:['green'],skin:'green',unlocked:[],dailyClaim:'',questDate:today(),quests:{eat5:0,eat10:0,play3:0},questClaimed:[],sound:true,highLevel:1}}
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY));if(!x||typeof x!=='object')return defaultSave();const d={...defaultSave(),...x};d.owned=Array.isArray(d.owned)?[...new Set(['green',...d.owned.filter(id=>skins.some(s=>s.id===id))])]:['green'];d.unlocked=Array.isArray(d.unlocked)?d.unlocked:[];d.quests=d.quests&&typeof d.quests==='object'?d.quests:{};d.questClaimed=Array.isArray(d.questClaimed)?d.questClaimed:[];if(d.questDate!==today()){d.questDate=today();d.quests={eat5:0,eat10:0,play3:0};d.questClaimed=[]}return d}catch{return defaultSave()}}
-let save=load(), snake=[],dir={x:1,y:0},nextDir={x:1,y:0},apple={x:12,y:12},score=0,runCoins=0,applesRun=0,running=false,paused=false,over=false,timer=null,lastTick=0,soundCtx=null;
+function load(){
+ try{
+  const x=JSON.parse(localStorage.getItem(KEY));
+  if(!x||typeof x!=='object')return defaultSave();
+  const d={...defaultSave(),...x};
+  d.owned=Array.isArray(d.owned)?[...new Set(['green',...d.owned.filter(id=>skins.some(s=>s.id===id))])]:['green'];
+  d.unlocked=Array.isArray(d.unlocked)?d.unlocked:[];
+  d.quests=d.quests&&typeof d.quests==='object'?d.quests:{};
+  d.questClaimed=Array.isArray(d.questClaimed)?d.questClaimed:[];
+  if(d.questDate!==today()){d.questDate=today();d.quests={eat5:0,eat10:0,play3:0};d.questClaimed=[]}
+  return d;
+ }catch{return defaultSave()}
+}
+
+let save=load();
+let cloudUser=null,cloudReady=false,cloudQueue=Promise.resolve();
+let snake=[],dir={x:1,y:0},nextDir={x:1,y:0},apple={x:12,y:12};
+let score=0,runCoins=0,applesRun=0,running=false,paused=false,over=false,timer=null,soundCtx=null;
+
 const speed={easy:170,normal:125,hard:90,insane:62};
+
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(save))}catch{}}
-function sound(freq=520,duration=.07){if(!save.sound)return;try{soundCtx=soundCtx||new(window.AudioContext||window.webkitAudioContext)();const o=soundCtx.createOscillator(),g=soundCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.value=.035;o.connect(g);g.connect(soundCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,soundCtx.currentTime+duration);o.stop(soundCtx.currentTime+duration)}catch{}}
-function addXP(n){save.xp+=n;while(save.xp>=save.level*100){save.xp-=save.level*100;save.level++;save.highLevel=Math.max(save.highLevel,save.level);save.coins+=10;sound(760,.12);notice('shopNotice',`Level up! You're level ${save.level} (+10 coins)`)}}
+
+function syncCloud(){
+ if(!cloudUser||!cloudReady)return Promise.resolve();
+ const snapshot={coins:save.coins,coins_earned:save.coinsEarned,level:save.level};
+ cloudQueue=cloudQueue.then(async()=>{
+  const {error}=await db.from('profiles').update(snapshot).eq('id',cloudUser.id);
+  if(error)throw error;
+ }).catch(error=>{
+  console.error('MiniGameHQ cloud save failed:',error);
+  notice('cloudNotice','Cloud save failed. Check your connection and try refreshing.');
+ });
+ return cloudQueue;
+}
+
+function awardCoins(amount){
+ amount=Math.max(0,Math.floor(amount));
+ if(!amount)return;
+ save.coins+=amount;
+ save.coinsEarned=(save.coinsEarned||0)+amount;
+ persist();
+ renderMeta();
+ syncCloud();
+}
+
+function spendCoins(amount){
+ amount=Math.max(0,Math.floor(amount));
+ if(save.coins<amount)return false;
+ save.coins-=amount;
+ persist();
+ renderMeta();
+ syncCloud();
+ return true;
+}
+
+function sound(freq=520,duration=.07){
+ if(!save.sound)return;
+ try{
+  soundCtx=soundCtx||new(window.AudioContext||window.webkitAudioContext)();
+  const o=soundCtx.createOscillator(),g=soundCtx.createGain();
+  o.frequency.value=freq;o.type='sine';g.gain.value=.035;
+  o.connect(g);g.connect(soundCtx.destination);o.start();
+  g.gain.exponentialRampToValueAtTime(.001,soundCtx.currentTime+duration);
+  o.stop(soundCtx.currentTime+duration);
+ }catch{}
+}
+
+function addXP(n){
+ save.xp+=n;
+ while(save.xp>=save.level*100){
+  save.xp-=save.level*100;
+  save.level++;
+  save.highLevel=Math.max(save.highLevel,save.level);
+  save.coins+=10;
+  save.coinsEarned=(save.coinsEarned||0)+10;
+  sound(760,.12);
+  notice('shopNotice',`Level up! You're level ${save.level} (+10 coins)`);
+ }
+ persist();
+ syncCloud();
+}
+
 function notice(id,msg){const el=$(id);if(el)el.textContent=msg}
-function updateQuest(id,n=1){if(save.questDate!==today()){save.questDate=today();save.quests={eat5:0,eat10:0,play3:0};save.questClaimed=[]}save.quests[id]=(save.quests[id]||0)+n}
-function checkAchievements(){for(const a of achievements){if(!save.unlocked.includes(a.id)&&a.test(save)){save.unlocked.push(a.id);save.coins+=a.reward;notice('saveNotice',`Achievement unlocked: ${a.title} (+${a.reward} coins)`);sound(880,.16)}}}
-function renderMeta(){ $('coinTop').textContent=save.coins;$('levelTop').textContent=save.level;$('bestTop').textContent=save.best;$('levelText').textContent=save.level;$('xpText').textContent=`${save.xp} / ${save.level*100} XP to next level`;$('xpBar').style.width=`${Math.min(100,save.xp/(save.level*100)*100)}%`;$('currentSkin').textContent=skins.find(s=>s.id===save.skin)?.name||'Classic Green';$('soundBtn').textContent=save.sound?'🔊 Sound on':'🔇 Sound off';$('dailyStatus').textContent=save.dailyClaim===today()?'Claimed':'Ready';$('claimDaily').disabled=save.dailyClaim===today();$('claimDaily').textContent=save.dailyClaim===today()?'Already claimed':'Claim 25 coins + 20 XP';renderSkins();renderQuests();renderAchievements()}
-function renderSkins(){const box=$('skinList');box.innerHTML='';for(const s of skins){const owned=save.owned.includes(s.id),selected=save.skin===s.id,b=document.createElement('button');b.className='skin'+(selected?' selected':'');b.innerHTML=`<span class="swatch" style="background:linear-gradient(135deg,${s.colors[0]},${s.colors[1]})"></span><span>${s.name}<small>${selected?'Selected':owned?'Owned':`🪙 ${s.price}`}</small></span>`;b.onclick=()=>{if(owned){save.skin=s.id;persist();renderMeta();draw()}else if(save.coins>=s.price){save.coins-=s.price;save.owned.push(s.id);save.skin=s.id;checkAchievements();persist();renderMeta();draw();notice('shopNotice',`${s.name} unlocked!`)}else notice('shopNotice',`You need ${s.price-save.coins} more coins.`)};box.appendChild(b)}}
-function renderQuests(){const box=$('questList');box.innerHTML='';for(const q of questDefs){const v=Math.min(q.goal,save.quests[q.id]||0),claimed=save.questClaimed.includes(q.id),done=v>=q.goal;const el=document.createElement('div');el.className='quest';el.innerHTML=`<div class="questtop"><span>${q.title}<br><span class="muted">${q.desc}</span></span><b>${v}/${q.goal}</b></div><div class="bar"><i style="width:${v/q.goal*100}%"></i></div><div class="row"><span class="small muted">🪙 ${q.reward} · ${q.xp} XP</span><button ${!done||claimed?'disabled':''} data-claim="${q.id}">${claimed?'Claimed':'Claim'}</button></div>`;el.querySelector('button').onclick=()=>{if(done&&!claimed){save.questClaimed.push(q.id);save.coins+=q.reward;addXP(q.xp);persist();renderMeta();notice('dailyNotice',`${q.title} reward claimed!`)}};box.appendChild(el)}}
-function renderAchievements(){const box=$('achievementList');box.innerHTML='';for(const a of achievements){const unlocked=save.unlocked.includes(a.id),el=document.createElement('div');el.className='achievement'+(unlocked?'':' locked');el.innerHTML=`<span class="medal">${a.icon}</span><span><b>${a.title}</b><small>${a.desc} · ${unlocked?'Unlocked':`Reward: ${a.reward} coins`}</small></span>`;box.appendChild(el)}}
-function randomApple(){let p;do{p={x:Math.floor(Math.random()*SIZE),y:Math.floor(Math.random()*SIZE)}}while(snake.some(s=>s.x===p.x&&s.y===p.y));return p}
-function resetRun(){snake=[{x:7,y:12},{x:6,y:12},{x:5,y:12}];dir={x:1,y:0};nextDir={x:1,y:0};score=0;runCoins=0;applesRun=0;apple=randomApple();running=false;paused=false;over=false;clearTimeout(timer);updateStats();draw();showOverlay('Ready to play?','Use arrow keys or WASD. Don\'t hit yourself!','Start game');$('statusPill').textContent='READY';$('pauseBtn').textContent='▶ Start'}
-function updateStats(){$('score').textContent=score;$('runCoins').textContent=runCoins;$('length').textContent=snake.length}
-function showOverlay(title,text,button){$('overlayTitle').textContent=title;$('overlayText').textContent=text;$('startBtn').textContent=button;$('overlay').classList.remove('hidden')}
+
+function updateQuest(id,n=1){
+ if(save.questDate!==today()){
+  save.questDate=today();
+  save.quests={eat5:0,eat10:0,play3:0};
+  save.questClaimed=[];
+ }
+ save.quests[id]=(save.quests[id]||0)+n;
+}
+
+function checkAchievements(){
+ for(const a of achievements){
+  if(!save.unlocked.includes(a.id)&&a.test(save)){
+   save.unlocked.push(a.id);
+   awardCoins(a.reward);
+   notice('saveNotice',`Achievement unlocked: ${a.title} (+${a.reward} coins)`);
+   sound(880,.16);
+  }
+ }
+}
+
+function renderMeta(){
+ $('coinTop').textContent=save.coins.toLocaleString();
+ $('levelTop').textContent=save.level;
+ $('bestTop').textContent=save.best;
+ $('levelText').textContent=save.level;
+ $('xpText').textContent=`${save.xp} / ${save.level*100} XP to next level`;
+ $('xpBar').style.width=`${Math.min(100,save.xp/(save.level*100)*100)}%`;
+ $('currentSkin').textContent=skins.find(s=>s.id===save.skin)?.name||'Classic Green';
+ $('soundBtn').textContent=save.sound?'🔊 Sound on':'🔇 Sound off';
+ $('dailyStatus').textContent=save.dailyClaim===today()?'Claimed':'Ready';
+ $('claimDaily').disabled=save.dailyClaim===today();
+ $('claimDaily').textContent=save.dailyClaim===today()?'Already claimed':'Claim 25 coins + 20 XP';
+ renderSkins();renderQuests();renderAchievements();
+}
+
+function renderSkins(){
+ const box=$('skinList');box.innerHTML='';
+ for(const s of skins){
+  const owned=save.owned.includes(s.id),selected=save.skin===s.id,b=document.createElement('button');
+  b.className='skin'+(selected?' selected':'');
+  b.innerHTML=`<span class="swatch" style="background:linear-gradient(135deg,${s.colors[0]},${s.colors[1]})"></span><span>${s.name}<small>${selected?'Selected':owned?'Owned':`🪙 ${s.price}`}</small></span>`;
+  b.onclick=()=>{
+   if(owned){save.skin=s.id;persist();renderMeta();draw()}
+   else if(spendCoins(s.price)){
+    save.owned.push(s.id);save.skin=s.id;
+    checkAchievements();persist();renderMeta();draw();
+    notice('shopNotice',`${s.name} unlocked!`);
+   }else notice('shopNotice',`You need ${s.price-save.coins} more coins.`);
+  };
+  box.appendChild(b);
+ }
+}
+
+function renderQuests(){
+ const box=$('questList');box.innerHTML='';
+ for(const q of questDefs){
+  const v=Math.min(q.goal,save.quests[q.id]||0),claimed=save.questClaimed.includes(q.id),done=v>=q.goal;
+  const el=document.createElement('div');el.className='quest';
+  el.innerHTML=`<div class="questtop"><span>${q.title}<br><span class="muted">${q.desc}</span></span><b>${v}/${q.goal}</b></div><div class="bar"><i style="width:${v/q.goal*100}%"></i></div><div class="row"><span class="small muted">🪙 ${q.reward} · ${q.xp} XP</span><button ${!done||claimed?'disabled':''} data-claim="${q.id}">${claimed?'Claimed':'Claim'}</button></div>`;
+  el.querySelector('button').onclick=()=>{
+   if(done&&!claimed){
+    save.questClaimed.push(q.id);
+    awardCoins(q.reward);addXP(q.xp);persist();renderMeta();
+    notice('dailyNotice',`${q.title} reward claimed!`);
+   }
+  };
+  box.appendChild(el);
+ }
+}
+
+function renderAchievements(){
+ const box=$('achievementList');box.innerHTML='';
+ for(const a of achievements){
+  const unlocked=save.unlocked.includes(a.id),el=document.createElement('div');
+  el.className='achievement'+(unlocked?'':' locked');
+  el.innerHTML=`<span class="medal">${a.icon}</span><span><b>${a.title}</b><small>${a.desc} · ${unlocked?'Unlocked':`Reward: ${a.reward} coins`}</small></span>`;
+  box.appendChild(el);
+ }
+}
+
+function randomApple(){
+ let p;
+ do{p={x:Math.floor(Math.random()*SIZE),y:Math.floor(Math.random()*SIZE)}}
+ while(snake.some(s=>s.x===p.x&&s.y===p.y));
+ return p;
+}
+
+function resetRun(){
+ snake=[{x:7,y:12},{x:6,y:12},{x:5,y:12}];
+ dir={x:1,y:0};nextDir={x:1,y:0};score=0;runCoins=0;applesRun=0;
+ apple=randomApple();running=false;paused=false;over=false;clearTimeout(timer);
+ updateStats();draw();
+ showOverlay('Ready to play?','Use arrow keys or WASD. Don\'t hit yourself!','Start game');
+ $('statusPill').textContent='READY';$('pauseBtn').textContent='▶ Start';
+}
+
+function updateStats(){
+ $('score').textContent=score;
+ $('runCoins').textContent=runCoins;
+ $('length').textContent=snake.length;
+}
+
+function showOverlay(title,text,button){
+ $('overlayTitle').textContent=title;$('overlayText').textContent=text;
+ $('startBtn').textContent=button;$('overlay').classList.remove('hidden');
+}
 function hideOverlay(){$('overlay').classList.add('hidden')}
-function start(){if(over)resetRun();running=true;paused=false;hideOverlay();$('statusPill').textContent='PLAYING';$('pauseBtn').textContent='Ⅱ Pause';sound(560);tick()}
-function pause(){if(!running)return;running=false;paused=true;clearTimeout(timer);showOverlay('Paused','Take a breather. Your run is waiting.','Resume');$('statusPill').textContent='PAUSED';$('pauseBtn').textContent='▶ Resume'}
-function endRun(){running=false;over=true;clearTimeout(timer);save.runs++;save.best=Math.max(save.best,score);save.apples+=applesRun;updateQuest('play3');checkAchievements();addXP(Math.max(5,score*2));persist();renderMeta();showOverlay('Game over',`Score: ${score} · Earned ${runCoins} coins. Ready for another run?`,'Play again');$('statusPill').textContent='GAME OVER';$('pauseBtn').textContent='▶ Play again';sound(170,.25)}
-function tick(){if(!running)return;timer=setTimeout(()=>{step();if(running)tick()},speed[$('difficulty').value]||125)}
-function step(){dir=nextDir;let h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if($('walls').value==='wrap'){h.x=(h.x+SIZE)%SIZE;h.y=(h.y+SIZE)%SIZE}else if(h.x<0||h.x>=SIZE||h.y<0||h.y>=SIZE){endRun();return}const eating=h.x===apple.x&&h.y===apple.y;const body=eating?snake:snake.slice(0,-1);if(body.some(p=>p.x===h.x&&p.y===h.y)){endRun();return}snake.unshift(h);if(eating){score++;applesRun++;runCoins+=2;save.coins+=2;addXP(5);updateQuest('eat5');updateQuest('eat10');apple=randomApple();sound(650,.06);checkAchievements();persist();renderMeta()}else snake.pop();updateStats();draw()}
-function drawApple(x,y){const cx=x*CELL+CELL/2,cy=y*CELL+CELL/2;ctx.save();ctx.shadowColor='#ff526d';ctx.shadowBlur=13;ctx.fillStyle='#ff4965';ctx.beginPath();ctx.arc(cx,cy+1,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#c51e49';ctx.beginPath();ctx.arc(cx+3,cy+2,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#72ef9b';ctx.lineWidth=2.3;ctx.beginPath();ctx.moveTo(cx,cy-5);ctx.quadraticCurveTo(cx-1,cy-10,cx+3,cy-10);ctx.stroke();ctx.fillStyle='#72ef9b';ctx.beginPath();ctx.ellipse(cx+4,cy-7,4,2, -.5,0,Math.PI*2);ctx.fill();ctx.restore()}
-function draw(){ctx.clearRect(0,0,480,480);ctx.fillStyle='#0a1420';ctx.fillRect(0,0,480,480);if($('grid').value==='on'){ctx.strokeStyle='#172638';ctx.lineWidth=1;for(let i=0;i<=SIZE;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,480);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(480,i*CELL);ctx.stroke()}}drawApple(apple.x,apple.y);const skin=skins.find(s=>s.id===save.skin)||skins[0];snake.forEach((p,i)=>{const x=p.x*CELL,y=p.y*CELL;let color=skin.colors[0];if(save.skin==='rainbow'){color=`hsl(${(i*28+score*12)%360} 90% 65%)`}else if(save.skin==='fire'){color=i%2?'#ff553d':'#ffb14d'}else if(save.skin==='galaxy'){color=i%2?'#9b70ff':'#e0a5ff'}else if(save.skin==='shadow'){color=i%2?'#66758a':'#b0bfd2'}const pad=i===0?2:2.5;ctx.save();ctx.shadowColor=color;ctx.shadowBlur=i===0?11:4;ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x+pad,y+pad,CELL-pad*2,CELL-pad*2,6);ctx.fill();ctx.restore();if(i===0){ctx.fillStyle='#07111a';const ex=x+10+(dir.x===1?3:dir.x===-1?-3:0),ey=y+10+(dir.y===1?3:dir.y===-1?-3:0);ctx.beginPath();ctx.arc(ex-3,ey-3,1.7,0,Math.PI*2);ctx.arc(ex+3,ey-3,1.7,0,Math.PI*2);ctx.fill()}})}
-function changeDir(d){const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};const n=map[d];if(!n)return;if(n.x===-dir.x&&n.y===-dir.y)return;nextDir=n;if(!running&&!over&&paused===false){}}
-document.addEventListener('keydown',e=>{const k=e.key.toLowerCase(),dirs={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};if(dirs[k]){e.preventDefault();changeDir(dirs[k]);if(!running&&!over&&$('overlay').classList.contains('hidden')===false&&e.repeat===false&&paused===false)start()}else if(k===' '){e.preventDefault();running?pause():paused?start():null}else if(k==='enter'){if(!running)start()}});
-document.querySelectorAll('[data-dir]').forEach(b=>{b.addEventListener('click',()=>{changeDir(b.dataset.dir);if(!running&&!over)start()});b.addEventListener('touchstart',e=>{e.preventDefault();changeDir(b.dataset.dir);if(!running&&!over)start()},{passive:false})});
-$('startBtn').onclick=()=>start();$('pauseBtn').onclick=()=>running?pause():start();$('restartBtn').onclick=()=>{resetRun();start()};$('soundBtn').onclick=()=>{save.sound=!save.sound;persist();renderMeta();if(save.sound)sound()};$('difficulty').onchange=()=>{if(running){clearTimeout(timer);tick()}};$('grid').onchange=draw;
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['play','shop','quests','awards'].forEach(t=>$('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab))});
-$('claimDaily').onclick=()=>{if(save.dailyClaim===today())return;save.dailyClaim=today();save.coins+=25;addXP(20);persist();renderMeta();notice('dailyNotice','Daily reward claimed. Come back tomorrow!');sound(760,.12)};
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(save,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='minigamehq-snake-save.json';a.click();URL.revokeObjectURL(url);notice('saveNotice','Save exported.')};
-$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d||typeof d!=='object'||!Number.isFinite(d.coins)||!Array.isArray(d.owned))throw Error();save={...defaultSave(),...d};save.owned=[...new Set(['green',...save.owned.filter(id=>skins.some(s=>s.id===id))])];if(!save.owned.includes(save.skin))save.skin='green';persist();renderMeta();draw();notice('saveNotice','Save imported successfully.')}catch{notice('saveNotice','That save file is invalid.')}e.target.value=''};
-$('resetSave').onclick=()=>{if(confirm('Reset all Snake progress on this device? This cannot be undone.')){save=defaultSave();persist();renderMeta();resetRun();notice('saveNotice','Progress reset.')}};
-function init(){renderMeta();resetRun();if(save.dailyClaim===today())notice('dailyNotice','You have already claimed today’s reward.')}
+
+function start(){
+ if(over)resetRun();
+ running=true;paused=false;hideOverlay();
+ $('statusPill').textContent='PLAYING';$('pauseBtn').textContent='Ⅱ Pause';
+ sound(560);tick();
+}
+
+function pause(){
+ if(!running)return;
+ running=false;paused=true;clearTimeout(timer);
+ showOverlay('Paused','Take a breather. Your run is waiting.','Resume');
+ $('statusPill').textContent='PAUSED';$('pauseBtn').textContent='▶ Resume';
+}
+
+function endRun(){
+ running=false;over=true;clearTimeout(timer);
+ save.runs++;save.best=Math.max(save.best,score);save.apples+=applesRun;
+ updateQuest('play3');checkAchievements();addXP(Math.max(5,score*2));
+ persist();renderMeta();
+ showOverlay('Game over',`Score: ${score} · Earned ${runCoins} coins. Ready for another run?`,'Play again');
+ $('statusPill').textContent='GAME OVER';$('pauseBtn').textContent='▶ Play again';
+ sound(170,.25);
+}
+
+function tick(){
+ if(!running)return;
+ timer=setTimeout(()=>{step();if(running)tick()},speed[$('difficulty').value]||125);
+}
+
+function step(){
+ dir=nextDir;
+ let h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+ if($('walls').value==='wrap'){
+  h.x=(h.x+SIZE)%SIZE;h.y=(h.y+SIZE)%SIZE;
+ }else if(h.x<0||h.x>=SIZE||h.y<0||h.y>=SIZE){endRun();return}
+ const eating=h.x===apple.x&&h.y===apple.y;
+ const body=eating?snake:snake.slice(0,-1);
+ if(body.some(p=>p.x===h.x&&p.y===h.y)){endRun();return}
+ snake.unshift(h);
+ if(eating){
+  score++;applesRun++;runCoins+=2;
+  awardCoins(2);addXP(5);
+  updateQuest('eat5');updateQuest('eat10');
+  apple=randomApple();sound(650,.06);checkAchievements();
+  persist();renderMeta();
+ }else snake.pop();
+ updateStats();draw();
+}
+
+function drawApple(x,y){
+ const cx=x*CELL+CELL/2,cy=y*CELL+CELL/2;
+ ctx.save();ctx.shadowColor='#ff526d';ctx.shadowBlur=13;ctx.fillStyle='#ff4965';
+ ctx.beginPath();ctx.arc(cx,cy+1,7,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#c51e49';ctx.beginPath();ctx.arc(cx+3,cy+2,4,0,Math.PI*2);ctx.fill();
+ ctx.shadowBlur=0;ctx.strokeStyle='#72ef9b';ctx.lineWidth=2.3;
+ ctx.beginPath();ctx.moveTo(cx,cy-5);ctx.quadraticCurveTo(cx-1,cy-10,cx+3,cy-10);ctx.stroke();
+ ctx.fillStyle='#72ef9b';ctx.beginPath();ctx.ellipse(cx+4,cy-7,4,2,-.5,0,Math.PI*2);ctx.fill();
+ ctx.restore();
+}
+
+function draw(){
+ ctx.clearRect(0,0,480,480);ctx.fillStyle='#0a1420';ctx.fillRect(0,0,480,480);
+ if($('grid').value==='on'){
+  ctx.strokeStyle='#172638';ctx.lineWidth=1;
+  for(let i=0;i<=SIZE;i++){
+   ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,480);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(480,i*CELL);ctx.stroke();
+  }
+ }
+ drawApple(apple.x,apple.y);
+ const skin=skins.find(s=>s.id===save.skin)||skins[0];
+ snake.forEach((p,i)=>{
+  const x=p.x*CELL,y=p.y*CELL;let color=skin.colors[0];
+  if(save.skin==='rainbow')color=`hsl(${(i*28+score*12)%360} 90% 65%)`;
+  else if(save.skin==='fire')color=i%2?'#ff553d':'#ffb14d';
+  else if(save.skin==='galaxy')color=i%2?'#9b70ff':'#e0a5ff';
+  else if(save.skin==='shadow')color=i%2?'#66758a':'#b0bfd2';
+  const pad=i===0?2:2.5;
+  ctx.save();ctx.shadowColor=color;ctx.shadowBlur=i===0?11:4;ctx.fillStyle=color;
+  ctx.beginPath();ctx.roundRect(x+pad,y+pad,CELL-pad*2,CELL-pad*2,6);ctx.fill();ctx.restore();
+  if(i===0){
+   ctx.fillStyle='#07111a';
+   const ex=x+10+(dir.x===1?3:dir.x===-1?-3:0),ey=y+10+(dir.y===1?3:dir.y===-1?-3:0);
+   ctx.beginPath();ctx.arc(ex-3,ey-3,1.7,0,Math.PI*2);ctx.arc(ex+3,ey-3,1.7,0,Math.PI*2);ctx.fill();
+  }
+ });
+}
+
+function changeDir(d){
+ const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+ const n=map[d];if(!n)return;
+ if(n.x===-dir.x&&n.y===-dir.y)return;
+ nextDir=n;
+}
+
+document.addEventListener('keydown',e=>{
+ const k=e.key.toLowerCase(),dirs={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};
+ if(dirs[k]){
+  e.preventDefault();changeDir(dirs[k]);
+  if(!running&&!over&&$('overlay').classList.contains('hidden')===false&&e.repeat===false&&paused===false)start();
+ }else if(k===' '){
+  e.preventDefault();running?pause():paused?start():null;
+ }else if(k==='enter'){if(!running)start()}
+});
+
+document.querySelectorAll('[data-dir]').forEach(b=>{
+ b.addEventListener('click',()=>{changeDir(b.dataset.dir);if(!running&&!over)start()});
+ b.addEventListener('touchstart',e=>{e.preventDefault();changeDir(b.dataset.dir);if(!running&&!over)start()},{passive:false});
+});
+
+$('startBtn').onclick=()=>start();
+$('pauseBtn').onclick=()=>running?pause():start();
+$('restartBtn').onclick=()=>{resetRun();start()};
+$('soundBtn').onclick=()=>{save.sound=!save.sound;persist();renderMeta();if(save.sound)sound()};
+$('difficulty').onchange=()=>{if(running){clearTimeout(timer);tick()}};
+$('grid').onchange=draw;
+
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+ ['play','shop','quests','awards'].forEach(t=>$('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));
+});
+
+$('claimDaily').onclick=()=>{
+ if(save.dailyClaim===today())return;
+ save.dailyClaim=today();awardCoins(25);addXP(20);persist();renderMeta();
+ notice('dailyNotice','Daily reward claimed. Come back tomorrow!');sound(760,.12);
+};
+
+$('exportBtn').onclick=()=>{
+ const blob=new Blob([JSON.stringify(save,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='minigamehq-snake-save.json';a.click();
+ URL.revokeObjectURL(url);notice('saveNotice','Save exported.');
+};
+
+$('importBtn').onclick=()=>$('importFile').click();
+
+$('importFile').onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{
+  const d=JSON.parse(await f.text());
+  if(!d||typeof d!=='object'||!Number.isFinite(d.coins)||!Array.isArray(d.owned))throw Error();
+  save={...defaultSave(),...d};
+  save.owned=[...new Set(['green',...save.owned.filter(id=>skins.some(s=>s.id===id))])];
+  if(!save.owned.includes(save.skin))save.skin='green';
+  persist();renderMeta();draw();notice('saveNotice','Save imported successfully.');
+ }catch{notice('saveNotice','That save file is invalid.')}
+ e.target.value='';
+};
+
+$('resetSave').onclick=()=>{
+ if(confirm('Reset all Snake progress on this device? This cannot be undone.')){
+  save=defaultSave();save.coinsEarned=0;persist();renderMeta();resetRun();
+  syncCloud();notice('saveNotice','Local Snake progress reset. Cloud coins and level reset too.');
+ }
+};
+
+async function connectAccount(){
+ try{
+  const {data:{session},error}=await db.auth.getSession();
+  if(error)throw error;
+  if(!session){
+   save.coinsEarned=Number(save.coinsEarned)||0;
+   notice('cloudNotice','Not logged in. Coins and level are saving on this device only.');
+   renderMeta();return;
+  }
+  cloudUser=session.user;
+  const {data,error:profileError}=await db.from('profiles')
+   .select('coins,coins_earned,level')
+   .eq('id',cloudUser.id)
+   .single();
+  if(profileError)throw profileError;
+  save.coins=Math.max(0,Number(profileError?0:data.coins)||0);
+  save.coinsEarned=Math.max(0,Number(data.coins_earned)||0);
+  save.level=Math.max(1,Number(data.level)||1);
+  save.xp=0;
+  save.highLevel=Math.max(save.level,Number(save.highLevel)||1);
+  cloudReady=true;
+  persist();renderMeta();
+  notice('cloudNotice','✓ Connected! Coins and level are saving to your account.');
+ }catch(error){
+  console.error('MiniGameHQ account connection failed:',error);
+  notice('cloudNotice','Could not load your account. Check your login and refresh.');
+  renderMeta();
+ }
+}
+
+async function init(){
+ await connectAccount();
+ renderMeta();resetRun();
+ if(save.dailyClaim===today())notice('dailyNotice','You have already claimed today’s reward.');
+}
+
 init();
+
 })();
 </script>
 </body>
