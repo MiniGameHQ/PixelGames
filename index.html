@@ -1,60 +1,316 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>GameHub</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniGameHQ</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+body {
+    background: #090d16;
+    color: #f3f7ff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.account {
+    max-width: 420px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #111827;
+    border: 1px solid #26344a;
+    border-radius: 15px;
+}
+.account input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0;
+    border-radius: 8px;
+    border: 1px solid #34445c;
+    background: #172235;
+    color: white;
+}
+button {
+    cursor: pointer;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #3478f6;
+    color: white;
+    font-weight: bold;
+    margin: 5px;
+}
+button:hover {
+    opacity: 0.85;
+}
+#status {
+    color: #9db7dc;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+#profile {
+    display: none;
+    text-align: center;
+}
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 1000px;
+    margin: auto;
+}
+.card {
+    background: #111827;
+    border: 1px solid #26344a;
+    padding: 20px;
+    border-radius: 14px;
+    text-align: center;
+}
+.card a {
+    text-decoration: none;
+}
+</style>
 </head>
 
 <body>
 
-<h1>🎮 GameHub</h1>
-<p>Play free mini games online!</p>
+<header>
+    <h1>🎮 MiniGameHQ</h1>
+    <p>Play free mini games online!</p>
+</header>
 
-<input id="search" placeholder="Search games..." oninput="searchGames()">
+<section class="account">
+
+    <div id="auth">
+        <h2>👤 Player Account</h2>
+
+        <input id="username" type="text"
+        placeholder="Choose a username" maxlength="20">
+
+        <input id="email" type="email"
+        placeholder="Email address">
+
+        <input id="password" type="password"
+        placeholder="Password" minlength="6">
+
+        <button id="signup">Create Account</button>
+        <button id="login">Log In</button>
+
+        <p id="status">Create an account or log in to get started.</p>
+    </div>
+
+    <div id="profile">
+        <h2>Welcome, <span id="playerName"></span>!</h2>
+
+        <div class="stats">
+            <p>🪙 Coins: <strong id="coins">0</strong></p>
+            <p>⭐ XP: <strong id="xp">0</strong></p>
+            <p>🏆 Level: <strong id="level">1</strong></p>
+        </div>
+
+        <button id="logout">Log Out</button>
+    </div>
+
+</section>
+
+<h2 style="text-align:center;">🎮 Choose a Game</h2>
+
+<input id="search" placeholder="Search games..."
+oninput="searchGames()"
+style="display:block;width:90%;max-width:400px;margin:20px auto;padding:12px;">
 
 <div class="games" id="games">
 
-<div class="card" data-name="snake classic">
-<h2>🐍 Snake</h2>
-<p>Classic snake game</p>
-<a href="snake.html">
-<button>Play</button>
-</a>
-</div>
+    <div class="card" data-name="snake classic">
+        <h2>🐍 Snake</h2>
+        <p>Classic snake game</p>
+        <a href="snake.html"><button>Play</button></a>
+    </div>
 
-<div class="card" data-name="flappy bird flying">
-<h2>🐤 Flappy</h2>
-<p>Fly through the pipes and beat your best score!</p>
-<a href="flappy.html">
-<button>Play</button>
-</a>
-</div>
+    <div class="card" data-name="flappy bird flying">
+        <h2>🐤 Flappy</h2>
+        <p>Fly through the pipes and beat your best score!</p>
+        <a href="flappy.html"><button>Play</button></a>
+    </div>
 
-<div class="card" data-name="space invaders arcade shooter aliens">
-<h2>👾 Space Invaders</h2>
-<p>Defend Earth against waves of alien invaders!</p>
-<a href="spaceinvaders.html">
-<button>Play</button>
-</a>
-</div>
+    <div class="card" data-name="space invaders arcade shooter aliens">
+        <h2>👾 Space Invaders</h2>
+        <p>Defend Earth against waves of alien invaders!</p>
+        <a href="spaceinvaders.html"><button>Play</button></a>
+    </div>
 
-<div class="card" data-name="puzzle master brain">
-<h2>🧩 Puzzle Master</h2>
-<p>Test your brain</p>
-<button>Play</button>
-</div>
+    <div class="card" data-name="puzzle master brain">
+        <h2>🧩 Puzzle Master</h2>
+        <p>Test your brain</p>
+        <button disabled>Coming Soon</button>
+    </div>
 
-<div class="card premium" data-name="premium zone exclusive">
-<h2>👑 Premium Zone</h2>
-<p>Unlock exclusive games</p>
-<button>Upgrade</button>
-</div>
+    <div class="card premium" data-name="premium zone exclusive">
+        <h2>👑 Premium Zone</h2>
+        <p>Unlock exclusive games</p>
+        <button disabled>Coming Soon</button>
+    </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+const SUPABASE_URL = "https://vuvzrdxsnphhdcesbmue.supabase.co";
+const SUPABASE_KEY = "sb_publishable_6XDHu2AbuwBS7VT8dL264w_dP9B9Dz9";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const authBox = document.getElementById("auth");
+const profileBox = document.getElementById("profile");
+const statusText = document.getElementById("status");
+
+function setStatus(message) {
+    statusText.textContent = message;
+}
+
+async function loadProfile(user) {
+    const { data, error } = await db
+        .from("profiles")
+        .select("username, coins, xp, level")
+        .eq("id", user.id)
+        .single();
+
+    if (error) {
+        setStatus("Couldn't load your profile: " + error.message);
+        return;
+    }
+
+    document.getElementById("playerName").textContent = data.username;
+    document.getElementById("coins").textContent = data.coins;
+    document.getElementById("xp").textContent = data.xp;
+    document.getElementById("level").textContent = data.level;
+
+    authBox.style.display = "none";
+    profileBox.style.display = "block";
+}
+
+async function signup() {
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!username || !email || !password) {
+        setStatus("Please fill in all three fields.");
+        return;
+    }
+
+    if (username.length < 3) {
+        setStatus("Your username must be at least 3 characters.");
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        setStatus("Usernames can only use letters, numbers and underscores.");
+        return;
+    }
+
+    if (password.length < 6) {
+        setStatus("Your password must be at least 6 characters.");
+        return;
+    }
+
+    setStatus("Creating your account...");
+
+    const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: {
+            data: { username }
+        }
+    });
+
+    if (error) {
+        setStatus(error.message);
+        return;
+    }
+
+    if (data.session) {
+        await loadProfile(data.user);
+    } else {
+        setStatus("Account created! Check your email to confirm it, then log in.");
+    }
+}
+
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+        setStatus("Enter your email and password.");
+        return;
+    }
+
+    setStatus("Logging in...");
+
+    const { data, error } = await db.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) {
+        setStatus(error.message);
+        return;
+    }
+
+    await loadProfile(data.user);
+}
+
+async function logout() {
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+        setStatus(error.message);
+        return;
+    }
+
+    profileBox.style.display = "none";
+    authBox.style.display = "block";
+    setStatus("You have logged out.");
+}
+
+document.getElementById("signup").addEventListener("click", signup);
+document.getElementById("login").addEventListener("click", login);
+document.getElementById("logout").addEventListener("click", logout);
+
+async function checkLogin() {
+    const { data } = await db.auth.getSession();
+
+    if (data.session) {
+        await loadProfile(data.session.user);
+    }
+}
+
+db.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+        profileBox.style.display = "none";
+        authBox.style.display = "block";
+    }
+});
+
+checkLogin();
+
 function searchGames() {
     const search = document.getElementById("search").value.toLowerCase();
     const cards = document.querySelectorAll(".card");
