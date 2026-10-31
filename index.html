@@ -168,11 +168,6 @@ button:hover {
             </div>
 
             <div class="stat-card">
-                <p class="stat-number" id="coins">0</p>
-                <p class="stat-label">💰 Current Balance</p>
-            </div>
-
-            <div class="stat-card">
                 <p class="stat-number" id="level">1</p>
                 <p class="stat-label">🏆 Level</p>
             </div>
@@ -247,7 +242,7 @@ async function loadProfile(user) {
 
     const { data, error } = await db
         .from("profiles")
-        .select("username, coins, coins_earned, level")
+        .select("username, coins_earned, level")
         .eq("id", user.id)
         .single();
 
@@ -260,9 +255,6 @@ async function loadProfile(user) {
 
     document.getElementById("coinsEarned").textContent =
         Number(data.coins_earned).toLocaleString();
-
-    document.getElementById("coins").textContent =
-        Number(data.coins).toLocaleString();
 
     document.getElementById("level").textContent = data.level;
 
