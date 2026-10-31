@@ -15,18 +15,21 @@ body {
     margin: 0;
     padding: 20px;
 }
+
 header {
     text-align: center;
     margin-bottom: 25px;
 }
+
 .account {
-    max-width: 420px;
+    max-width: 500px;
     margin: 20px auto;
     padding: 20px;
     background: #111827;
     border: 1px solid #26344a;
     border-radius: 15px;
 }
+
 .account input {
     box-sizing: border-box;
     width: 100%;
@@ -37,6 +40,7 @@ header {
     background: #172235;
     color: white;
 }
+
 button {
     cursor: pointer;
     padding: 11px 18px;
@@ -47,24 +51,50 @@ button {
     font-weight: bold;
     margin: 5px;
 }
+
 button:hover {
     opacity: 0.85;
 }
+
 #status {
     color: #9db7dc;
     font-size: 14px;
     overflow-wrap: anywhere;
 }
+
 #profile {
     display: none;
     text-align: center;
 }
+
 .stats {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
 }
+
+.stat-card {
+    background: #1b2940;
+    border: 1px solid #34445c;
+    border-radius: 12px;
+    padding: 15px 8px;
+}
+
+.stat-card p {
+    margin: 5px 0;
+}
+
+.stat-number {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #b9c9df;
+    font-size: 13px;
+}
+
 .games {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -72,6 +102,7 @@ button:hover {
     max-width: 1000px;
     margin: auto;
 }
+
 .card {
     background: #111827;
     border: 1px solid #26344a;
@@ -79,8 +110,22 @@ button:hover {
     border-radius: 14px;
     text-align: center;
 }
+
 .card a {
     text-decoration: none;
+}
+
+#search {
+    display: block;
+    box-sizing: border-box;
+    width: 90%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #34445c;
+    background: #172235;
+    color: white;
 }
 </style>
 </head>
@@ -116,9 +161,22 @@ button:hover {
         <h2>Welcome, <span id="playerName"></span>!</h2>
 
         <div class="stats">
-            <p>🪙 Coins: <strong id="coins">0</strong></p>
-            <p>⭐ XP: <strong id="xp">0</strong></p>
-            <p>🏆 Level: <strong id="level">1</strong></p>
+
+            <div class="stat-card">
+                <p class="stat-number" id="coinsEarned">0</p>
+                <p class="stat-label">🪙 Coins Earned</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-number" id="coins">0</p>
+                <p class="stat-label">💰 Current Balance</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-number" id="level">1</p>
+                <p class="stat-label">🏆 Level</p>
+            </div>
+
         </div>
 
         <button id="logout">Log Out</button>
@@ -129,8 +187,7 @@ button:hover {
 <h2 style="text-align:center;">🎮 Choose a Game</h2>
 
 <input id="search" placeholder="Search games..."
-oninput="searchGames()"
-style="display:block;width:90%;max-width:400px;margin:20px auto;padding:12px;">
+oninput="searchGames()">
 
 <div class="games" id="games">
 
@@ -170,6 +227,7 @@ style="display:block;width:90%;max-width:400px;margin:20px auto;padding:12px;">
 
 <script>
 const SUPABASE_URL = "https://vuvzrdxsnphhdcesbmue.supabase.co";
+
 const SUPABASE_KEY = "sb_publishable_6XDHu2AbuwBS7VT8dL264w_dP9B9Dz9";
 
 const db = window.supabase.createClient(
@@ -186,9 +244,10 @@ function setStatus(message) {
 }
 
 async function loadProfile(user) {
+
     const { data, error } = await db
         .from("profiles")
-        .select("username, coins, xp, level")
+        .select("username, coins, coins_earned, level")
         .eq("id", user.id)
         .single();
 
@@ -198,8 +257,13 @@ async function loadProfile(user) {
     }
 
     document.getElementById("playerName").textContent = data.username;
-    document.getElementById("coins").textContent = data.coins;
-    document.getElementById("xp").textContent = data.xp;
+
+    document.getElementById("coinsEarned").textContent =
+        Number(data.coins_earned).toLocaleString();
+
+    document.getElementById("coins").textContent =
+        Number(data.coins).toLocaleString();
+
     document.getElementById("level").textContent = data.level;
 
     authBox.style.display = "none";
@@ -207,6 +271,7 @@ async function loadProfile(user) {
 }
 
 async function signup() {
+
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
@@ -254,6 +319,7 @@ async function signup() {
 }
 
 async function login() {
+
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
@@ -278,6 +344,7 @@ async function login() {
 }
 
 async function logout() {
+
     const { error } = await db.auth.signOut();
 
     if (error) {
@@ -291,10 +358,13 @@ async function logout() {
 }
 
 document.getElementById("signup").addEventListener("click", signup);
+
 document.getElementById("login").addEventListener("click", login);
+
 document.getElementById("logout").addEventListener("click", logout);
 
 async function checkLogin() {
+
     const { data } = await db.auth.getSession();
 
     if (data.session) {
@@ -303,21 +373,28 @@ async function checkLogin() {
 }
 
 db.auth.onAuthStateChange((event, session) => {
+
     if (event === "SIGNED_OUT") {
         profileBox.style.display = "none";
         authBox.style.display = "block";
     }
+
 });
 
 checkLogin();
 
 function searchGames() {
+
     const search = document.getElementById("search").value.toLowerCase();
+
     const cards = document.querySelectorAll(".card");
 
     cards.forEach(card => {
+
         const name = card.dataset.name || card.innerText.toLowerCase();
+
         card.style.display = name.includes(search) ? "" : "none";
+
     });
 }
 </script>
